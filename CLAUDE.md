@@ -75,6 +75,13 @@ Each person has their own long-lived branch, based on the answer to "who is work
 - Keep changes minimal and in your own area to keep merges painless (section 3).
 - Before committing: run typecheck, lint and tests (`npm run build`, `npm test`) once the scaffold exists.
 
-## 7. Open decision (Nana resolves in issue #1)
+## 7. Convex during development (decided in issue #1)
 
-How the two of us share Convex during development (separate dev deployments vs one shared). Until it is written here, **don't run `npx convex dev` against a deployment you didn't create yourself**, and ask the user which deployment to use.
+Each person develops against **their own Convex dev deployment**, so schema pushes don't clash:
+
+- **Nana**: the main `receipts` Convex project (its dev deployment, plus the prod deployment used for the final deploy).
+- **Dave**: a **separate** Convex project, created once with `npx convex dev --configure new` (name it e.g. `receipts-dave`). It is written to the git-ignored `.env.local`, so nothing leaks between machines.
+- Every deployment needs its own env vars (`YOUCAM_API_KEY`, `OPENROUTER_API_KEY`, and the Convex Auth keys from `npx @convex-dev/auth`). See `.env.example`.
+- `convex/_generated/` **is committed**, so a fresh clone typechecks. Re-run `npx convex dev` after changing `convex/` and commit the regenerated files.
+- Never point `npx convex dev` at someone else's deployment. If unsure which one `.env.local` points to, ask the user.
+- Dave's dev deployment starts empty: run the demo seed there (from the seed issue) to get sample data without spending YouCam units.
