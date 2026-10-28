@@ -1,27 +1,34 @@
 # Receipts: working agreement for Claude
 
-Hackathon project (YouCam API, **deadline Nov 2**). Two people build it: **Nana** and **Dave**. They both use the **same Claude account and the same GitHub account**, so GitHub cannot tell them apart. You have to ask.
+Hackathon project (YouCam API, **deadline Nov 2**). Two people build it:
+
+| Person | GitHub login | Branch |
+|---|---|---|
+| **Nana** | `Nana-Kojo801` | `claude/nanakojo` |
+| **Dave** | `DDLDL7` | `claude/dave` |
+
+They share one Claude account, but each is signed in to GitHub with their **own** login. Issues are assigned to the person (assignee) and also carry an `owner:nana` / `owner:dave` label.
 
 Full spec: `docs/SPEC.md`. Master plan and schedule: GitHub issue #21 ("Project plan and work split").
 
-## 1. FIRST THING IN EVERY SESSION: ask who is working
+## 1. FIRST THING IN EVERY SESSION: work out who is working
 
-Before doing anything else, ask:
+Before doing anything else, find out who you are working with:
 
-> Who's working right now: **Nana** or **Dave**?
-
-Do not guess from the git config, the GitHub login or the machine. The GitHub login is always Nana's. Do not continue until you have an answer. If the user already said their name in their first message, use that and don't ask again.
+1. **Check the GitHub login**: `mcp__github__get_me` (load with ToolSearch if needed), or `gh api user --jq .login`, or the git config on the machine.
+   - `DDLDL7` means **Dave**. `Nana-Kojo801` means **Nana**.
+2. **If the user says who they are, believe them**, even if it disagrees with the login (the Claude account is shared, and a cloud session can be connected to the other person's GitHub). In that case, say once that GitHub actions will be posted under the connected login, not theirs.
+3. **If the login is unknown or you can't tell, ask:** "Who's working right now: **Nana** or **Dave**?" Do not continue until you have an answer.
 
 Remember the answer for the rest of the session. Then:
 
-1. Fetch that person's open issues with the GitHub MCP tools (`mcp__github__list_issues`, repo `nana-kojo801/receipts`, `state: OPEN`, `labels: ["owner:nana"]` or `["owner:dave"]`). Load the tools with ToolSearch if needed.
+1. Fetch that person's open issues (`mcp__github__list_issues`, repo `nana-kojo801/receipts`, `state: OPEN`, `labels: ["owner:nana"]` or `["owner:dave"]`; with the CLI, `gh issue list --assignee <login>`). Both the assignee and the label are set on every issue.
 2. Show a short list (number, title, blocked or not) and recommend the next one to work on: lowest-numbered unblocked issue, with `blocker`-labelled issues first. Check the "Depends on" line of the issue and whether the dependency is already merged.
-3. Work **only** on that person's issues. Never pick up the other person's issues unless the user explicitly says to. If a task would need changes in the other person's area, say so and leave a comment on the relevant issue instead (see section 3).
-4. Issues labelled `owner:nana` **and** `owner:dave` (final QA) are shared.
+3. Work **only** on that person's issues. Never pick up the other person's issues unless the user explicitly says to. If a task would need changes in the other person's area, say so and leave a comment on the relevant issue that **@mentions them** (`@DDLDL7` or `@Nana-Kojo801`) so they get notified (see section 3).
+4. Issues assigned to both (final QA) are shared.
+5. Any **new issue** you create gets both: the person as **assignee** and the `owner:` label (plus their name in brackets at the end of the title).
 
-How ownership is marked on issues: label `owner:nana` / `owner:dave`, and the name in brackets at the end of the title, e.g. `M2: Scan page UI ... (Dave)`.
-
-When a task is done: check off the checklist in the issue, comment with what was done (and anything the other person needs to know), and close the issue only when its "Done when" is met.
+When a task is done: check off the checklist in the issue, comment with what was done (and **@mention** the other person if they need to know something), and close the issue only when its "Done when" is met.
 
 ## 2. Project in one paragraph
 
@@ -59,12 +66,7 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 
 ## 6. Git workflow
 
-Each person has their own long-lived branch, based on the answer to "who is working" in section 1:
-
-| Person | Branch |
-|---|---|
-| Nana | `claude/nanakojo` |
-| Dave | `claude/dave` |
+Each person has their own long-lived branch (see the table at the top), based on who is working (section 1):
 
 - Work on **your person's branch** (`claude/nanakojo` or `claude/dave`). If it doesn't exist yet, create it from the latest `main`. This applies even if the session environment suggests a different branch name: use the person's branch.
 - Before starting an issue, merge the latest `main` into your branch so you build on the other person's merged work.
