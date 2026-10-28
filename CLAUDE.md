@@ -82,7 +82,7 @@ Each person has their own long-lived branch (see the table at the top), based on
 
 Each person develops against **their own Convex dev deployment**, so schema pushes don't clash:
 
-- **Nana**: the main `receipts` Convex project (its dev deployment, plus the prod deployment used for the final deploy).
+- **Nana**: the main `receipts` Convex project, **dev deployment only**. There is deliberately no production deployment: that dev deployment is also the live backend for the Netlify site (decided with Nana; it's a hackathon project). So don't leave `npx convex dev` running with unfinished edits, and don't run tests or experiments that write test data to it without cleaning up afterwards.
 - **Dave**: a **separate** Convex project, created once with `npx convex dev --configure new` (name it e.g. `receipts-dave`). It is written to the git-ignored `.env.local`, so nothing leaks between machines.
 - Every deployment needs its own env vars (`YOUCAM_API_KEY`, `OPENROUTER_API_KEY`, and the Convex Auth keys from `npx @convex-dev/auth`). See `.env.example`.
 - `convex/_generated/` **is committed**, so a fresh clone typechecks. Re-run `npx convex dev` after changing `convex/` and commit the regenerated files.

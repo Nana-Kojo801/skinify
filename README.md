@@ -65,23 +65,20 @@ Create the demo account on your deployment:
 
 ```bash
 npm run reset-demo            # creates the demo login if missing and (re)seeds it; safe to repeat
-npm run reset-demo -- --prod  # same, on the production deployment
 ```
 
 Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`, `npm run lint`, `npm run build`.
 
-### Deploying (Convex + Netlify)
+### Deploying (Netlify + a Convex deployment)
 
-1. **Convex deploy key.** In the Convex dashboard, open the `receipts` project, switch to **Production**, create the production deployment if it does not exist yet (it uses one slot of the team's deployment quota), then Settings, Deploy keys, and generate a production deploy key.
-2. **Netlify.** Add a new site from this GitHub repo. The build settings come from [`netlify.toml`](netlify.toml) (`npx convex deploy --cmd 'npm run build'`, publish `dist`; routing and cache rules are in `public/_redirects` and `public/_headers`). Add one environment variable: `CONVEX_DEPLOY_KEY` = the production deploy key. The build deploys the backend to Convex production and builds the frontend against it.
-3. **Production environment variables** (run on your machine, logged in to Convex; `--prod` targets production):
-   ```bash
-   npx convex env set YOUCAM_API_KEY <key> --prod
-   npx convex env set OPENROUTER_API_KEY <key> --prod
-   npx @convex-dev/auth --prod --web-server-url https://<your-site>.netlify.app   # login keys + SITE_URL
-   ```
-   Until the login keys exist, sign-in does not work.
-4. **Demo account:** `npm run reset-demo -- --prod` (and again before judging if the demo data was touched).
+For this hackathon the live app runs on a Convex **development** deployment (no separate production deployment). That deployment already has the environment variables above and the demo account; the code is pushed to it with `npx convex dev --once` (or while `npx convex dev` runs). Note that anything pushed there goes live at once, so don't leave `npx convex dev` running with half-finished edits while the app is being judged.
+
+1. **Netlify:** add a new site from this GitHub repo. The build settings come from [`netlify.toml`](netlify.toml) (`npm run build`, publish `dist`; routing and cache rules are in `public/_redirects` and `public/_headers`).
+2. **One environment variable in Netlify:** `VITE_CONVEX_URL` = the Convex deployment's URL (it is the `VITE_CONVEX_URL` line in your `.env.local`, for example `https://dashing-chameleon-912.convex.cloud`; it is public, not a secret).
+3. Optional: set `SITE_URL` on the Convex deployment to the Netlify URL (`npx convex env set SITE_URL https://<your-site>.netlify.app`).
+4. Before judging, restore the demo data if it was touched: `npm run reset-demo`.
+
+If you ever want a separate production deployment instead: create it in the Convex dashboard, add a production deploy key to Netlify as `CONVEX_DEPLOY_KEY`, use the build command `npx convex deploy --cmd 'npm run build'`, set the environment variables with `--prod`, and run `npx @convex-dev/auth --prod --web-server-url <site>` and `npm run reset-demo -- --prod`.
 
 ## How verdicts are calculated
 
