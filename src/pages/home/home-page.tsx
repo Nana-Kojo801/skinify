@@ -28,11 +28,11 @@ export function HomePage() {
         : null
 
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-6 px-5 pt-4 pb-12">
-      <section className="rise relative isolate flex min-h-[15rem] flex-col justify-end overflow-hidden rounded-3xl p-5 text-white">
+    <main className="mx-auto flex max-w-md flex-col gap-6 px-5 pt-4 pb-12 md:max-w-5xl md:gap-8">
+      <section className="rise relative isolate flex min-h-[15rem] flex-col justify-end overflow-hidden rounded-3xl p-5 text-white md:min-h-[24rem] md:p-10">
         <img src="/images/home-hero.jpg" alt="" className="absolute inset-0 -z-20 size-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#06222c]/85 via-[#06222c]/25 to-transparent" />
-        <h1 className="display">
+        <h1 className="display md:max-w-xl md:text-6xl">
           Your <strong>skin</strong>, with receipts.
         </h1>
         <p className="mt-1 text-sm text-white/85">
@@ -43,11 +43,11 @@ export function HomePage() {
               : 'No scans yet. Scan before you start a product, so there is a baseline.'}
         </p>
         {usage?.canScan ? (
-          <Link to="/scan" className={buttonVariants({ size: 'lg' }) + ' mt-4 bg-white text-[#06222c] hover:bg-white/90'}>
+          <Link to="/scan" className={buttonVariants({ size: 'lg' }) + ' mt-4 bg-white text-[#06222c] hover:bg-white/90 md:w-fit md:px-10'}>
             New scan
           </Link>
         ) : (
-          blocked && <p className="mt-3 rounded-2xl bg-[#06222c]/70 px-4 py-2.5 text-sm backdrop-blur">{blocked}</p>
+          blocked && <p className="mt-3 rounded-2xl bg-[#06222c]/70 px-4 py-2.5 text-sm backdrop-blur md:w-fit">{blocked}</p>
         )}
       </section>
 
@@ -65,7 +65,7 @@ export function HomePage() {
         </div>
 
         {products === undefined ? (
-          <div className="flex flex-col gap-4" aria-hidden>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-hidden>
             {[0, 1].map((i) => (
               <div key={i} className="surface h-52 animate-pulse bg-secondary" />
             ))}
@@ -81,7 +81,8 @@ export function HomePage() {
             </Link>
           </div>
         ) : (
-          products.map((product, index) => (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {products.map((product, index) => (
             <ProductCard
               key={product._id}
               id={product._id}
@@ -93,7 +94,8 @@ export function HomePage() {
               verdict={verdictByProduct.get(product._id)?.verdict ?? null}
               index={index + 1}
             />
-          ))
+          ))}
+          </div>
         )}
       </section>
     </main>

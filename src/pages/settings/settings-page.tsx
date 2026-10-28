@@ -26,7 +26,7 @@ export function SettingsPage() {
   }
 
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12">
+    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12 md:max-w-xl">
       <div>
         <h1 className="display">
           <strong>Settings</strong>

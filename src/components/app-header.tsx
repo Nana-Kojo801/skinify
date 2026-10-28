@@ -10,7 +10,7 @@ export function AppHeader() {
   return (
     <>
       <header className="sticky top-0 z-20 border-b border-border/60 bg-background/85 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-md items-center justify-between px-5">
+        <div className="mx-auto flex h-16 max-w-md items-center md:max-w-5xl justify-between px-5">
           <Link to="/" className="text-lg font-semibold tracking-tight">
             receipts
           </Link>

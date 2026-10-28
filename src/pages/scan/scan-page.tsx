@@ -81,7 +81,7 @@ export function ScanPage() {
 
   if (result) {
     return (
-      <main className="mx-auto max-w-md px-5 pt-4 pb-12">
+      <main className="mx-auto max-w-md px-5 pt-4 pb-12 md:max-w-xl">
         <ScanResult result={result} />
       </main>
     )
@@ -99,7 +99,7 @@ export function ScanPage() {
       : null
 
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12">
+    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12 md:max-w-3xl">
       <div>
         <Link to="/" aria-label="Back to products" className="mb-3 flex size-10 items-center justify-center rounded-full bg-secondary active:scale-95">
           <ArrowLeft size={20} weight="bold" />
@@ -128,8 +128,10 @@ export function ScanPage() {
         <p className="surface p-5 text-sm">{blocked}</p>
       ) : (
         <>
+          <div className="grid gap-5 md:grid-cols-2">
           <PhotoSlot label="Photo 1" previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
           <PhotoSlot label="Photo 2" previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
+          </div>
           {error && (
             <p role="alert" className="rounded-2xl bg-red-100 px-4 py-3 text-sm font-medium text-red-900">
               {error}

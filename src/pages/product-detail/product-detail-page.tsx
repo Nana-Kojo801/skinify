@@ -47,7 +47,9 @@ export function ProductDetailPage() {
   }
 
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-6 px-5 pt-4 pb-12">
+    <main className="mx-auto max-w-md px-5 pt-4 pb-12 md:max-w-5xl">
+      <div className="flex flex-col gap-6 md:grid md:grid-cols-2 md:items-start md:gap-8">
+      <div className="contents md:flex md:flex-col md:gap-6">
       <header className="rise">
         <div className="relative h-40 overflow-hidden rounded-3xl">
           <img src={productImage(productRank(products ?? [], product._id))} alt="" className="size-full object-cover" />
@@ -70,6 +72,41 @@ export function ProductDetailPage() {
         <VerdictCard data={verdict ?? null} />
       </div>
 
+      <div className="rise order-last flex flex-col gap-2 md:order-none" style={{ '--i': 4 } as React.CSSProperties}>
+        {usage?.canScan && (
+          <Link to="/scan" className={buttonVariants({ size: 'lg' })}>
+            New scan
+          </Link>
+        )}
+        {scans.length >= 2 && (
+          <Link to={`/compare/${productId}`} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+            Compare before and after
+          </Link>
+        )}
+        {!isDemo && (
+          <>
+            <Link to={`/products/${productId}/edit`} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+              Edit product
+            </Link>
+            {confirming ? (
+              <Button variant="destructive" size="lg" onClick={onRemove}>
+                Yes, delete this product
+              </Button>
+            ) : (
+              <Button variant="ghost" size="lg" onClick={() => setConfirming(true)}>
+                Delete product
+              </Button>
+            )}
+          </>
+        )}
+        {error && (
+          <p role="alert" className="text-sm text-red-700">
+            {error}
+          </p>
+        )}
+      </div>
+      </div>
+      <div className="contents md:flex md:flex-col md:gap-6">
       <section className="rise surface flex flex-col gap-3 p-5" style={{ '--i': 2 } as React.CSSProperties}>
         <h2 className="text-xl font-light tracking-tight">
           <strong className="font-semibold">{concernLabel}</strong> over time
@@ -102,38 +139,7 @@ export function ProductDetailPage() {
         )}
       </section>
 
-      <div className="rise flex flex-col gap-2" style={{ '--i': 4 } as React.CSSProperties}>
-        {usage?.canScan && (
-          <Link to="/scan" className={buttonVariants({ size: 'lg' })}>
-            New scan
-          </Link>
-        )}
-        {scans.length >= 2 && (
-          <Link to={`/compare/${productId}`} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-            Compare before and after
-          </Link>
-        )}
-        {!isDemo && (
-          <>
-            <Link to={`/products/${productId}/edit`} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
-              Edit product
-            </Link>
-            {confirming ? (
-              <Button variant="destructive" size="lg" onClick={onRemove}>
-                Yes, delete this product
-              </Button>
-            ) : (
-              <Button variant="ghost" size="lg" onClick={() => setConfirming(true)}>
-                Delete product
-              </Button>
-            )}
-          </>
-        )}
-        {error && (
-          <p role="alert" className="text-sm text-red-700">
-            {error}
-          </p>
-        )}
+      </div>
       </div>
     </main>
   )

@@ -26,7 +26,7 @@ export function ComparePage() {
   const after = scans.filter((scan) => scan.createdAt >= dayEnd).slice(-2)
 
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12">
+    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12 md:max-w-2xl">
       <div>
         <Link
           to={`/products/${productId}`}

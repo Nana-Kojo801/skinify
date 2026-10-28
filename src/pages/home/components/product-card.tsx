@@ -27,7 +27,7 @@ export function ProductCard({ id, rank, name, concernLabel, startDate, now, verd
         src={productImage(rank)}
         alt=""
         loading="lazy"
-        className="h-32 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+        className="h-32 w-full object-cover md:h-44 transition-transform duration-500 group-hover:scale-[1.03]"
       />
       <div className="flex flex-col gap-3 p-4">
         <h3 className="text-lg leading-snug font-semibold tracking-tight">{name}</h3>

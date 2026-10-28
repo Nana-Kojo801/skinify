@@ -59,15 +59,16 @@ export function LoginPage() {
 
   return (
     <main className="relative isolate flex min-h-[100dvh] flex-col justify-between overflow-hidden text-white">
-      <img src="/images/login-hero.jpg" alt="" className="absolute inset-0 -z-20 size-full object-cover" />
+      <img src="/images/login-hero.jpg" alt="" className="absolute inset-0 -z-20 size-full object-cover lg:hidden" />
+      <img src="/images/home-hero.jpg" alt="" className="absolute inset-0 -z-20 hidden size-full object-cover lg:block" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#06222c]/45 via-[#06222c]/20 to-[#06222c]/90" />
 
-      <header className="mx-auto w-full max-w-md px-5 pt-6">
+      <header className="mx-auto w-full max-w-md px-5 pt-6 lg:max-w-6xl lg:px-10 lg:pt-8">
         <span className="text-lg font-semibold tracking-tight">receipts</span>
       </header>
 
-      <section className="mx-auto w-full max-w-md px-5 pb-8">
-        <h1 className="display rise">
+      <section className="mx-auto w-full max-w-md px-5 pb-8 lg:max-w-6xl lg:px-10 lg:pb-16 [&>*]:lg:max-w-md">
+        <h1 className="display rise lg:text-6xl">
           Is it <strong>actually</strong> working?
         </h1>
         <p className="rise mt-3 max-w-[32ch] text-base text-white/85" style={{ '--i': 1 } as React.CSSProperties}>

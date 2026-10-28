@@ -58,7 +58,7 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
   }
 
   return (
-    <main className="mx-auto max-w-md px-5 pt-4 pb-12">
+    <main className="mx-auto max-w-md px-5 pt-4 pb-12 md:max-w-xl">
       <Link
         to={productId ? `/products/${productId}` : '/'}
         aria-label="Back"
