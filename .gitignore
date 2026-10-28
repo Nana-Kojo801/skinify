@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# YouCam spike raw output (contains links to face images)
+.spike/
