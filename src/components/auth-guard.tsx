@@ -2,7 +2,7 @@ import { useConvexAuth } from 'convex/react'
 import { Navigate, Outlet } from 'react-router'
 
 function Loading() {
-  return <p className="p-4 text-sm text-neutral-500">Loading…</p>
+  return <p className="p-5 text-sm text-muted-foreground">Loading…</p>
 }
 
 // Wraps every private route: anonymous visitors only ever see /login.

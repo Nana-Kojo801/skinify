@@ -1,3 +1,4 @@
+import { ArrowLeft } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
@@ -13,8 +14,8 @@ export function ProductFormPage() {
   const { id } = useParams()
   const product = useQuery(api.products.get, id ? { productId: id as Id<'products'> } : 'skip')
   const [today] = useState(() => toDateInputValue(Date.now()))
-  if (id && product === undefined) return <p className="p-4 text-sm text-neutral-500">Loading…</p>
-  if (id && product === null) return <p className="p-4 text-sm">Product not found.</p>
+  if (id && product === undefined) return <p className="p-5 text-sm text-muted-foreground">Loading…</p>
+  if (id && product === null) return <p className="p-5 text-sm">Product not found.</p>
   return (
     <ProductForm
       productId={id as Id<'products'> | undefined}
@@ -57,57 +58,69 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
   }
 
   return (
-    <main className="mx-auto max-w-md p-4">
-      <h1 className="mb-4 text-xl font-semibold">{productId ? 'Edit product' : 'New product'}</h1>
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm">
-          Product name
-          <input
-            value={values.name}
-            onChange={(e) => setValues({ ...values, name: e.target.value })}
-            maxLength={80}
-            required
-            placeholder="e.g. Niacinamide 10% serum"
-            className="rounded-md border px-3 py-2 text-base"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Which concern does it target?
-          <select
-            value={values.targetConcern}
-            onChange={(e) => setValues({ ...values, targetConcern: e.target.value })}
-            className="rounded-md border px-3 py-2 text-base"
-          >
-            {CONCERN_KEYS.map((key) => (
-              <option key={key} value={key}>
-                {CONCERNS[key].label} ({CONCERNS[key].hint})
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Start date
-          <input
-            type="date"
-            value={values.startDate}
-            onChange={(e) => setValues({ ...values, startDate: e.target.value })}
-            required
-            className="rounded-md border px-3 py-2 text-base"
-          />
-          <span className="text-xs text-neutral-500">Scans before this date are your baseline.</span>
-        </label>
-        {error && (
-          <p role="alert" className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
-        <Button type="submit" disabled={pending}>
-          {pending ? 'Saving…' : 'Save'}
-        </Button>
-        <Link to={productId ? `/products/${productId}` : '/'} className="text-center text-sm underline">
-          Cancel
+    <main className="mx-auto grid max-w-6xl gap-10 px-5 pt-6 pb-20 md:grid-cols-2 md:gap-14 md:px-8 md:pt-10">
+      <aside className="relative hidden md:block">
+        <img src="/images/product-pour.jpg" alt="" className="aspect-[4/5] w-full rounded-lg object-cover" />
+      </aside>
+      <div className="flex flex-col justify-center">
+        <Link
+          to={productId ? `/products/${productId}` : '/'}
+          aria-label="Back"
+          className="mb-6 flex size-11 items-center justify-center rounded-full border border-white/30 transition-colors hover:border-white/70"
+        >
+          <ArrowLeft size={20} weight="bold" />
         </Link>
-      </form>
+        <h1 className="heading text-5xl md:text-6xl">
+          {productId ? (
+            <>
+              Edit <strong>product</strong>
+            </>
+          ) : (
+            <>
+              New <strong>product</strong>
+            </>
+          )}
+        </h1>
+        <p className="mt-3 mb-9 max-w-md text-lg text-white/75">
+          Pick the one skin concern it promises to improve. That is the score the verdict will follow.
+        </p>
+        <form onSubmit={onSubmit} className="flex flex-col gap-6">
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Product name
+            <input
+              value={values.name}
+              onChange={(e) => setValues({ ...values, name: e.target.value })}
+              maxLength={80}
+              required
+              placeholder="e.g. Niacinamide 10% serum"
+              className="field"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Target concern
+            <select value={values.targetConcern} onChange={(e) => setValues({ ...values, targetConcern: e.target.value })} className="field">
+              {CONCERN_KEYS.map((key) => (
+                <option key={key} value={key}>
+                  {CONCERNS[key].label} ({CONCERNS[key].hint})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-medium">
+            Start date
+            <input type="date" value={values.startDate} onChange={(e) => setValues({ ...values, startDate: e.target.value })} required className="field" />
+            <span className="text-sm font-normal text-muted-foreground">Scans before this date are your baseline.</span>
+          </label>
+          {error && (
+            <p role="alert" className="rounded-md bg-[#3d1717] px-4 py-3 text-sm text-[#f7c3bd]">
+              {error}
+            </p>
+          )}
+          <Button type="submit" size="lg" disabled={pending} className="self-start">
+            {pending ? 'Saving…' : 'Save product'}
+          </Button>
+        </form>
+      </div>
     </main>
   )
 }

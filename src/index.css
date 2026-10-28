@@ -1,26 +1,41 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
 
+/* Satoshi (Indian Type Foundry, free licence via Fontshare), self-hosted. */
+@font-face {
+    font-family: 'Satoshi';
+    src: url('/fonts/satoshi-300.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Satoshi';
+    src: url('/fonts/satoshi-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Satoshi';
+    src: url('/fonts/satoshi-500.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Satoshi';
+    src: url('/fonts/satoshi-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: 'Geist Variable', sans-serif;
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
+    --font-sans: 'Satoshi', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    --color-taupe: var(--taupe);
+    --color-navy: var(--navy);
+    --color-ink: var(--ink);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -39,92 +54,89 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
+    --radius-sm: calc(var(--radius) * 0.5);
+    --radius-md: calc(var(--radius) * 0.75);
     --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+    --radius-xl: var(--radius);
+    --radius-2xl: var(--radius);
+    --radius-3xl: var(--radius);
+    --radius-4xl: var(--radius);
 }
 
+/*
+ * Palette taken from the reference site (bluemoreyachting.com): deep navy base, white type,
+ * one warm taupe as the secondary colour (it also reads as a skin tone). Dark theme only.
+ * Shape rule: buttons and fields 6px, cards and photos 8px. Nothing is pill-shaped except icon buttons.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --navy: #070c26;
+    --ink: #0d1433;
+    --taupe: #7d7064;
+    --background: #070c26;
+    --foreground: #f5f3f0;
+    --card: #0d1433;
+    --card-foreground: #f5f3f0;
+    --popover: #0d1433;
+    --popover-foreground: #f5f3f0;
+    --primary: #f5f3f0;
+    --primary-foreground: #070c26;
+    --secondary: #151c40;
+    --secondary-foreground: #f5f3f0;
+    --muted: #151c40;
+    --muted-foreground: #a9acbd;
+    --accent: #151c40;
+    --accent-foreground: #f5f3f0;
+    --destructive: #f2867d;
+    --border: rgb(255 255 255 / 0.12);
+    --input: rgb(255 255 255 / 0.2);
+    --ring: rgb(255 255 255 / 0.5);
+    --radius: 0.5rem;
+    color-scheme: dark;
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+    body {
+        @apply bg-background text-foreground antialiased;
     }
-  html {
-    @apply font-sans;
+    html {
+        @apply font-sans;
+    }
+}
+
+@layer components {
+    /* Dark input used inside the app. */
+    .field {
+        @apply w-full rounded-md border border-input bg-white/[0.04] px-4 py-3 text-base text-foreground outline-none transition-colors;
+        @apply placeholder:text-muted-foreground focus-visible:border-white/60 focus-visible:bg-white/[0.07];
+    }
+    .field option {
+        @apply bg-ink text-foreground;
+    }
+    /* Headline: light weight with one bold word, as on the reference site. */
+    .heading {
+        @apply font-light tracking-tight;
+    }
+    .heading strong {
+        @apply font-bold;
+    }
+    .panel {
+        @apply rounded-lg border border-border bg-card;
+    }
+}
+
+/* Entrance motion: content settles in when a page opens (state change feedback). Off for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+    .rise {
+        animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: calc(var(--i, 0) * 80ms);
+    }
+    @keyframes rise {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
     }
 }

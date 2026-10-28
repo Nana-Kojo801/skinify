@@ -2,6 +2,8 @@ import { useAuthActions } from '@convex-dev/auth/react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { DEMO_EMAIL, DEMO_PASSWORD } from '@shared/demo-account'
+import { SCAN_CONFIG } from '@shared/scan/scan-config'
+import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 
 type Flow = 'signIn' | 'signUp'
 
@@ -57,61 +59,91 @@ export function LoginPage() {
     }
   }
 
+  // Inputs inside the white bar: label above value, no borders (the bar draws the frame).
+  const barField = 'w-full bg-transparent text-base text-navy outline-none placeholder:text-navy/40'
+  const barCell = 'flex flex-col gap-1 px-5 py-3.5 text-left'
+
   return (
-    <main className="mx-auto max-w-md p-4">
-      <h1 className="text-xl font-semibold">Receipts</h1>
-      <p className="mb-4 text-sm text-neutral-500">
-        Is this skincare product actually working?
-      </p>
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm">
-          Email
-          <input
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="rounded-md border px-3 py-2 text-base"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Password
-          <input
-            name="password"
-            type="password"
-            autoComplete={flow === 'signIn' ? 'current-password' : 'new-password'}
-            minLength={8}
-            required
-            className="rounded-md border px-3 py-2 text-base"
-          />
-        </label>
-        {error && (
-          <p role="alert" className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
-        <Button type="submit" disabled={pending}>
-          {pending ? 'Please wait…' : flow === 'signIn' ? 'Sign in' : 'Create account'}
-        </Button>
-      </form>
-      <button
-        type="button"
-        className="mt-3 text-sm underline"
-        onClick={() => {
-          setError(null)
-          setFlow(flow === 'signIn' ? 'signUp' : 'signIn')
-        }}
-      >
-        {flow === 'signIn'
-          ? 'No account? Sign up'
-          : 'Already have an account? Sign in'}
-      </button>
-      <div className="mt-6 border-t pt-4">
-        <Button variant="outline" className="w-full" onClick={onDemo} disabled={pending}>
+    <main className="relative isolate flex min-h-[100dvh] flex-col overflow-hidden">
+      <img src="/images/login-portrait.jpg" alt="" className="absolute inset-0 -z-20 size-full object-cover object-top md:hidden" />
+      <img src="/images/login-wide.jpg" alt="" className="absolute inset-0 -z-20 hidden size-full object-cover md:block" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-navy/70 via-navy/45 to-navy" />
+
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 md:px-8 md:py-7">
+        <span className="text-xl font-bold tracking-tight">receipts</span>
+        <Button onClick={onDemo} disabled={pending}>
           Try the demo
         </Button>
-        <p className="mt-1 text-xs text-neutral-500">Signs you into a read-only account with sample data.</p>
-      </div>
+      </header>
+
+      <section className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-10 md:items-center md:justify-center md:px-8 md:pb-0 md:text-center">
+        <h1 className="heading rise text-[2.6rem] leading-[1.05] md:text-6xl">
+          Is your skincare <strong>actually working?</strong>
+        </h1>
+        <p className="rise mt-4 max-w-xl text-lg text-white/80" style={{ '--i': 1 } as React.CSSProperties}>
+          Scan your face once a week. Get an honest verdict on every product, based on the numbers.
+        </p>
+
+        <form onSubmit={onSubmit} className="rise mt-9 w-full max-w-3xl" style={{ '--i': 2 } as React.CSSProperties}>
+          <p className="mb-2.5 text-left text-sm text-white/80">
+            <strong className="font-medium text-white">{flow === 'signIn' ? 'Sign in' : 'Create'}</strong>{' '}
+            {flow === 'signIn' ? 'to your account' : 'your free account'}
+          </p>
+          <div className="grid overflow-hidden rounded-lg bg-white text-navy md:grid-cols-[1fr_1fr_auto] md:p-2">
+            <label className={`${barCell} border-b border-navy/10 md:border-r md:border-b-0`}>
+              <span className="text-xs text-navy/60">Email</span>
+              <input name="email" type="email" autoComplete="email" required placeholder="you@example.com" className={barField} />
+            </label>
+            <label className={barCell}>
+              <span className="text-xs text-navy/60">Password{flow === 'signUp' ? ', at least 8 characters' : ''}</span>
+              <input
+                name="password"
+                type="password"
+                autoComplete={flow === 'signIn' ? 'current-password' : 'new-password'}
+                minLength={8}
+                required
+                placeholder="••••••••"
+                className={barField}
+              />
+            </label>
+            <div className="p-2 md:p-0">
+              <Button type="submit" variant="navy" size="lg" disabled={pending} className="h-full min-h-12 w-full md:w-auto md:px-10">
+                {pending ? 'Please wait…' : flow === 'signIn' ? 'Sign in' : 'Create account'}
+              </Button>
+            </div>
+          </div>
+          {error && (
+            <p role="alert" className="mt-3 rounded-md bg-[#3d1717] px-4 py-3 text-left text-sm text-[#f7c3bd]">
+              {error}
+            </p>
+          )}
+          <button
+            type="button"
+            className="mt-4 text-sm text-white/85 underline underline-offset-4 hover:text-white"
+            onClick={() => {
+              setError(null)
+              setFlow(flow === 'signIn' ? 'signUp' : 'signIn')
+            }}
+          >
+            {flow === 'signIn' ? 'New here? Create an account' : 'Already have an account? Sign in'}
+          </button>
+        </form>
+      </section>
+
+      <footer className="mx-auto grid w-full max-w-6xl grid-cols-3 gap-4 border-t border-white/15 px-5 py-6 md:mt-16 md:px-8 md:py-8">
+        <Fact value={String(SCAN_CONFIG.photosPerScan)} label="photos per scan" />
+        <Fact value={String(VERDICT_CONFIG.minDaysSinceStart)} label="days to a verdict" />
+        <Fact value="0" label="photos ever stored" />
+      </footer>
     </main>
+  )
+}
+
+function Fact({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <p className="text-3xl font-medium tracking-tight md:text-4xl">{value}</p>
+      <p className="mt-1 text-xs text-white/70 md:text-sm">{label}</p>
+    </div>
   )
 }

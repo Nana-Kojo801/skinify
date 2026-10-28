@@ -1,3 +1,4 @@
+import { Camera, Images } from '@phosphor-icons/react'
 import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -21,20 +22,34 @@ export function PhotoSlot({ label, previewUrl, disabled, problem, onFile }: Phot
   }
 
   return (
-    <div className={`flex flex-col gap-2 rounded-lg border p-3 ${problem ? 'border-red-400' : ''}`}>
-      <p className="text-sm font-medium">{label}</p>
-      {previewUrl && <img src={previewUrl} alt={label} className="aspect-[3/4] w-full rounded-md object-cover" />}
+    <div className={`panel flex flex-col gap-4 p-4 ${problem ? 'border-destructive' : ''}`}>
+      <p className="font-bold">{label}</p>
+      {previewUrl ? (
+        <img src={previewUrl} alt={label} className="aspect-[3/4] w-full rounded-md object-cover" />
+      ) : (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => cameraRef.current?.click()}
+          className="flex aspect-[3/4] w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-md border border-dashed border-white/25 text-white/70 transition-colors hover:border-white/60 hover:text-white"
+        >
+          <Camera size={36} weight="light" />
+          <span className="text-sm">Tap to take a photo</span>
+        </button>
+      )}
       {problem && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-destructive">
           {problem}
         </p>
       )}
-      <div className="flex gap-2">
-        <Button type="button" variant="outline" className="flex-1" disabled={disabled} onClick={() => cameraRef.current?.click()}>
-          {previewUrl ? 'Retake' : 'Take photo'}
+      <div className="grid grid-cols-2 gap-2">
+        <Button type="button" variant="outline" disabled={disabled} onClick={() => cameraRef.current?.click()}>
+          <Camera size={18} />
+          {previewUrl ? 'Retake' : 'Camera'}
         </Button>
-        <Button type="button" variant="outline" className="flex-1" disabled={disabled} onClick={() => galleryRef.current?.click()}>
-          From gallery
+        <Button type="button" variant="outline" disabled={disabled} onClick={() => galleryRef.current?.click()}>
+          <Images size={18} />
+          Gallery
         </Button>
       </div>
       <input ref={cameraRef} type="file" accept="image/*" capture="user" className="hidden" onChange={handle} />
