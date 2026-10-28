@@ -36,8 +36,13 @@ export default defineSchema({
     userId: v.id('users'),
     createdAt: v.number(),
     verdict: verdictValidator,
-    /** Explanation text (templated first, replaced by the LLM text when it arrives). */
+    /** Explanation text: templated first, replaced by the LLM text when it arrives and passes the checks. */
     summary: v.string(),
+    summarySource: v.union(v.literal('template'), v.literal('model')),
+    /** Why CANT_TELL (FEW_BASELINE_SCANS, NOISY_SCANS, POOR_QUALITY); empty for other verdicts. */
+    reasons: v.array(v.string()),
+    /** What a rescan would fix, one sentence per reason (CANT_TELL only). */
+    rescanAdvice: v.array(v.string()),
     /** The numbers the verdict was computed from (shared/verdict VerdictInputs). */
     inputs: verdictInputsValidator,
   })

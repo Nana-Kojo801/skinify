@@ -10,7 +10,8 @@
     "typecheck": "tsc -b",
     "test": "vitest run --passWithNoTests",
     "preview": "vite preview",
-    "spike:youcam": "node scripts/youcam-spike.ts"
+    "spike:youcam": "node scripts/youcam-spike.ts",
+    "reset-demo": "convex run seed:resetDemo"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
