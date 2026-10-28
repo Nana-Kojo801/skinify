@@ -58,60 +58,74 @@ export function LoginPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md p-4">
-      <h1 className="text-xl font-semibold">Receipts</h1>
-      <p className="mb-4 text-sm text-neutral-500">
-        Is this skincare product actually working?
-      </p>
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm">
-          Email
-          <input
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="rounded-md border px-3 py-2 text-base"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Password
-          <input
-            name="password"
-            type="password"
-            autoComplete={flow === 'signIn' ? 'current-password' : 'new-password'}
-            minLength={8}
-            required
-            className="rounded-md border px-3 py-2 text-base"
-          />
-        </label>
-        {error && (
-          <p role="alert" className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
-        <Button type="submit" disabled={pending}>
-          {pending ? 'Please wait…' : flow === 'signIn' ? 'Sign in' : 'Create account'}
-        </Button>
-      </form>
-      <button
-        type="button"
-        className="mt-3 text-sm underline"
-        onClick={() => {
-          setError(null)
-          setFlow(flow === 'signIn' ? 'signUp' : 'signIn')
-        }}
-      >
-        {flow === 'signIn'
-          ? 'No account? Sign up'
-          : 'Already have an account? Sign in'}
-      </button>
-      <div className="mt-6 border-t pt-4">
-        <Button variant="outline" className="w-full" onClick={onDemo} disabled={pending}>
+    <main className="relative isolate flex min-h-[100dvh] flex-col justify-between overflow-hidden text-white">
+      <img src="/images/login-hero.jpg" alt="" className="absolute inset-0 -z-20 size-full object-cover" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#06222c]/45 via-[#06222c]/20 to-[#06222c]/90" />
+
+      <header className="mx-auto w-full max-w-md px-5 pt-6">
+        <span className="text-lg font-semibold tracking-tight">receipts</span>
+      </header>
+
+      <section className="mx-auto w-full max-w-md px-5 pb-8">
+        <h1 className="display rise">
+          Is it <strong>actually</strong> working?
+        </h1>
+        <p className="rise mt-3 max-w-[32ch] text-base text-white/85" style={{ '--i': 1 } as React.CSSProperties}>
+          Scan your skin each week and get an honest verdict on every product.
+        </p>
+
+        <form
+          onSubmit={onSubmit}
+          className="rise mt-6 flex flex-col gap-3 rounded-3xl border border-white/20 bg-[#06222c]/55 p-4 backdrop-blur-md"
+          style={{ '--i': 2 } as React.CSSProperties}
+        >
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
+            Email
+            <input name="email" type="email" autoComplete="email" required className="field text-foreground" />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
+            Password
+            <input
+              name="password"
+              type="password"
+              autoComplete={flow === 'signIn' ? 'current-password' : 'new-password'}
+              minLength={8}
+              required
+              className="field text-foreground"
+            />
+            {flow === 'signUp' && <span className="text-xs font-normal text-white/75">At least 8 characters.</span>}
+          </label>
+          {error && (
+            <p role="alert" className="rounded-2xl bg-white px-4 py-2.5 text-sm font-medium text-red-800">
+              {error}
+            </p>
+          )}
+          <Button type="submit" size="lg" disabled={pending} className="bg-white text-[#06222c] hover:bg-white/90">
+            {pending ? 'Please wait…' : flow === 'signIn' ? 'Sign in' : 'Create account'}
+          </Button>
+          <button
+            type="button"
+            className="py-1 text-sm text-white/90 underline underline-offset-4"
+            onClick={() => {
+              setError(null)
+              setFlow(flow === 'signIn' ? 'signUp' : 'signIn')
+            }}
+          >
+            {flow === 'signIn' ? 'No account? Sign up' : 'Already have an account? Sign in'}
+          </button>
+        </form>
+
+        <Button
+          variant="ghost"
+          size="lg"
+          className="rise mt-3 w-full border border-white/40 text-white hover:bg-white/15 hover:text-white"
+          style={{ '--i': 3 } as React.CSSProperties}
+          onClick={onDemo}
+          disabled={pending}
+        >
           Try the demo
         </Button>
-        <p className="mt-1 text-xs text-neutral-500">Signs you into a read-only account with sample data.</p>
-      </div>
+      </section>
     </main>
   )
 }

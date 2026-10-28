@@ -1,3 +1,4 @@
+import { Camera, Images } from '@phosphor-icons/react'
 import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -21,20 +22,34 @@ export function PhotoSlot({ label, previewUrl, disabled, problem, onFile }: Phot
   }
 
   return (
-    <div className={`flex flex-col gap-2 rounded-lg border p-3 ${problem ? 'border-red-400' : ''}`}>
-      <p className="text-sm font-medium">{label}</p>
-      {previewUrl && <img src={previewUrl} alt={label} className="aspect-[3/4] w-full rounded-md object-cover" />}
+    <div className={`surface flex flex-col gap-3 p-4 ${problem ? 'border-red-400' : ''}`}>
+      <p className="font-medium">{label}</p>
+      {previewUrl ? (
+        <img src={previewUrl} alt={label} className="aspect-[4/3] w-full rounded-2xl object-cover" />
+      ) : (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => cameraRef.current?.click()}
+          className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-input bg-secondary/60 text-muted-foreground transition-colors hover:bg-secondary"
+        >
+          <Camera size={32} weight="light" />
+          <span className="text-sm">Tap to take a photo</span>
+        </button>
+      )}
       {problem && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm font-medium text-red-700">
           {problem}
         </p>
       )}
       <div className="flex gap-2">
         <Button type="button" variant="outline" className="flex-1" disabled={disabled} onClick={() => cameraRef.current?.click()}>
-          {previewUrl ? 'Retake' : 'Take photo'}
+          <Camera size={18} />
+          {previewUrl ? 'Retake' : 'Camera'}
         </Button>
         <Button type="button" variant="outline" className="flex-1" disabled={disabled} onClick={() => galleryRef.current?.click()}>
-          From gallery
+          <Images size={18} />
+          Gallery
         </Button>
       </div>
       <input ref={cameraRef} type="file" accept="image/*" capture="user" className="hidden" onChange={handle} />

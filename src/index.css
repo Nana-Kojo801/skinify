@@ -49,30 +49,31 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    /* Sea palette: cool mist surfaces, deep ink text, ONE accent (deep teal). Light theme only. */
+    --background: oklch(0.972 0.008 215);
+    --foreground: oklch(0.24 0.045 228);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.24 0.045 228);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
+    --popover-foreground: oklch(0.24 0.045 228);
+    --primary: oklch(0.4 0.075 218);
+    --primary-foreground: oklch(0.985 0.004 215);
+    --secondary: oklch(0.94 0.014 215);
+    --secondary-foreground: oklch(0.3 0.05 225);
+    --muted: oklch(0.94 0.014 215);
+    --muted-foreground: oklch(0.47 0.03 225);
+    --accent: oklch(0.94 0.014 215);
+    --accent-foreground: oklch(0.3 0.05 225);
+    --destructive: oklch(0.5 0.19 27);
+    --border: oklch(0.9 0.014 215);
+    --input: oklch(0.88 0.016 215);
+    --ring: oklch(0.55 0.08 215);
+    --chart-1: oklch(0.4 0.075 218);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
+    --radius: 1rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.205 0 0);
@@ -127,4 +128,35 @@
   html {
     @apply font-sans;
     }
+}
+/* Shape rule: buttons are pills, cards are rounded-3xl, fields are rounded-2xl. */
+@layer components {
+  .field {
+    @apply w-full rounded-2xl border border-input bg-card px-4 py-3 text-base text-foreground shadow-none outline-none transition-colors;
+    @apply placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/20;
+  }
+  .surface {
+    @apply rounded-3xl border border-border bg-card;
+  }
+  /* Display headline: light weight with one bold accent word (same family, per the reference site). */
+  .display {
+    @apply text-4xl leading-[1.1] font-light tracking-tight;
+  }
+  .display strong {
+    @apply font-semibold;
+  }
+}
+
+/* Entrance motion: content settles in (feedback that the page changed). Off for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
 }

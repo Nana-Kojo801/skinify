@@ -1,3 +1,4 @@
+import { ArrowLeft } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
@@ -13,8 +14,8 @@ export function ProductFormPage() {
   const { id } = useParams()
   const product = useQuery(api.products.get, id ? { productId: id as Id<'products'> } : 'skip')
   const [today] = useState(() => toDateInputValue(Date.now()))
-  if (id && product === undefined) return <p className="p-4 text-sm text-neutral-500">Loading…</p>
-  if (id && product === null) return <p className="p-4 text-sm">Product not found.</p>
+  if (id && product === undefined) return <p className="p-5 text-sm text-muted-foreground">Loading…</p>
+  if (id && product === null) return <p className="p-5 text-sm">Product not found.</p>
   return (
     <ProductForm
       productId={id as Id<'products'> | undefined}
@@ -57,10 +58,27 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
   }
 
   return (
-    <main className="mx-auto max-w-md p-4">
-      <h1 className="mb-4 text-xl font-semibold">{productId ? 'Edit product' : 'New product'}</h1>
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm">
+    <main className="mx-auto max-w-md px-5 pt-4 pb-12">
+      <Link
+        to={productId ? `/products/${productId}` : '/'}
+        aria-label="Back"
+        className="mb-3 flex size-10 items-center justify-center rounded-full bg-secondary active:scale-95"
+      >
+        <ArrowLeft size={20} weight="bold" />
+      </Link>
+      <h1 className="display mb-6">
+        {productId ? (
+          <>
+            Edit <strong>product</strong>
+          </>
+        ) : (
+          <>
+            New <strong>product</strong>
+          </>
+        )}
+      </h1>
+      <form onSubmit={onSubmit} className="flex flex-col gap-5">
+        <label className="flex flex-col gap-2 text-sm font-medium">
           Product name
           <input
             value={values.name}
@@ -68,16 +86,12 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
             maxLength={80}
             required
             placeholder="e.g. Niacinamide 10% serum"
-            className="rounded-md border px-3 py-2 text-base"
+            className="field"
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-2 text-sm font-medium">
           Which concern does it target?
-          <select
-            value={values.targetConcern}
-            onChange={(e) => setValues({ ...values, targetConcern: e.target.value })}
-            className="rounded-md border px-3 py-2 text-base"
-          >
+          <select value={values.targetConcern} onChange={(e) => setValues({ ...values, targetConcern: e.target.value })} className="field">
             {CONCERN_KEYS.map((key) => (
               <option key={key} value={key}>
                 {CONCERNS[key].label} ({CONCERNS[key].hint})
@@ -85,28 +99,19 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-2 text-sm font-medium">
           Start date
-          <input
-            type="date"
-            value={values.startDate}
-            onChange={(e) => setValues({ ...values, startDate: e.target.value })}
-            required
-            className="rounded-md border px-3 py-2 text-base"
-          />
-          <span className="text-xs text-neutral-500">Scans before this date are your baseline.</span>
+          <input type="date" value={values.startDate} onChange={(e) => setValues({ ...values, startDate: e.target.value })} required className="field" />
+          <span className="text-xs font-normal text-muted-foreground">Scans before this date are your baseline.</span>
         </label>
         {error && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="rounded-2xl bg-red-100 px-4 py-3 text-sm font-medium text-red-900">
             {error}
           </p>
         )}
-        <Button type="submit" disabled={pending}>
-          {pending ? 'Saving…' : 'Save'}
+        <Button type="submit" size="lg" disabled={pending}>
+          {pending ? 'Saving…' : 'Save product'}
         </Button>
-        <Link to={productId ? `/products/${productId}` : '/'} className="text-center text-sm underline">
-          Cancel
-        </Link>
       </form>
     </main>
   )

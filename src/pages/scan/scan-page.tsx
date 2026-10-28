@@ -1,3 +1,4 @@
+import { ArrowLeft, CheckCircle } from '@phosphor-icons/react'
 import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useEffect, useRef, useState } from 'react'
@@ -80,7 +81,7 @@ export function ScanPage() {
 
   if (result) {
     return (
-      <main className="mx-auto max-w-md p-4">
+      <main className="mx-auto max-w-md px-5 pt-4 pb-12">
         <ScanResult result={result} />
       </main>
     )
@@ -98,40 +99,50 @@ export function ScanPage() {
       : null
 
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-4 p-4">
+    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12">
       <div>
-        <Link to="/" className="text-sm underline">
-          ← Products
+        <Link to="/" aria-label="Back to products" className="mb-3 flex size-10 items-center justify-center rounded-full bg-secondary active:scale-95">
+          <ArrowLeft size={20} weight="bold" />
         </Link>
-        <h1 className="text-xl font-semibold">New scan</h1>
+        <h1 className="display">
+          New <strong>scan</strong>
+        </h1>
       </div>
 
-      <section className="rounded-lg bg-neutral-50 p-3 text-sm">
-        <p className="font-medium">For a fair comparison every time:</p>
-        <ul className="mt-1 list-disc pl-5">
-          <li>Face a window with even light</li>
-          <li>No filters, no makeup, hair off your face</li>
-          <li>Hold the phone at the same distance each time</li>
-          <li>Your whole face should fill most of the frame</li>
+      <section className="surface p-5">
+        <h2 className="font-semibold">For a fair comparison every time</h2>
+        <ul className="mt-3 flex flex-col gap-2 text-sm">
+          {['Face a window with even light', 'No filters, no makeup, hair off your face', 'Hold the phone at the same distance each time', 'Your face should fill most of the frame'].map(
+            (tip) => (
+              <li key={tip} className="flex items-start gap-2">
+                <CheckCircle size={18} weight="fill" className="mt-0.5 shrink-0 text-primary" />
+                {tip}
+              </li>
+            ),
+          )}
         </ul>
-        <p className="mt-2 text-xs text-neutral-500">Take two photos back to back. Photos are not stored, only the scores.</p>
+        <p className="mt-3 text-xs text-muted-foreground">Take two photos back to back. Photos are not stored, only the scores.</p>
       </section>
 
       {blocked ? (
-        <p className="rounded-lg border p-3 text-sm">{blocked}</p>
+        <p className="surface p-5 text-sm">{blocked}</p>
       ) : (
         <>
           <PhotoSlot label="Photo 1" previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
           <PhotoSlot label="Photo 2" previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
           {error && (
-            <p role="alert" className="text-sm text-red-600">
+            <p role="alert" className="rounded-2xl bg-red-100 px-4 py-3 text-sm font-medium text-red-900">
               {error}
             </p>
           )}
-          <Button size="lg" className="h-12 text-base" disabled={!photos[0] || !photos[1] || pending} onClick={() => void onSubmit()}>
-            {pending ? 'Analysing… (about 10 seconds)' : 'Analyse my skin'}
+          <Button size="lg" disabled={!photos[0] || !photos[1] || pending} onClick={() => void onSubmit()}>
+            {pending ? 'Analysing, about 10 seconds…' : 'Analyse my skin'}
           </Button>
-          {usage && <p className="text-xs text-neutral-500">{usage.remaining} of {usage.dailyLimit} scans left today.</p>}
+          {usage && (
+            <p className="text-center text-xs text-muted-foreground">
+              {usage.remaining} of {usage.dailyLimit} scans left today
+            </p>
+          )}
         </>
       )}
     </main>

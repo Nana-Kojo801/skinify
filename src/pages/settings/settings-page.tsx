@@ -26,40 +26,44 @@ export function SettingsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md p-4">
-      <h1 className="text-xl font-semibold">Settings</h1>
-      {me && <p className="mb-6 text-sm text-neutral-500">Signed in as {me.email}</p>}
+    <main className="mx-auto flex max-w-md flex-col gap-5 px-5 pt-4 pb-12">
+      <div>
+        <h1 className="display">
+          <strong>Settings</strong>
+        </h1>
+        {me && <p className="mt-1 text-sm text-muted-foreground">Signed in as {me.email}</p>}
+      </div>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="font-medium">Your data</h2>
+      <section className="surface flex flex-col gap-3 p-5">
+        <h2 className="text-lg font-semibold tracking-tight">Your data</h2>
         {me?.isDemoAccount ? (
-          <p className="text-sm text-neutral-500">
-            This is the shared demo account, so it can't be deleted. Sign out and create your own account to try the app
-            with your own products.
+          <p className="text-sm text-muted-foreground">
+            This is the shared demo account, so it can't be deleted. Sign out and create your own account to try the app with your own
+            products.
           </p>
         ) : (
           <>
-            <p className="text-sm text-neutral-500">
-              Deletes your account, products, scan scores and verdicts. Photos are never stored, so there is nothing else to
-              remove. This cannot be undone.
+            <p className="text-sm text-muted-foreground">
+              Deletes your account, products, scan scores and verdicts. Photos are never stored, so there is nothing else to remove. This
+              cannot be undone.
             </p>
             {confirming ? (
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium">Are you sure?</p>
-                <Button variant="destructive" onClick={onDelete} disabled={pending}>
+                <Button variant="destructive" size="lg" onClick={onDelete} disabled={pending}>
                   {pending ? 'Deleting…' : 'Yes, delete everything'}
                 </Button>
-                <Button variant="outline" onClick={() => setConfirming(false)} disabled={pending}>
+                <Button variant="outline" size="lg" onClick={() => setConfirming(false)} disabled={pending}>
                   Cancel
                 </Button>
               </div>
             ) : (
-              <Button variant="destructive" onClick={() => setConfirming(true)} disabled={!me}>
+              <Button variant="destructive" size="lg" onClick={() => setConfirming(true)} disabled={!me}>
                 Delete my account and data
               </Button>
             )}
             {error && (
-              <p role="alert" className="text-sm text-red-600">
+              <p role="alert" className="text-sm font-medium text-red-700">
                 {error}
               </p>
             )}

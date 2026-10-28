@@ -1,85 +1,101 @@
+import { Plus } from '@phosphor-icons/react'
 import { useQuery } from 'convex/react'
+import { useState } from 'react'
 import { Link } from 'react-router'
-import { VerdictBadge } from '@/components/verdict-badge'
 import { buttonVariants } from '@/components/ui/button'
 import { formatDate } from '@/lib/format'
+import { productRank } from '@/lib/product-image'
 import { CONCERNS, isConcernKey } from '@shared/concerns'
 import { api } from '../../../convex/_generated/api'
+import { ProductCard } from './components/product-card'
 
 export function HomePage() {
   const products = useQuery(api.products.list)
   const verdicts = useQuery(api.verdicts.latestForAll)
   const latestScan = useQuery(api.scans.latest)
   const usage = useQuery(api.scans.usage)
+  const [now] = useState(() => Date.now())
 
   const verdictByProduct = new Map(verdicts?.map((entry) => [entry.productId, entry.verdict]))
   const isDemo = usage?.isDemoAccount ?? false
 
-  return (
-    <main className="mx-auto flex max-w-md flex-col gap-4 p-4">
-      <h1 className="text-xl font-semibold">Your products</h1>
+  const blocked = isDemo
+    ? 'The demo runs on sample data, so live scans are off.'
+    : usage && !usage.serviceAvailable
+      ? 'Scanning is paused: the free scan budget for this app is used up.'
+      : usage?.nextScanAt && !usage.canScan
+        ? `Daily limit reached. Next scan ${formatDate(usage.nextScanAt)}.`
+        : null
 
-      <div className="flex flex-col gap-1">
+  return (
+    <main className="mx-auto flex max-w-md flex-col gap-6 px-5 pt-4 pb-12">
+      <section className="rise relative isolate flex min-h-[15rem] flex-col justify-end overflow-hidden rounded-3xl p-5 text-white">
+        <img src="/images/home-hero.jpg" alt="" className="absolute inset-0 -z-20 size-full object-cover" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#06222c]/85 via-[#06222c]/25 to-transparent" />
+        <h1 className="display">
+          Your <strong>skin</strong>, with receipts.
+        </h1>
+        <p className="mt-1 text-sm text-white/85">
+          {latestScan === undefined
+            ? ' '
+            : latestScan
+              ? `Last scan ${formatDate(latestScan.createdAt)}`
+              : 'No scans yet. Scan before you start a product, so there is a baseline.'}
+        </p>
         {usage?.canScan ? (
-          <Link to="/scan" className={buttonVariants({ size: 'lg' }) + ' h-12 text-base'}>
+          <Link to="/scan" className={buttonVariants({ size: 'lg' }) + ' mt-4 bg-white text-[#06222c] hover:bg-white/90'}>
             New scan
           </Link>
         ) : (
-          <p className="rounded-lg border p-3 text-sm text-neutral-600">
-            {isDemo
-              ? 'The demo runs on sample data, so live scans are turned off.'
-              : usage && !usage.serviceAvailable
-                ? 'Scanning is paused: the free scan budget for this app has been used up.'
-                : usage?.nextScanAt
-                  ? `Daily scan limit reached. Next scan available ${formatDate(usage.nextScanAt)}.`
-                  : 'Loading…'}
-          </p>
+          blocked && <p className="mt-3 rounded-2xl bg-[#06222c]/70 px-4 py-2.5 text-sm backdrop-blur">{blocked}</p>
         )}
-        <p className="text-xs text-neutral-500">
-          {latestScan === undefined
-            ? ''
-            : latestScan
-              ? `Last scan: ${formatDate(latestScan.createdAt)}`
-              : 'No scans yet. Do one before you start a product, so there is a baseline.'}
-        </p>
-      </div>
+      </section>
 
-      {products === undefined ? (
-        <p className="text-sm text-neutral-500">Loading…</p>
-      ) : products.length === 0 ? (
-        <p className="text-sm text-neutral-500">No products yet. Add the first product you want to check.</p>
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {products.map((product) => {
-            const verdict = verdictByProduct.get(product._id)
-            return (
-              <li key={product._id}>
-                <Link to={`/products/${product._id}`} className="flex items-center justify-between gap-2 rounded-lg border p-3">
-                  <span className="flex min-w-0 flex-col">
-                    <span className="truncate font-medium">{product.name}</span>
-                    <span className="text-xs text-neutral-500">
-                      {isConcernKey(product.targetConcern) ? CONCERNS[product.targetConcern].label : product.targetConcern}
-                      {' · started '}
-                      {formatDate(product.startDate)}
-                    </span>
-                  </span>
-                  {verdict ? (
-                    <VerdictBadge verdict={verdict.verdict} />
-                  ) : (
-                    <span className="text-xs text-neutral-500">No verdict yet</span>
-                  )}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      )}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-end justify-between">
+          <h2 className="text-2xl font-light tracking-tight">
+            Your <strong className="font-semibold">products</strong>
+          </h2>
+          {!isDemo && (
+            <Link to="/products/new" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+              <Plus size={16} weight="bold" />
+              Add
+            </Link>
+          )}
+        </div>
 
-      {!isDemo && (
-        <Link to="/products/new" className={buttonVariants({ variant: 'outline' })}>
-          Add a product
-        </Link>
-      )}
+        {products === undefined ? (
+          <div className="flex flex-col gap-4" aria-hidden>
+            {[0, 1].map((i) => (
+              <div key={i} className="surface h-52 animate-pulse bg-secondary" />
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <div className="surface flex flex-col items-start gap-3 p-5">
+            <h3 className="text-lg font-semibold tracking-tight">Nothing to judge yet</h3>
+            <p className="text-sm text-muted-foreground">
+              Add a product you want to test, then scan weekly. After about four weeks you get a verdict.
+            </p>
+            <Link to="/products/new" className={buttonVariants()}>
+              Add your first product
+            </Link>
+          </div>
+        ) : (
+          products.map((product, index) => (
+            <ProductCard
+              key={product._id}
+              id={product._id}
+              rank={productRank(products, product._id)}
+              name={product.name}
+              concernLabel={isConcernKey(product.targetConcern) ? CONCERNS[product.targetConcern].label : product.targetConcern}
+              startDate={product.startDate}
+              now={now}
+              verdict={verdictByProduct.get(product._id)?.verdict ?? null}
+              index={index + 1}
+            />
+          ))
+        )}
+      </section>
     </main>
   )
 }
