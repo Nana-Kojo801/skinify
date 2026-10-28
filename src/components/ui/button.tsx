@@ -1,56 +1,35 @@
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "cn"
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
 
+// Pill buttons. Every interactive size is at least 44 px tall (tap targets).
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap outline-none select-none transition-[color,background-color,box-shadow,scale] duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        // White on navy, like the reference site's "Start Planning".
-        default: "bg-primary text-primary-foreground hover:bg-white",
-        // Navy on white surfaces (the login bar).
-        navy: "bg-navy text-white hover:bg-ink",
-        outline: "border-white/35 bg-transparent text-foreground hover:border-white/70 hover:bg-white/10",
-        secondary: "bg-taupe text-white hover:bg-taupe/85",
-        ghost: "text-foreground hover:bg-white/10",
-        destructive: "border-destructive/60 bg-transparent text-destructive hover:bg-destructive/10",
-        link: "text-foreground underline underline-offset-4 hover:text-white",
+        primary: 'bg-cocoa text-cream shadow-(--shadow-button) hover:bg-cocoa-soft active:shadow-[inset_0_1px_0_rgb(255_255_255/0.1),0_1px_2px_rgb(46_36_32/0.3)]',
+        soft: 'bg-sand text-cocoa shadow-(--shadow-button-soft) hover:bg-nude',
+        white: 'bg-card text-cocoa shadow-(--shadow-float) hover:bg-cream',
+        outline: 'border-[1.5px] border-nude bg-card text-cocoa hover:border-cocoa/40',
+        ghost: 'text-cocoa hover:bg-sand',
+        danger: 'bg-irritation-bg text-irritation-ink shadow-(--shadow-button-soft) hover:bg-[#f2cbc5]',
+        dangerSolid: 'bg-irritation-ink text-white shadow-(--shadow-button) hover:bg-[#862626]',
       },
       size: {
-        default:
-          "h-11 gap-2 px-5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 rounded-sm px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-9 gap-1.5 px-3.5 text-sm has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-12 gap-2 px-7 text-base has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
-        "icon-lg": "size-9",
+        sm: 'h-11 px-4 text-sm',
+        md: 'h-12 px-6 text-[15px]',
+        lg: 'h-14 px-7 text-base',
+        icon: 'size-11',
       },
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  }
+    defaultVariants: { variant: 'primary', size: 'md' },
+  },
 )
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-  return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+type ButtonProps = React.ComponentProps<'button'> & VariantProps<typeof buttonVariants>
+
+function Button({ className, variant, size, type = 'button', ...props }: ButtonProps) {
+  return <button type={type} className={cn(buttonVariants({ variant, size }), className)} {...props} />
 }
 
 export { Button, buttonVariants }

@@ -1,8 +1,13 @@
 import { useConvexAuth } from 'convex/react'
 import { Navigate, Outlet } from 'react-router'
+import { LogoMark } from '@/components/logo'
 
 function Loading() {
-  return <p className="p-5 text-sm text-muted-foreground">Loading…</p>
+  return (
+    <div className="grid min-h-dvh place-items-center" aria-busy="true" aria-label="Loading">
+      <LogoMark className="size-10 animate-[breathe_1.4s_ease-in-out_infinite]" />
+    </div>
+  )
 }
 
 // Wraps every private route: anonymous visitors only ever see /login.

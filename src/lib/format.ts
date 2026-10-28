@@ -30,3 +30,15 @@ export function fromDateInputValue(value: string): number {
   const [y, m, d] = value.split('-').map(Number)
   return new Date(y, m - 1, d).getTime()
 }
+
+/** +13.1, −6.4, 0 (one decimal, a real minus sign, and plain 0 for no change). */
+export function formatSigned(n: number, decimals = 1): string {
+  const rounded = Number(n.toFixed(decimals))
+  if (rounded === 0) return '0'
+  return `${rounded > 0 ? '+' : '−'}${Math.abs(rounded).toFixed(decimals)}`
+}
+
+/** 13.1, 3, 20.7: at most one decimal. */
+export function formatPoints(n: number): string {
+  return String(Number(n.toFixed(1)))
+}

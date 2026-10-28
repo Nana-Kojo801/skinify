@@ -1,7 +1,9 @@
 import { useAuthActions } from '@convex-dev/auth/react'
+import { LockSimple, SignOut, Sparkle, Trash } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { api } from '../../../convex/_generated/api'
 
@@ -26,54 +28,76 @@ export function SettingsPage() {
   }
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-10 px-5 pt-8 pb-20 md:px-8 md:pt-14">
-      <div>
-        <h1 className="heading text-5xl md:text-6xl">
-          <strong>Settings</strong>
-        </h1>
-        {me && <p className="mt-3 text-lg text-white/75">Signed in as {me.email}</p>}
-      </div>
+    <main className="mx-auto flex max-w-3xl flex-col gap-3.5 px-4 pt-1.5 md:px-8 md:pt-12">
+      <section className="rise mb-2 px-1">
+        <p className="text-sm font-medium text-muted">Settings</p>
+        <h1 className="mt-1 text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] md:text-5xl">Your account</h1>
+      </section>
 
-      <section className="panel flex flex-col gap-4 p-6 md:p-8">
-        <h2 className="text-2xl font-light">
-          Your <strong className="font-bold">data</strong>
-        </h2>
+      <section className="card rise flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between md:p-6" style={{ '--i': 1 } as React.CSSProperties}>
+        <div className="flex min-w-0 items-center gap-3.5">
+          <span className="grid size-[52px] shrink-0 place-items-center rounded-full bg-coral text-xl font-bold text-white uppercase shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_8px_16px_-8px_rgb(168_81_58/0.7)]">
+            {me?.email?.charAt(0) ?? ' '}
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[13px] text-muted">Signed in as</span>
+            <span className="block truncate text-lg font-semibold">{me?.email ?? ' '}</span>
+          </span>
+        </div>
+        <Button variant="soft" size="lg" onClick={() => void signOut()}>
+          <SignOut size={19} />
+          Sign out
+        </Button>
+      </section>
+
+      <section className="photo rise relative h-40 overflow-hidden rounded-(--radius-card) md:h-48" style={{ '--i': 2 } as React.CSSProperties}>
+        <img src="/images/dropper-skin.webp" alt="" className="size-full object-cover object-[50%_40%]" />
+        <div className="absolute inset-x-0 bottom-0 flex items-end gap-3 bg-linear-to-b from-transparent to-cocoa/75 px-5 pt-10 pb-4 text-white">
+          <LockSimple size={24} className="mb-0.5 shrink-0" />
+          <span>
+            <span className="block text-lg font-semibold">Photos are never stored</span>
+            <span className="block text-[13.5px] opacity-90">Each photo is analysed, then thrown away. Receipts keeps the scores and nothing else.</span>
+          </span>
+        </div>
+      </section>
+
+      <section className="card rise p-5 md:p-6" style={{ '--i': 3 } as React.CSSProperties}>
+        <h2 className="text-lg font-semibold">Your data</h2>
         {me?.isDemoAccount ? (
-          <p className="text-white/75">
-            This is the shared demo account, so it can't be deleted. Sign out and create your own account to try the app with your own
-            products.
+          <p className="mt-2 flex items-start gap-2.5 text-[15px] text-muted">
+            <Sparkle size={18} className="mt-0.5 shrink-0 text-coral-ink" />
+            This is the shared demo account, so it can't be deleted. Sign out and create your own account to try the app with your own products.
           </p>
         ) : (
           <>
-            <p className="max-w-xl text-white/75">
-              Deletes your account, products, scan scores and verdicts. Photos are never stored, so there is nothing else to remove. This
-              cannot be undone.
+            <p className="mt-2 max-w-xl text-[15px] text-muted">
+              Deletes your account, products, scan scores and verdicts. Photos are never stored, so there is nothing else to remove. This cannot be
+              undone.
             </p>
-            {confirming ? (
-              <div className="flex flex-col gap-3">
-                <p className="font-medium">Are you sure?</p>
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="destructive" size="lg" onClick={onDelete} disabled={pending}>
-                    {pending ? 'Deleting…' : 'Yes, delete everything'}
-                  </Button>
-                  <Button variant="outline" size="lg" onClick={() => setConfirming(false)} disabled={pending}>
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <Button variant="destructive" size="lg" className="self-start" onClick={() => setConfirming(true)} disabled={!me}>
-                Delete my account and data
-              </Button>
-            )}
-            {error && (
-              <p role="alert" className="text-sm text-destructive">
-                {error}
-              </p>
-            )}
+            <Button variant="danger" size="lg" className="mt-4" onClick={() => setConfirming(true)} disabled={!me}>
+              <Trash size={19} />
+              Delete my account and data
+            </Button>
           </>
         )}
       </section>
+
+      <p className="rise px-1 pt-2 text-center text-[13px] text-muted" style={{ '--i': 4 } as React.CSSProperties}>
+        Scores are estimates from photos, not a medical assessment.
+      </p>
+
+      <ConfirmDialog
+        open={confirming}
+        onOpenChange={(open) => {
+          if (!pending) setConfirming(open)
+        }}
+        title="Are you sure?"
+        description="Deletes your account, products, scan scores and verdicts. Photos are never stored, so there is nothing else to remove. This cannot be undone."
+        confirmLabel="Yes, delete everything"
+        pending={pending}
+        error={error}
+        onConfirm={() => void onDelete()}
+      />
     </main>
   )
 }

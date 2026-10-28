@@ -2,11 +2,11 @@
 // (oldest first), so the first five products always look different and a product keeps its photo when newer ones
 // are added. Photos: Unsplash (free licence), self-hosted in public/images.
 const PRODUCT_IMAGES = [
-  '/images/product-amber.jpg',
-  '/images/product-pour.jpg',
-  '/images/product-cream.jpg',
-  '/images/product-drops.jpg',
-  '/images/product-jar.jpg',
+  '/images/product-amber.webp',
+  '/images/product-pour.webp',
+  '/images/product-cream.webp',
+  '/images/product-drops.webp',
+  '/images/product-jar.webp',
 ]
 
 export function productImage(rank: number): string {

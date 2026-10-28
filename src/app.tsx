@@ -1,23 +1,33 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
-import { AppHeader } from '@/components/app-header'
+import { AppShell } from '@/components/app-shell'
 import { RedirectIfAuthed, RequireAuth } from '@/components/auth-guard'
-import { ComparePage } from '@/pages/compare/compare-page'
-import { HomePage } from '@/pages/home/home-page'
-import { LoginPage } from '@/pages/login/login-page'
-import { ProductFormPage } from '@/pages/product-form/product-form-page'
-import { ProductDetailPage } from '@/pages/product-detail/product-detail-page'
-import { ScanPage } from '@/pages/scan/scan-page'
-import { SettingsPage } from '@/pages/settings/settings-page'
+
+// Route-level code splitting: each page is its own chunk, loaded on first visit.
+const LoginPage = lazy(() => import('@/pages/login/login-page').then((m) => ({ default: m.LoginPage })))
+const HomePage = lazy(() => import('@/pages/home/home-page').then((m) => ({ default: m.HomePage })))
+const ScanPage = lazy(() => import('@/pages/scan/scan-page').then((m) => ({ default: m.ScanPage })))
+const ProductFormPage = lazy(() => import('@/pages/product-form/product-form-page').then((m) => ({ default: m.ProductFormPage })))
+const ProductDetailPage = lazy(() => import('@/pages/product-detail/product-detail-page').then((m) => ({ default: m.ProductDetailPage })))
+const ComparePage = lazy(() => import('@/pages/compare/compare-page').then((m) => ({ default: m.ComparePage })))
+const SettingsPage = lazy(() => import('@/pages/settings/settings-page').then((m) => ({ default: m.SettingsPage })))
 
 export function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<RedirectIfAuthed />}>
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/login"
+            element={
+              <Suspense fallback={null}>
+                <LoginPage />
+              </Suspense>
+            }
+          />
         </Route>
         <Route element={<RequireAuth />}>
-          <Route element={<AppHeader />}>
+          <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/scan" element={<ScanPage />} />
             <Route path="/products/new" element={<ProductFormPage />} />
@@ -32,3 +42,4 @@ export function App() {
     </BrowserRouter>
   )
 }
+
