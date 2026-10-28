@@ -4,6 +4,7 @@ import { isConcernKey } from '../shared/concerns'
 import type { Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
 import { invalidInput, requireUserId } from './helpers'
+import { recomputeProductVerdict } from './verdictCompute'
 
 const MAX_NAME_LENGTH = 80
 const DAY_MS = 86_400_000
@@ -38,7 +39,10 @@ export const create = mutation({
     const name = cleanName(args.name)
     checkConcern(args.targetConcern)
     const startDate = args.startDate ?? Math.floor(Date.now() / DAY_MS) * DAY_MS
-    return await ctx.db.insert('products', { userId, name, targetConcern: args.targetConcern, startDate })
+    const productId = await ctx.db.insert('products', { userId, name, targetConcern: args.targetConcern, startDate })
+    // Gives the new product a verdict (TOO_EARLY or CANT_TELL) straight away, so Home has a badge to show.
+    await recomputeProductVerdict(ctx, (await ctx.db.get(productId))!)
+    return productId
   },
 })
 
@@ -83,6 +87,9 @@ export const update = mutation({
       // patching a field with undefined removes it
       ...(endDate !== undefined && { endDate: endDate === null ? undefined : endDate }),
     })
+    if (targetConcern !== undefined || startDate !== undefined) {
+      await recomputeProductVerdict(ctx, (await ctx.db.get(productId))!)
+    }
   },
 })
 

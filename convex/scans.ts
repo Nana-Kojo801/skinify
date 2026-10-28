@@ -9,6 +9,7 @@ import { YoucamError, analysePhoto } from '../shared/youcam/youcam-client'
 import { internal } from './_generated/api'
 import type { Doc, Id } from './_generated/dataModel'
 import { action, internalMutation, internalQuery, query, type QueryCtx } from './_generated/server'
+import { recomputeUserVerdicts } from './verdictCompute'
 
 const DAY_MS = 86_400_000
 const UNITS_COUNTER = 'youcam_units'
@@ -124,7 +125,10 @@ export const recordScan = internalMutation({
     qualityFlag: v.boolean(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert('scans', { ...args, createdAt: Date.now() })
+    const scanId = await ctx.db.insert('scans', { ...args, createdAt: Date.now() })
+    // A new scan can change the verdict of every product the user tracks.
+    await recomputeUserVerdicts(ctx, args.userId)
+    return scanId
   },
 })
 

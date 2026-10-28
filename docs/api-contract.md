@@ -77,12 +77,15 @@ try {
 | `query verdicts.latestForProduct` | `{ productId }` | newest verdict row or `null` |
 | `query verdicts.latestForAll` | none | `[{ productId, verdict: row \| null }]`, one per product (for Home) |
 
-Verdict row: `{ productId, userId, createdAt, verdict, summary, inputs }` where `verdict` is one of `TOO_EARLY | CANT_TELL | POSSIBLE_IRRITATION | WORKING | NO_VISIBLE_CHANGE`, `summary` is the explanation text, and `inputs` are the numbers behind it (`shared/verdict/verdict-types.ts`, `VerdictInputs`: `daysRemaining`, `postScansRemaining`, `change`, `noise`, ...).
+Verdict row: `{ productId, userId, createdAt, verdict, summary, summarySource, reasons, rescanAdvice, inputs }`
+- `verdict`: `TOO_EARLY | CANT_TELL | POSSIBLE_IRRITATION | WORKING | NO_VISIBLE_CHANGE`
+- `summary`: the explanation text, 3 to 4 sentences plus one sentence starting with `Next step:`. **It always has text**: a templated version is stored the moment the verdict is created, and is replaced a few seconds later by the AI-written version (`summarySource` changes from `'template'` to `'model'`) if that succeeds. Because the queries are reactive, the card just updates by itself. Show `summary` as is; don't treat `'template'` as an error or a loading state.
+- `reasons`: for `CANT_TELL`, a list of `FEW_BASELINE_SCANS | NOISY_SCANS | POOR_QUALITY`; `rescanAdvice` has one sentence per reason saying what would fix it. Empty for other verdicts.
+- `inputs`: the numbers behind it (`shared/verdict/verdict-types.ts`, `VerdictInputs`): `change`, `improvement`, `noise`, `noiseThreshold`, `baselineMean`, `recentPostMean`, `baselineCount`, `postCount`, `worsening`, ... All numbers or `null`. **`inputs.daysSinceStart` / `daysRemaining` are as of when the verdict was computed**, so for "day N" shown live compute it from `product.startDate`.
 
-**Not yet available:** verdict rows are written by issue #7, so until then these return `null` / `{ verdict: null }`. Build the empty state ("Add scans to get a verdict") and test the badge/card against hard-coded sample rows. `shared/verdict/compute-verdict.ts` is pure and importable if you want to compute a sample on the client.
+**When verdicts appear:** a product gets one as soon as it is created (usually `TOO_EARLY`), after every scan, when the product's start date or target concern changes, and once a day. Nothing to call from the UI. A product with no row yet (the first moment after creating it) means `verdict: null`: show "Add scans to get a verdict".
 
 ## Not yet available
-- Verdict rows and explanations (#7, #8)
 - Demo account and its seeded data (#9). `DEMO_EMAIL` and `DEMO_PASSWORD` are already in `shared/demo-account.ts` for the "Try the demo" button.
 - Account deletion and Convex Auth setup are yours (#12, #3). Every table has a `userId` index (`products.by_user`, `scans.by_user_and_createdAt`, `verdicts.by_user`) so wiping a user is a few queries. `usageCounters` is app-wide and must NOT be deleted.
 

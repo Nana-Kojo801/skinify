@@ -98,6 +98,9 @@ describe('products', () => {
         createdAt: Date.now(),
         verdict: 'TOO_EARLY',
         summary: 's',
+        summarySource: 'template',
+        reasons: [],
+        rescanAdvice: [],
         inputs: {
           targetConcern: 'acne', direction: 'higher', daysSinceStart: 1, daysRemaining: 27, baselineCount: 1, postCount: 0,
           postScansRemaining: 3, baselineMean: 60, recentPostMean: null, change: null, improvement: null, noise: 1,
