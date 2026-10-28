@@ -1,0 +1,2 @@
+# Netlify: send every route to the single-page app (real files such as /sw.js are served as they are)
+/*    /index.html   200

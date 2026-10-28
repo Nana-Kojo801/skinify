@@ -73,7 +73,7 @@ Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`
 ### Deploying
 
 1. `npx convex deploy` creates/updates the production deployment. Set the variables above on it (`npx convex env set ... --prod`).
-2. Host the frontend (Vercel, Netlify or similar) with build command `npx convex deploy --cmd 'npm run build'`, output directory `dist`, SPA fallback to `index.html`, and `CONVEX_DEPLOY_KEY` set from the Convex dashboard. Set `SITE_URL` on the production deployment to the hosted URL.
+2. Host the frontend (Vercel or Netlify). The repo already has the routing and cache config for both (`vercel.json`, `public/_redirects`, `public/_headers`: every route serves the single-page app, and the service worker is never cached). Build command `npx convex deploy --cmd 'npm run build'`, output directory `dist`, and set `CONVEX_DEPLOY_KEY` (production deploy key from the Convex dashboard) in the host's environment variables. Set `SITE_URL` on the production Convex deployment to the hosted URL.
 3. `npm run reset-demo -- --prod` once, and again before judging if the demo data was touched.
 
 ## How verdicts are calculated

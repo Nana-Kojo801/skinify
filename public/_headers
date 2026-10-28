@@ -1,0 +1,5 @@
+# Netlify: the service worker and manifest must not be cached, so app updates reach installed phones
+/sw.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
