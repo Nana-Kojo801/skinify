@@ -1,6 +1,7 @@
 import { useAuthActions } from '@convex-dev/auth/react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { DEMO_EMAIL, DEMO_PASSWORD } from '@shared/demo-account'
 
 type Flow = 'signIn' | 'signUp'
 
@@ -39,6 +40,18 @@ export function LoginPage() {
       await signIn('password', formData)
     } catch (e) {
       setError(describeError(e, flow))
+    } finally {
+      setPending(false)
+    }
+  }
+
+  async function onDemo() {
+    setError(null)
+    setPending(true)
+    try {
+      await signIn('password', { email: DEMO_EMAIL, password: DEMO_PASSWORD, flow: 'signIn' })
+    } catch {
+      setError('The demo account is not available right now. Please create an account instead.')
     } finally {
       setPending(false)
     }
@@ -93,7 +106,12 @@ export function LoginPage() {
           ? 'No account? Sign up'
           : 'Already have an account? Sign in'}
       </button>
-      {/* "Try the demo" button goes here (issue #11). */}
+      <div className="mt-6 border-t pt-4">
+        <Button variant="outline" className="w-full" onClick={onDemo} disabled={pending}>
+          Try the demo
+        </Button>
+        <p className="mt-1 text-xs text-neutral-500">Signs you into a read-only account with sample data.</p>
+      </div>
     </main>
   )
 }
