@@ -9,7 +9,16 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as crons from "../crons.js";
+import type * as explanations from "../explanations.js";
+import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
+import type * as products from "../products.js";
+import type * as scans from "../scans.js";
+import type * as seed from "../seed.js";
+import type * as validators from "../validators.js";
+import type * as verdictCompute from "../verdictCompute.js";
+import type * as verdicts from "../verdicts.js";
 
 import type {
   ApiFromModules,
@@ -19,7 +28,16 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  crons: typeof crons;
+  explanations: typeof explanations;
+  helpers: typeof helpers;
   http: typeof http;
+  products: typeof products;
+  scans: typeof scans;
+  seed: typeof seed;
+  validators: typeof validators;
+  verdictCompute: typeof verdictCompute;
+  verdicts: typeof verdicts;
 }>;
 
 /**

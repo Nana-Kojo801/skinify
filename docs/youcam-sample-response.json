@@ -1,0 +1,190 @@
+{
+  "status": 200,
+  "data": {
+    "error": null,
+    "results": {
+      "output": [
+        {
+          "ui_score": 73,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 62.194639444351196,
+          "type": "eye_bag",
+          "url": null
+        },
+        {
+          "ui_score": 64,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 41.38786792755127,
+          "type": "tear_trough",
+          "url": null
+        },
+        {
+          "ui_score": 75,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 67.42344498634338,
+          "type": "droopy_lower_eyelid",
+          "url": null
+        },
+        {
+          "ui_score": 63,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 39.3857017159462,
+          "type": "pore",
+          "url": null
+        },
+        {
+          "ui_score": 73,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 63.564056158065796,
+          "type": "droopy_upper_eyelid",
+          "url": null
+        },
+        {
+          "ui_score": 78,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 73.82005453109741,
+          "type": "firmness",
+          "url": null
+        },
+        {
+          "ui_score": 99,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 100,
+          "type": "redness",
+          "url": null
+        },
+        {
+          "ui_score": 70,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 54.82097268104553,
+          "type": "texture",
+          "url": null
+        },
+        {
+          "ui_score": 65,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 45.380897521972656,
+          "type": "oiliness",
+          "url": null
+        },
+        {
+          "ui_score": 75,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 79.7492904663086,
+          "type": "age_spot",
+          "url": null
+        },
+        {
+          "ui_score": 76,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 68.58232,
+          "type": "acne",
+          "url": null
+        },
+        {
+          "ui_score": 71,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 57.872962951660156,
+          "type": "radiance",
+          "url": null
+        },
+        {
+          "ui_score": 74,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 75.23044347763062,
+          "type": "dark_circle_v2",
+          "url": null
+        },
+        {
+          "ui_score": 71,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 65.40492177009583,
+          "type": "wrinkle",
+          "url": null
+        },
+        {
+          "ui_score": 64,
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "raw_score": 35.21837890148163,
+          "type": "moisture",
+          "url": null
+        },
+        {
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "type": "skin_type",
+          "region": "whole",
+          "skin_type": "Oily",
+          "url": null
+        },
+        {
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "type": "skin_type",
+          "region": "t_zone",
+          "skin_type": "Oily",
+          "url": null
+        },
+        {
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "type": "skin_type",
+          "region": "u_zone",
+          "skin_type": "Oily",
+          "url": null
+        },
+        {
+          "score": 72.73333333333333,
+          "type": "all",
+          "url": null
+        },
+        {
+          "score": 26,
+          "type": "skin_age",
+          "url": null
+        },
+        {
+          "mask_urls": [
+            "<url removed>"
+          ],
+          "type": "resize_image",
+          "url": null
+        }
+      ]
+    },
+    "task_status": "success"
+  }
+}
