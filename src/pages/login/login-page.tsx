@@ -91,7 +91,7 @@ export function LoginPage() {
           </p>
         )}
         <Button type="submit" disabled={pending}>
-          {flow === 'signIn' ? 'Sign in' : 'Create account'}
+          {pending ? 'Please wait…' : flow === 'signIn' ? 'Sign in' : 'Create account'}
         </Button>
       </form>
       <button
