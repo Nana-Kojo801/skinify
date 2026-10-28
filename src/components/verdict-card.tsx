@@ -1,5 +1,6 @@
+import { Quotes } from '@phosphor-icons/react'
 import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
-import { VERDICT_CLASSES, VERDICT_LABELS } from '@/lib/verdict-display'
+import { StatFigure } from '@/components/stat-figure'
 
 export type VerdictCardData = {
   verdict: Verdict
@@ -11,54 +12,46 @@ export type VerdictCardData = {
 function formatPoints(value: number | null): string {
   if (value === null) return 'n/a'
   const rounded = Math.round(value * 10) / 10
-  return `${rounded > 0 ? '+' : ''}${rounded}`
+  return rounded === 0 ? '0' : `${rounded > 0 ? '+' : ''}${rounded}`
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+/** The numbers behind a verdict, as big figures. */
+export function VerdictFigures({ inputs }: { inputs: VerdictInputs }) {
   return (
-    <div className="rounded-2xl bg-secondary px-3 py-2.5">
-      <dd className="text-lg font-semibold tracking-tight">{value}</dd>
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-    </div>
+    <dl className="grid grid-cols-2 gap-x-8 gap-y-8">
+      <StatFigure value={formatPoints(inputs.change)} unit="pts" label="Change since start" />
+      <StatFigure value={`±${Math.round(inputs.noise * 10) / 10}`} unit="pts" label="Measurement noise" />
+      <StatFigure value={String(inputs.baselineCount)} label="Scans before start" />
+      <StatFigure value={String(inputs.postCount)} label="Scans after start" />
+    </dl>
   )
 }
 
-/** The verdict, the explanation text and the numbers behind it. `null` = no verdict computed yet. */
+/** The explanation, on the taupe panel the reference site uses for reviews. `null` = no verdict computed yet. */
 export function VerdictCard({ data }: { data: VerdictCardData | null }) {
   if (!data) {
     return (
-      <section className="surface p-5">
-        <h2 className="text-xl font-semibold tracking-tight">No verdict yet</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Add scans to get a verdict.</p>
+      <section className="rounded-lg bg-taupe p-6 md:p-8">
+        <h2 className="text-2xl font-light">
+          No <strong className="font-bold">verdict</strong> yet
+        </h2>
+        <p className="mt-2 text-white/85">Add scans to get a verdict.</p>
       </section>
     )
   }
-  const { verdict, summary, rescanAdvice, inputs } = data
+  const { summary, rescanAdvice } = data
   return (
-    <section className="surface overflow-hidden">
-      <div className={`px-5 py-4 ${VERDICT_CLASSES[verdict]}`}>
-        <p className="text-xs font-medium opacity-80">Verdict</p>
-        <h2 className="text-3xl leading-tight font-semibold tracking-tight">{VERDICT_LABELS[verdict]}</h2>
-      </div>
-      <div className="flex flex-col gap-4 p-5">
-        <p className="text-base leading-relaxed whitespace-pre-line">{summary}</p>
-        {rescanAdvice.length > 0 && (
-          <ul className="flex list-disc flex-col gap-1 pl-5 text-sm">
-            {rescanAdvice.map((advice) => (
-              <li key={advice}>{advice}</li>
-            ))}
-          </ul>
-        )}
-        <dl className="grid grid-cols-2 gap-2">
-          <Stat label="Scans before start" value={String(inputs.baselineCount)} />
-          <Stat label="Scans after start" value={String(inputs.postCount)} />
-          <Stat label="Change (points)" value={formatPoints(inputs.change)} />
-          <Stat label="Noise (points)" value={`±${Math.round(inputs.noise * 10) / 10}`} />
-        </dl>
-        <p className="text-xs text-muted-foreground">
-          Not medical advice. Ask a pharmacist or dermatologist about skin problems.
-        </p>
-      </div>
+    <section className="rounded-lg bg-taupe p-6 md:p-8">
+      <Quotes size={40} weight="fill" className="text-white" />
+      <p className="mt-5 text-lg leading-relaxed whitespace-pre-line text-white">{summary}</p>
+      {rescanAdvice.length > 0 && (
+        <ul className="mt-5 flex flex-col gap-2 border-t border-white/20 pt-5 text-sm text-white/90">
+          {rescanAdvice.map((advice) => (
+            <li key={advice}>{advice}</li>
+          ))}
+        </ul>
+      )}
+      <p className="mt-6 text-xs text-white/75">Not medical advice. Ask a pharmacist or dermatologist about skin problems.</p>
     </section>
   )
 }
