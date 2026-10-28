@@ -1,8 +1,8 @@
 # YouCam Skin Analysis API notes
 
-Status of issue #2 (API spike). **Part A is from the official docs. Part B must be filled in from a real run** of `scripts/youcam-spike.ts`; nothing in Part A has been confirmed against a live response yet.
+Status of issue #2 (API spike). **Part A is from the official docs. Part B is from a real run** (Oct 28, one selfie sent twice, SD, all 16 concerns). A cleaned sample response is in `docs/youcam-sample-response.json` (use it for mocks and seed data).
 
-Sources: https://yce.perfectcorp.com/ai-api (overview), https://docs.perfectcorp.com/reference/ai_skin_analysis (reference). The reference page was read through a summarising fetch, so treat exact field names as "to verify against the raw output" until Part B is done.
+Sources: https://yce.perfectcorp.com/ai-api (overview), https://docs.perfectcorp.com/reference/ai_skin_analysis (reference). Where Part B contradicts Part A, Part B wins.
 
 ## Part A: what the docs say
 
@@ -70,19 +70,59 @@ Result shape: `data.results.output[]` with `type`, `ui_score`, `raw_score`, `mas
 5. **Scan UI limits** (#13): downscale on the client but keep the short side at least 480 px and the file under 10 MB; ask for the face to fill the frame (more than 60% of the width), portrait orientation.
 6. **`qualityFlag`**: the docs show no quality score on success, only failure codes. We probably have to derive the flag ourselves (e.g. large photo-1 vs photo-2 difference). Decide after Part B.
 
-## Part B: results of the real run (TODO, fill in)
+## Part B: results of the real run
 
-Run:
-```bash
-YOUCAM_API_KEY=... node scripts/youcam-spike.ts ~/selfie.jpg --runs 2
+Run: `YOUCAM_API_KEY=... node scripts/youcam-spike.ts selfie.jpg --runs 2` (selfie 3408x2556 stored landscape, 2.5 MB jpg, accepted without resizing). Both runs returned `task_status: "success"`.
+
+### Flow confirmed
+- `POST /s2s/v2.0/file` returns `data.files[0].file_id` and `data.files[0].requests[0]` = `{ method: "PUT", url, headers: { "Content-Length", "Content-Type" } }`.
+- Create task returns `data.task_id`. Poll returns `{ status: 200, data: { task_status, error, results } }`.
+- **Time per photo: 6.5 s and 8.4 s** (polling every 2 s). Two photos in parallel should take about 8 to 10 s per scan.
+
+### What comes back (21 outputs for 16 requested concerns)
+`data.results.output[]` entries:
+
+| `type` | Fields | Observed values |
+|---|---|---|
+| `eye_bag`, `tear_trough`, `droopy_lower_eyelid`, `droopy_upper_eyelid`, `pore`, `firmness`, `redness`, `texture`, `oiliness`, `age_spot`, `acne`, `radiance`, `dark_circle_v2`, `wrinkle`, `moisture` (15 scored concerns) | `raw_score` (float), `ui_score` (int), `mask_urls` (array), `url` (null) | raw 35.2 to 100, ui 63 to 99 |
+| `skin_type` (3 entries, `region` = `whole`, `t_zone`, `u_zone`) | `skin_type` (string, e.g. `"Oily"`), `mask_urls`. **No numeric score.** | "Oily" |
+| `all` | `score` (one number, not raw/ui) | 72.7 |
+| `skin_age` | `score` | 26 |
+| `resize_image` | `mask_urls` only | n/a |
+
+So **15 concerns are usable as numeric scores**. `skin_type`, `all`, `skin_age` and `resize_image` have no `raw_score`: skip or handle separately. `mask_urls` link to images of the face: never store or log them.
+
+### Noise: identical photo gives identical scores
+Running the **same photo twice gave exactly the same score for every concern (|diff| = 0)**. The API is deterministic. So all the noise we will see comes from the photo itself (light, angle, distance, expression), which is exactly what the 2-photos-per-scan design measures. This also means identical-input tests can't tune the noise thresholds. To tune `maxNoiseToRangeRatio` and `noiseFloor` we need **two different photos taken back to back** (16 units).
+
+### Scores
+- `raw_score` is 1 to 100 and higher is healthier (consistent with the docs). `ui_score` is compressed upward (moisture 35 raw is 64 ui; redness 100 raw is 99 ui), so verdicts use `raw_score`.
+- **`redness` came back as exactly 100 (the ceiling).** If redness is often saturated, WORKING can never be shown for redness, and POSSIBLE_IRRITATION can only trigger when it drops from 100. This is one sample; check on more photos (and across skin tones) before relying on redness.
+
+### Errors
+A task can be rejected after creation: create-task still returns HTTP 200, and the poll returns
+```json
+{ "status": 200, "data": { "error": "error_below_min_image_size", "error_message": "The input image is below the minimum required resolution.", "results": null, "task_status": "error" } }
 ```
-(16 units per run with the default 16 concerns. Keep the selfie outside the repo.)
+(tested with a 100x100 image; came back in 2.1 s). The other quality codes from the docs are `error_src_face_too_small`, `error_src_face_out_of_bound`, `error_lighting_dark`, `error_exceed_max_image_size`. Not yet triggered: no-face and bad-lighting cases. Treat any `task_status: "error"` as a typed error in #5, keyed by `data.error`.
 
-- [ ] Full raw response pasted or attached (from `.spike/run-1.json`)
-- [ ] Concerns that actually come back, with their score ranges and which direction is better
-- [ ] Does `skin_type` return a number or a class?
-- [ ] Same photo twice: per-concern |difference| in `raw_score` (the noise floor)
-- [ ] How long a task takes (seconds)
-- [ ] A rejected photo (e.g. too dark or face too small): exact error shape
-- [ ] Is a `file_id` reusable across tasks? (would halve upload calls)
-- [ ] Confirm the final list of concerns we request and the resulting units per scan
+### Units: confirmed from the YouCam console (Unit Records)
+Balance went 1,000, then 984, then 968 for the two spike runs: **16 units per photo with 16 concerns**, as in the docs table. The rejected tiny-image test showed **-9 then +9**: a task is **charged when created and refunded if it ends in `error`**. So rejected photos cost nothing in the end, but the balance dips briefly. (The docs say units are only consumed on success; the refund explains the difference.)
+
+### Not tested (to save units)
+- Whether a `file_id` can be reused for a second task.
+- Whether the API honours a photo's EXIF rotation tag. The selfie was stored landscape but displays portrait, and it was accepted, so either works. The Scan UI should still draw photos through a canvas, which bakes the rotation in.
+
+### Proposed concern list to request (Nana to confirm)
+Request only what we show. Suggested 8: `acne`, `redness`, `pore`, `texture`, `oiliness`, `moisture`, `radiance`, `dark_circle_v2`. That is the 5 to 8 tier: **12 units per photo, 24 per scan, about 41 scans from 1,000 units.** Dropping to 4 concerns (e.g. acne, redness, texture, moisture) is 9 units per photo, 18 per scan, about 55 scans.
+
+### Checklist
+- [x] Raw response and concern list with score ranges
+- [x] `skin_type` returns a string per region, no number
+- [x] Same photo twice: no difference at all
+- [x] Task time: 6.5 to 8.4 s
+- [x] Rejected photo shape (too small)
+- [ ] Real photo-to-photo noise (needs 2 different back-to-back photos)
+- [ ] No-face and too-dark error cases
+- [ ] `file_id` reuse
+- [ ] Final concern list confirmed
