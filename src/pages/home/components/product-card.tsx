@@ -1,48 +1,46 @@
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { CaretRight } from '@phosphor-icons/react'
 import { Link } from 'react-router'
-import { VerdictBadge } from '@/components/verdict-badge'
-import { daysBetween } from '@/lib/format'
-import { productImage } from '@/lib/product-image'
+import { Sparkline } from '@/components/sparkline'
+import { VerdictPill } from '@/components/verdict-pill'
+import { VERDICT_STYLE } from '@/lib/verdict-display'
+import { cn } from '@/lib/utils'
 import type { Verdict } from '@shared/verdict/verdict-types'
 
 type ProductCardProps = {
   id: string
-  rank: number
+  image: string
   name: string
-  concernLabel: string
-  startDate: number
-  now: number
+  meta: string
   verdict: Verdict | null
+  /** The one number that explains the verdict (e.g. "+13.1"), if there is one. */
+  stat: string | null
+  trend: number[]
   index: number
 }
 
-// Photo tile with the text on the image, like the reference site's destination tiles.
-export function ProductCard({ id, rank, name, concernLabel, startDate, now, verdict, index }: ProductCardProps) {
-  const started = startDate <= now
+// A row with the product photo on phones; a tall card with the photo on top on desktop.
+export function ProductCard({ id, image, name, meta, verdict, stat, trend, index }: ProductCardProps) {
+  const style = verdict ? VERDICT_STYLE[verdict] : null
   return (
     <Link
       to={`/products/${id}`}
-      className="rise group relative isolate flex aspect-[4/5] w-[80%] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-lg p-5 md:w-auto"
+      className="card press group flex items-center gap-3.5 rounded-[26px] py-3 pr-3.5 pl-3 transition-shadow hover:shadow-(--shadow-float) md:flex-col md:items-stretch md:gap-0 md:p-0"
       style={{ '--i': index } as React.CSSProperties}
     >
-      <img
-        src={productImage(rank)}
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-700 group-hover:scale-105"
-      />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-navy via-navy/30 to-navy/10" />
-      <div>{verdict ? <VerdictBadge verdict={verdict} /> : <span className="rounded-sm bg-navy/70 px-2.5 py-1 text-xs">No verdict yet</span>}</div>
-      <div className="flex items-end justify-between gap-3">
-        <div>
-          <h3 className="text-2xl leading-tight font-bold tracking-tight">{name}</h3>
-          <p className="mt-1 text-sm text-white/80">
-            {concernLabel} · {started ? `day ${daysBetween(startDate, now)}` : 'starts soon'}
-          </p>
+      <div className="h-[92px] w-[78px] shrink-0 overflow-hidden rounded-[18px] md:h-48 md:w-auto md:rounded-b-none md:rounded-t-[26px]">
+        <img src={image} alt="" loading="lazy" className="size-full object-cover transition-transform duration-700 ease-(--ease-out-soft) group-hover:scale-105" />
+      </div>
+      <div className="flex min-w-0 flex-1 items-center gap-3 md:p-5">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <h3 className="text-base leading-tight font-semibold md:text-lg">{name}</h3>
+          <p className="text-[13px] text-muted">{meta}</p>
+          <VerdictPill verdict={verdict} className="mt-1 self-start" />
         </div>
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-sm border border-white/70 transition-colors group-hover:bg-white group-hover:text-navy">
-          <ArrowUpRight size={16} weight="bold" />
-        </span>
+        <div className="flex shrink-0 flex-col items-end gap-0.5">
+          {stat && <span className={cn('text-xl font-semibold tracking-[-0.02em]', style?.text)}>{stat}</span>}
+          {trend.length >= 2 && style && <Sparkline values={trend} color={style.line} />}
+          {!stat && <CaretRight size={20} className="text-muted" />}
+        </div>
       </div>
     </Link>
   )

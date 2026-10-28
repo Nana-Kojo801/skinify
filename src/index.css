@@ -1,142 +1,222 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-
-@custom-variant dark (&:is(.dark *));
-
-/* Satoshi (Indian Type Foundry, free licence via Fontshare), self-hosted. */
-@font-face {
-    font-family: 'Satoshi';
-    src: url('/fonts/satoshi-300.woff2') format('woff2');
-    font-weight: 300;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Satoshi';
-    src: url('/fonts/satoshi-400.woff2') format('woff2');
-    font-weight: 400;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Satoshi';
-    src: url('/fonts/satoshi-500.woff2') format('woff2');
-    font-weight: 500;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'Satoshi';
-    src: url('/fonts/satoshi-700.woff2') format('woff2');
-    font-weight: 700;
-    font-display: swap;
-}
-
-@theme inline {
-    --font-heading: var(--font-sans);
-    --font-sans: 'Satoshi', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-    --color-taupe: var(--taupe);
-    --color-navy: var(--navy);
-    --color-ink: var(--ink);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.5);
-    --radius-md: calc(var(--radius) * 0.75);
-    --radius-lg: var(--radius);
-    --radius-xl: var(--radius);
-    --radius-2xl: var(--radius);
-    --radius-3xl: var(--radius);
-    --radius-4xl: var(--radius);
-}
+@import "@fontsource-variable/figtree";
 
 /*
- * Palette taken from the reference site (bluemoreyachting.com): deep navy base, white type,
- * one warm taupe as the secondary colour (it also reads as a skin tone). Dark theme only.
- * Shape rule: buttons and fields 6px, cards and photos 8px. Nothing is pill-shaped except icon buttons.
+ * Receipts design system (issue #34). Light, warm skincare look: cream ground, cocoa ink, coral score rings,
+ * pastel verdict colours, Figtree everywhere, soft rounded cards and lots of photography.
+ * Every colour, radius, shadow and motion value lives here; components use the tokens, never raw values.
  */
+@theme {
+    --font-sans: 'Figtree Variable', 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    --color-cream: #fbf7f2;
+    --color-sand: #f3e9e1;
+    --color-nude: #eaded4;
+    --color-line: #f0e6dd;
+    --color-card: #ffffff;
+    --color-cocoa: #2e2420;
+    --color-cocoa-soft: #4a3b35;
+    --color-muted: #76665e;
+    --color-coral: #e8876b;
+    --color-coral-ink: #a8513a;
+    --color-ring-track: #f2e8df;
+
+    --color-working: #4f9a72;
+    --color-working-bg: #dcebdf;
+    --color-working-ink: #2f6b4a;
+    --color-nochange: #6f8bb0;
+    --color-nochange-bg: #e2e8f0;
+    --color-nochange-ink: #3f5674;
+    --color-canttell: #c99634;
+    --color-canttell-bg: #f6e7c8;
+    --color-canttell-ink: #7c5a12;
+    --color-irritation: #d4574f;
+    --color-irritation-bg: #f7dcd8;
+    --color-irritation-ink: #9b2f2f;
+    --color-early: #a8968a;
+    --color-early-bg: #ede6df;
+    --color-early-ink: #6a5a50;
+
+    --radius-card: 28px;
+    --radius-tile: 22px;
+    --radius-field: 18px;
+
+    --shadow-card: 0 1px 2px rgb(46 36 32 / 0.04), 0 14px 34px -16px rgb(46 36 32 / 0.18);
+    --shadow-float: 0 18px 40px -14px rgb(46 36 32 / 0.3);
+
+    --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-pop: cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
 :root {
-    --navy: #070c26;
-    --ink: #0d1433;
-    --taupe: #7d7064;
-    --background: #070c26;
-    --foreground: #f5f3f0;
-    --card: #0d1433;
-    --card-foreground: #f5f3f0;
-    --popover: #0d1433;
-    --popover-foreground: #f5f3f0;
-    --primary: #f5f3f0;
-    --primary-foreground: #070c26;
-    --secondary: #151c40;
-    --secondary-foreground: #f5f3f0;
-    --muted: #151c40;
-    --muted-foreground: #a9acbd;
-    --accent: #151c40;
-    --accent-foreground: #f5f3f0;
-    --destructive: #f2867d;
-    --border: rgb(255 255 255 / 0.12);
-    --input: rgb(255 255 255 / 0.2);
-    --ring: rgb(255 255 255 / 0.5);
-    --radius: 0.5rem;
-    color-scheme: dark;
+    color-scheme: light;
 }
 
 @layer base {
-    * {
-        @apply border-border outline-ring/50;
+    html {
+        @apply bg-cream font-sans text-cocoa antialiased;
+        -webkit-tap-highlight-color: transparent;
     }
     body {
-        @apply bg-background text-foreground antialiased;
+        @apply min-h-dvh bg-cream;
     }
-    html {
-        @apply font-sans;
+    :focus-visible {
+        outline: 2px solid var(--color-cocoa);
+        outline-offset: 3px;
+    }
+    ::selection {
+        background: var(--color-nude);
     }
 }
 
 @layer components {
-    /* Dark input used inside the app. */
+    .card {
+        @apply rounded-(--radius-card) bg-card shadow-(--shadow-card);
+    }
     .field {
-        @apply w-full rounded-md border border-input bg-white/[0.04] px-4 py-3 text-base text-foreground outline-none transition-colors;
-        @apply placeholder:text-muted-foreground focus-visible:border-white/60 focus-visible:bg-white/[0.07];
+        @apply h-14 w-full rounded-(--radius-field) border-[1.5px] border-nude bg-card px-[18px] text-base text-cocoa outline-none transition-colors placeholder:text-[#a8988f] focus:border-cocoa;
     }
-    .field option {
-        @apply bg-ink text-foreground;
-    }
-    /* Headline: light weight with one bold word, as on the reference site. */
-    .heading {
-        @apply font-light tracking-tight;
-    }
-    .heading strong {
-        @apply font-bold;
-    }
-    .panel {
-        @apply rounded-lg border border-border bg-card;
+    .skeleton {
+        @apply rounded-(--radius-card) bg-sand;
+        background-image: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.6) 50%, transparent 70%);
+        background-size: 300% 100%;
+        animation: shimmer 1.6s linear infinite;
     }
 }
 
-/* Entrance motion: content settles in when a page opens (state change feedback). Off for reduced motion. */
-@media (prefers-reduced-motion: no-preference) {
+/*
+ * Motion. Everything animates transform and opacity only (compositor-friendly, 60 fps on mid-range phones),
+ * plus short SVG stroke animations on small elements. All of it is switched off for prefers-reduced-motion.
+ */
+@layer utilities {
+    /* Entrance: content settles in when a page opens, staggered with --i. */
     .rise {
-        animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-        animation-delay: calc(var(--i, 0) * 80ms);
+        animation: rise 0.7s var(--ease-out-soft) backwards;
+        animation-delay: calc(var(--i, 0) * 70ms);
     }
-    @keyframes rise {
-        from {
-            opacity: 0;
-            transform: translateY(16px);
-        }
+    /* Page transition, applied to the routed content on every navigation. */
+    .page-in {
+        animation: page-in 0.45s var(--ease-out-soft) backwards;
+    }
+    /* Photos ease out of a slight zoom when they load. */
+    .settle {
+        animation: settle 1.8s var(--ease-out-soft) backwards;
+    }
+    /* Below-the-fold content waits until it scrolls into view (see useInView). */
+    .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+            opacity 0.7s var(--ease-out-soft),
+            transform 0.7s var(--ease-out-soft);
+        transition-delay: calc(var(--i, 0) * 70ms);
+    }
+    .reveal[data-shown='true'] {
+        opacity: 1;
+        transform: none;
+    }
+    .draw-line {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        transition: stroke-dashoffset 1.3s var(--ease-out-soft);
+    }
+    .draw-line[data-shown='true'] {
+        stroke-dashoffset: 0;
+    }
+    /* Lines that draw themselves once mounted (charts mount when they scroll into view). */
+    .draw-in {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        animation: draw 1.3s var(--ease-out-soft) 0.15s forwards;
+    }
+    .fade-in {
+        animation: fade 0.6s ease backwards;
+        animation-delay: var(--d, 0s);
+    }
+    .press {
+        transition: transform 0.16s var(--ease-out-soft);
+    }
+    .press:active {
+        transform: scale(0.97);
+    }
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+}
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+@keyframes settle {
+    from {
+        transform: scale(1.08);
+    }
+}
+@keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+}
+@keyframes shimmer {
+    to {
+        background-position: -300% 0;
+    }
+}
+@keyframes pop {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+}
+@keyframes burst {
+    from {
+        opacity: 1;
+        transform: rotate(var(--a)) translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: rotate(var(--a)) translateY(-62px) scale(0.4);
+    }
+}
+@keyframes sweep {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(300%);
+    }
+}
+@keyframes breathe {
+    50% {
+        opacity: 0.45;
+        transform: scale(0.97);
+    }
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 1ms !important;
+        animation-delay: 0ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        transition-delay: 0ms !important;
     }
 }

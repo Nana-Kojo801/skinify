@@ -1,14 +1,16 @@
+import { CaretRight, Info, Plus, ScanSmiley, Warning } from '@phosphor-icons/react'
 import { useQuery } from 'convex/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowLink } from '@/components/arrow-link'
+import { Reveal } from '@/components/reveal'
 import { buttonVariants } from '@/components/ui/button'
-import { formatDate } from '@/lib/format'
+import { daysBetween, formatDate, formatPoints, formatSigned } from '@/lib/format'
 import { productImage, productRank } from '@/lib/product-image'
 import { CONCERNS, isConcernKey } from '@shared/concerns'
 import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
+import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
 import { api } from '../../../convex/_generated/api'
-import { LatestScanPanel } from './components/latest-scan-panel'
+import { LatestScanCard } from './components/latest-scan-card'
 import { ProductCard } from './components/product-card'
 
 const RULES = [
@@ -20,6 +22,23 @@ const RULES = [
     text: `Under ${VERDICT_CONFIG.minDaysSinceStart} days, or fewer than ${VERDICT_CONFIG.minPostScans} scans since starting.`,
   },
 ]
+
+const concernLabel = (key: string) => (isConcernKey(key) ? CONCERNS[key].label : key)
+
+/** The one number that explains a verdict on a product card. */
+function verdictStat(verdict: Verdict, inputs: VerdictInputs): string | null {
+  switch (verdict) {
+    case 'WORKING':
+    case 'NO_VISIBLE_CHANGE':
+      return inputs.change === null ? null : formatSigned(inputs.change)
+    case 'CANT_TELL':
+      return `±${formatPoints(inputs.noise)}`
+    case 'POSSIBLE_IRRITATION':
+      return inputs.worsening ? formatSigned(-inputs.worsening.amount) : null
+    case 'TOO_EARLY':
+      return null
+  }
+}
 
 export function HomePage() {
   const products = useQuery(api.products.list)
@@ -33,6 +52,7 @@ export function HomePage() {
   const isDemo = usage?.isDemoAccount ?? false
   // Only offer editing once we know this isn't the read-only demo account (avoids a flash of buttons that would fail).
   const canEdit = usage !== undefined && !usage.isDemoAccount
+  const canScan = usage?.canScan ?? false
   const blocked = isDemo
     ? 'This is the demo account. It runs on sample data, so live scans are off.'
     : usage && !usage.serviceAvailable
@@ -41,134 +61,205 @@ export function HomePage() {
         ? `Daily limit reached. Next scan ${formatDate(usage.nextScanAt)}.`
         : null
 
+  // One highlight for the home page: a possible irritation first (it needs attention), else a product that works.
+  const insight = (() => {
+    if (!products) return null
+    const rows = products.map((product) => ({ product, row: verdictByProduct.get(product._id) ?? null }))
+    const irritated = rows.find(({ row }) => row?.verdict === 'POSSIBLE_IRRITATION')
+    if (irritated?.row?.inputs.worsening) {
+      const { concern, amount } = irritated.row.inputs.worsening
+      return {
+        tone: 'irritation' as const,
+        product: irritated.product,
+        title: `${irritated.product.name} may be irritating your skin.`,
+        text: `${concernLabel(concern)} got worse by about ${formatPoints(amount)} points.`,
+      }
+    }
+    const working = rows.find(({ row }) => row?.verdict === 'WORKING')
+    if (working?.row && working.row.inputs.improvement !== null) {
+      return {
+        tone: 'working' as const,
+        product: working.product,
+        title: `${working.product.name} is working.`,
+        text: `${concernLabel(working.product.targetConcern)} is up ${formatPoints(working.row.inputs.improvement)} points since you started it.`,
+      }
+    }
+    return null
+  })()
+
+  const today = new Date(now).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
+
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-16 px-5 pt-8 pb-20 md:gap-24 md:px-8 md:pt-14">
-      <section className="grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-12">
-        <div className="rise">
-          <h1 className="heading text-5xl leading-none md:text-7xl">
-            Your <strong>skin</strong>
-          </h1>
-          <p className="mt-4 max-w-sm text-lg text-white/75">
+    <main className="mx-auto flex max-w-6xl flex-col px-4 pt-1.5 md:px-8 md:pt-10">
+      <section className="rise flex flex-wrap items-end justify-between gap-4 px-1">
+        <div>
+          <p className="text-sm font-medium text-muted">{today}</p>
+          <h1 className="mt-1 text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] md:text-5xl">Your skin</h1>
+          <p className="mt-1.5 text-muted md:text-[17px]">
             {scans === undefined
-              ? ' '
+              ? ' '
               : scans.length === 0
                 ? 'No scans yet. Start with one today.'
                 : `${scans.length} scan${scans.length === 1 ? '' : 's'} so far, tracking ${products?.length ?? 0} product${products?.length === 1 ? '' : 's'}.`}
           </p>
-          <div className="mt-7 flex flex-wrap items-center gap-5">
-            {usage?.canScan && (
-              <Link to="/scan" className={buttonVariants({ size: 'lg' })}>
-                New scan
-              </Link>
-            )}
-            {canEdit && <ArrowLink to="/products/new">Add a product</ArrowLink>}
-          </div>
-          {blocked && <p className="mt-6 max-w-sm border-l-2 border-taupe pl-4 text-sm text-white/75">{blocked}</p>}
         </div>
-        <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
-          <LatestScanPanel scan={latestScan} />
+        <div className="hidden gap-2.5 md:flex">
+          {canScan && (
+            <Link to="/scan" className={buttonVariants({ size: 'lg' })}>
+              <ScanSmiley size={20} />
+              New scan
+            </Link>
+          )}
+          {canEdit && (
+            <Link to="/products/new" className={buttonVariants({ variant: 'soft', size: 'lg' })}>
+              <Plus size={18} />
+              Add a product
+            </Link>
+          )}
         </div>
       </section>
 
-      <section className="flex flex-col gap-7">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="heading text-4xl md:text-5xl">
-              Your <strong>products</strong>
-            </h2>
-            <p className="mt-2 text-white/70">Each one is judged on the skin concern it targets.</p>
-          </div>
+      {blocked && (
+        <p className="rise mt-4 flex items-start gap-2.5 rounded-2xl bg-sand px-4 py-3 text-sm text-cocoa-soft" style={{ '--i': 1 } as React.CSSProperties}>
+          <Info size={18} className="mt-px shrink-0" />
+          {blocked}
+        </p>
+      )}
+
+      <div className="mt-5 grid gap-4 md:mt-8 md:grid-cols-[1.4fr_1fr] md:gap-6">
+        <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
+          <LatestScanCard scan={latestScan} canScan={canScan} />
+        </div>
+        <div className="flex flex-col gap-4 md:gap-6">
+          {insight && (
+            <Link
+              to={`/products/${insight.product._id}`}
+              className={`rise press flex items-center gap-3.5 rounded-3xl py-3.5 pr-4 pl-3.5 ${insight.tone === 'working' ? 'bg-working-bg text-[#234f37]' : 'bg-irritation-bg text-irritation-ink'}`}
+              style={{ '--i': 2 } as React.CSSProperties}
+            >
+              {insight.tone === 'working' ? (
+                <img src={productImage(productRank(products ?? [], insight.product._id))} alt="" className="size-[52px] shrink-0 rounded-2xl object-cover" />
+              ) : (
+                <span className="grid size-[52px] shrink-0 place-items-center rounded-2xl bg-white/70">
+                  <Warning size={24} />
+                </span>
+              )}
+              <span className="flex-1 text-[14.5px] leading-snug">
+                <strong className="font-bold">{insight.title}</strong> {insight.text}
+              </span>
+              <CaretRight size={20} weight="bold" className="shrink-0" />
+            </Link>
+          )}
+          <Reveal className="hidden flex-col gap-2.5 md:flex">
+            <HowItWorks />
+          </Reveal>
+        </div>
+      </div>
+
+      <section className="mt-9 md:mt-14">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-[22px] font-semibold tracking-[-0.02em] md:text-[28px]">Your products</h2>
           {canEdit && products && products.length > 0 && (
-            <span className="hidden md:block">
-              <ArrowLink to="/products/new">Add a product</ArrowLink>
-            </span>
+            <Link to="/products/new" className={buttonVariants({ variant: 'soft', size: 'sm', className: 'md:hidden' })}>
+              <Plus size={16} weight="bold" />
+              Add
+            </Link>
           )}
         </div>
+        <p className="mt-1 px-1 text-[15px] text-muted">Each one is judged on the skin concern it targets.</p>
 
         {products === undefined ? (
-          <div className="grid gap-5 md:grid-cols-3" aria-hidden>
+          <div className="mt-4 grid gap-3 md:grid-cols-3 md:gap-5" aria-hidden>
             {[0, 1, 2].map((i) => (
-              <div key={i} className="panel aspect-[4/5] animate-pulse" />
+              <div key={i} className="skeleton h-[116px] md:h-80" />
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="grid gap-5 md:grid-cols-3">
-            <Link
-              to="/products/new"
-              className="group relative isolate flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-lg p-6"
-            >
-              <img
-                src={productImage(0)}
-                alt=""
-                className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 -z-10 bg-gradient-to-t from-navy via-navy/40 to-transparent" />
-              <h3 className="text-2xl font-light">
-                Add your first <strong className="font-bold">product</strong>
-              </h3>
-              <p className="mt-1 text-sm text-white/80">The serum, cream or cleanser you want to test.</p>
-            </Link>
-            <ol className="panel flex flex-col justify-center gap-px overflow-hidden md:col-span-2">
+          <div className="mt-4 grid gap-3 md:grid-cols-[1.2fr_1fr] md:gap-5">
+            {canEdit ? (
+              <Link to="/products/new" className="card press group relative flex min-h-56 flex-col justify-end overflow-hidden p-5 text-white">
+                <img src="/images/product-pour.webp" alt="" className="absolute inset-0 -z-0 size-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <span className="absolute inset-0 bg-linear-to-t from-cocoa/75 via-cocoa/10 to-transparent" />
+                <span className="relative">
+                  <span className="mb-3 grid size-11 place-items-center rounded-full bg-white text-cocoa">
+                    <Plus size={20} weight="bold" />
+                  </span>
+                  <span className="block text-xl font-semibold tracking-[-0.02em]">Add your first product</span>
+                  <span className="text-sm opacity-90">The serum, cream or cleanser you want to test.</span>
+                </span>
+              </Link>
+            ) : (
+              <p className="card p-5 text-muted">No products yet.</p>
+            )}
+            <ol className="card flex flex-col justify-center px-5 py-2">
               {[
                 ['Scan', 'Take a scan today, before you start the product. Two scans before starting is best.'],
                 ['Add', 'Add the product and the one concern it promises to improve.'],
                 ['Repeat', `Scan once a week. After ${VERDICT_CONFIG.minDaysSinceStart} days you get a verdict you can trust.`],
               ].map(([term, text], index) => (
-                <li key={term} className="grid grid-cols-[3rem_1fr] items-baseline gap-4 border-b border-white/10 px-6 py-6 last:border-b-0 md:px-10">
-                  <span className="text-4xl font-medium tabular-nums text-taupe">{index + 1}</span>
+                <li key={term} className="flex gap-4 border-b border-line py-4 last:border-b-0">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-sand font-bold text-coral-ink">{index + 1}</span>
                   <span>
-                    <strong className="text-lg font-bold">{term}</strong>
-                    <span className="mt-1 block text-white/75">{text}</span>
+                    <strong className="font-semibold">{term}</strong>
+                    <span className="mt-0.5 block text-sm text-muted">{text}</span>
                   </span>
                 </li>
               ))}
             </ol>
           </div>
         ) : (
-          <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0">
-            {products.map((product, index) => (
-              <ProductCard
-                key={product._id}
-                id={product._id}
-                rank={productRank(products, product._id)}
-                name={product.name}
-                concernLabel={isConcernKey(product.targetConcern) ? CONCERNS[product.targetConcern].label : product.targetConcern}
-                startDate={product.startDate}
-                now={now}
-                verdict={verdictByProduct.get(product._id)?.verdict ?? null}
-                index={index + 2}
-              />
-            ))}
-          </div>
+          <ul className="mt-4 grid gap-3 md:grid-cols-3 md:gap-5">
+            {products.map((product, index) => {
+              const row = verdictByProduct.get(product._id) ?? null
+              const started = product.startDate <= now
+              const day = daysBetween(product.startDate, now)
+              const trend = (scans ?? []).flatMap((scan) => (scan.scores[product.targetConcern] === undefined ? [] : [scan.scores[product.targetConcern]])).slice(-8)
+              return (
+                <Reveal as="li" key={product._id} index={index}>
+                  <ProductCard
+                    id={product._id}
+                    image={productImage(productRank(products, product._id))}
+                    name={product.name}
+                    meta={`${concernLabel(product.targetConcern)} · ${started ? `day ${day}` : 'starts soon'}`}
+                    verdict={row?.verdict ?? null}
+                    stat={row ? verdictStat(row.verdict, row.inputs) : null}
+                    trend={trend}
+                    index={index}
+                  />
+                </Reveal>
+              )
+            })}
+          </ul>
         )}
       </section>
 
-      <section className="grid overflow-hidden rounded-lg md:grid-cols-2">
-        <img src="/images/dropper-skin.jpg" alt="" className="h-64 w-full object-cover md:h-full" />
-        <div className="bg-card p-7 md:p-12">
-          <h2 className="heading text-4xl">
-            How the <strong>verdict</strong> works
-          </h2>
-          <p className="mt-3 text-white/70">No guessing. Every verdict comes from your own numbers.</p>
-          <dl className="mt-8 flex flex-col divide-y divide-white/10">
-            {RULES.map((rule) => (
-              <div key={rule.term} className="grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6">
-                <dt className="font-bold">{rule.term}</dt>
-                <dd className="text-white/75">{rule.text}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+      <Reveal as="section" className="mt-9 flex flex-col gap-2.5 md:hidden">
+        <HowItWorks />
+      </Reveal>
 
-      <section className="relative isolate overflow-hidden rounded-lg px-6 py-14 md:px-12 md:py-20">
-        <img src="/images/skin-texture.jpg" alt="" className="absolute inset-0 -z-20 size-full object-cover" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-navy via-navy/75 to-navy/20" />
-        <h2 className="heading max-w-lg text-4xl">
-          Your photos are <strong>never stored</strong>
-        </h2>
-        <p className="mt-4 max-w-md text-white/80">Each photo is analysed, then thrown away. Receipts keeps the scores and nothing else.</p>
-      </section>
+      <Reveal as="section" className="relative mt-4 h-[180px] overflow-hidden rounded-(--radius-card) md:mt-14 md:h-[260px]">
+        <img src="/images/dropper-skin.webp" alt="" loading="lazy" className="size-full object-cover object-[50%_40%]" />
+        <div className="absolute inset-x-0 bottom-0 bg-linear-to-b from-transparent to-cocoa/75 px-5 pt-10 pb-[18px] text-white md:px-8 md:pb-7">
+          <p className="text-xl font-semibold tracking-[-0.02em] md:text-3xl">Your photos are never stored</p>
+          <p className="mt-0.5 text-[13.5px] opacity-90 md:text-base">Each photo is analysed, then thrown away. Receipts keeps the scores and nothing else.</p>
+        </div>
+      </Reveal>
     </main>
+  )
+}
+
+function HowItWorks() {
+  return (
+    <>
+      <h2 className="px-1 text-[22px] font-semibold tracking-[-0.02em] md:text-xl">How the verdict works</h2>
+      <div className="grid grid-cols-2 gap-2.5">
+        {RULES.map((rule) => (
+          <div key={rule.term} className="rounded-(--radius-tile) bg-sand p-4">
+            <p className="font-bold">{rule.term}</p>
+            <p className="mt-1 text-[13.5px] leading-snug text-muted">{rule.text}</p>
+          </div>
+        ))}
+      </div>
+    </>
   )
 }

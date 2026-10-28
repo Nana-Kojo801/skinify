@@ -109,7 +109,7 @@ scripts/        YouCam API spike and a live check script (need an API key)
 docs/           SPEC.md, youcam-api-notes.md, api-contract.md
 ```
 
-Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions, Convex Auth with email + password), recharts.
+Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions, Convex Auth with email + password). Charts are hand-drawn SVG; Figtree (Fontsource, OFL) is the typeface.
 
 ## License
 
