@@ -50,7 +50,9 @@ describe('templated summaries (the fallback text)', () => {
     expect(text).toContain('from before you started')
     expect(text).toContain('too much to spot a real change')
     expect(text).toContain('flagged as poor quality')
-    expect(nextStepFor(r)).toBe(r.rescanAdvice[0])
+    // the first reason decides the next step: a short lowercase phrase, not the full advice sentence
+    expect(nextStepFor(r)).toMatch(/^if you have not started it yet, move the start date forward/)
+    expect(text).not.toContain('..')
   })
 
   it('TOO_EARLY says how much longer to keep going', () => {
@@ -59,6 +61,23 @@ describe('templated summaries (the fallback text)', () => {
     // with scans missing too it asks for both
     const fewScans = { ...CASES.TOO_EARLY, inputs: { ...CASES.TOO_EARLY.inputs, postScansRemaining: 2 } }
     expect(nextStepFor(fewScans)).toBe('keep using it and scan about once a week: roughly 8 more days and 2 more scans to go')
+  })
+
+  it('reads cleanly: one next step, lowercase after the colon, no doubled punctuation', () => {
+    for (const result of Object.values(CASES)) {
+      const text = fallbackSummary(result)
+      expect(text, result.verdict).not.toMatch(/\.\.|, ,|\s{2}/)
+      expect(text, result.verdict).toMatch(/Next step: [a-z]/)
+      expect(text.endsWith('.'), result.verdict).toBe(true)
+    }
+  })
+
+  it('each CANT_TELL reason has its own next step', () => {
+    const base = CASES.CANT_TELL
+    const step = (reason: string) => nextStepFor({ ...base, reasons: [reason] })
+    expect(step('NOISY_SCANS')).toMatch(/^rescan in the same spot/)
+    expect(step('POOR_QUALITY')).toMatch(/^rescan in even daylight/)
+    expect(step('SOMETHING_ELSE')).toMatch(/^rescan in even daylight/) // unknown reason: safe default
   })
 
   it('never diagnoses', () => {

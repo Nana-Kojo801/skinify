@@ -21,8 +21,15 @@ export function concernLabel(concern: string): string {
   return isConcernKey(concern) ? CONCERNS[concern].label.toLowerCase() : concern
 }
 
+/** Short lowercase next steps for CANT_TELL (the full sentences in `rescanAdvice` are shown separately). */
+const RESCAN_STEP: Record<CantTellReason, string> = {
+  FEW_BASELINE_SCANS: 'if you have not started it yet, move the start date forward and scan twice before the first use',
+  NOISY_SCANS: 'rescan in the same spot each time: face a window, even light, no filters, same distance and angle',
+  POOR_QUALITY: 'rescan in even daylight with your face centred and filling the frame, no filters or heavy makeup',
+}
+
 /** The single next step we recommend for a verdict (also given to the LLM so it only has to rephrase it). */
-export function nextStepFor({ verdict, inputs, rescanAdvice }: VerdictText): string {
+export function nextStepFor({ verdict, inputs, reasons }: VerdictText): string {
   switch (verdict) {
     case 'TOO_EARLY': {
       const days = inputs.daysRemaining
@@ -33,8 +40,10 @@ export function nextStepFor({ verdict, inputs, rescanAdvice }: VerdictText): str
       if (scans > 0) return `keep scanning about once a week: ${plural(scans, 'more scan')} needed`
       return `keep using it and scan again in about ${plural(days, 'day')}`
     }
-    case 'CANT_TELL':
-      return rescanAdvice[0] ?? 'rescan in even daylight, no filters, same distance each time'
+    case 'CANT_TELL': {
+      const reason = reasons.find((r): r is CantTellReason => r in RESCAN_STEP)
+      return reason ? RESCAN_STEP[reason] : 'rescan in even daylight, no filters, same distance each time'
+    }
     case 'POSSIBLE_IRRITATION':
       return 'consider pausing it and doing a patch test; if your skin stays red or sore, ask a pharmacist or dermatologist'
     case 'WORKING':
