@@ -106,10 +106,12 @@ A task can be rejected after creation: create-task still returns HTTP 200, and t
 ```
 (tested with a 100x100 image; came back in 2.1 s). The other quality codes from the docs are `error_src_face_too_small`, `error_src_face_out_of_bound`, `error_lighting_dark`, `error_exceed_max_image_size`. Not yet triggered: no-face and bad-lighting cases. Treat any `task_status: "error"` as a typed error in #5, keyed by `data.error`.
 
+### Units: confirmed from the YouCam console (Unit Records)
+Balance went 1,000, then 984, then 968 for the two spike runs: **16 units per photo with 16 concerns**, as in the docs table. The rejected tiny-image test showed **-9 then +9**: a task is **charged when created and refunded if it ends in `error`**. So rejected photos cost nothing in the end, but the balance dips briefly. (The docs say units are only consumed on success; the refund explains the difference.)
+
 ### Not tested (to save units)
 - Whether a `file_id` can be reused for a second task.
 - Whether the API honours a photo's EXIF rotation tag. The selfie was stored landscape but displays portrait, and it was accepted, so either works. The Scan UI should still draw photos through a canvas, which bakes the rotation in.
-- Units actually charged. The API shows no balance; check the YouCam console after the run (expected 16 units per photo, so 32 for the two runs).
 
 ### Proposed concern list to request (Nana to confirm)
 Request only what we show. Suggested 8: `acne`, `redness`, `pore`, `texture`, `oiliness`, `moisture`, `radiance`, `dark_circle_v2`. That is the 5 to 8 tier: **12 units per photo, 24 per scan, about 41 scans from 1,000 units.** Dropping to 4 concerns (e.g. acne, redness, texture, moisture) is 9 units per photo, 18 per scan, about 55 scans.
