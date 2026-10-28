@@ -59,10 +59,20 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 
 ## 6. Git workflow
 
-- Follow the branch your session environment designates. If none is designated, use one branch per issue named `<name>/<issue-number>-<slug>` (e.g. `dave/13-scan-ui`, `nana/5-scan-backend`).
+Each person has their own long-lived branch, based on the answer to "who is working" in section 1:
+
+| Person | Branch |
+|---|---|
+| Nana | `claude/nanakojo` |
+| Dave | `claude/dave` |
+
+- Work on **your person's branch** (`claude/nanakojo` or `claude/dave`). If it doesn't exist yet, create it from the latest `main`. This applies even if the session environment suggests a different branch name: use the person's branch.
+- Before starting an issue, merge the latest `main` into your branch so you build on the other person's merged work.
 - Commit small and often, mention the issue (`Refs #13` / `Closes #13`) in commit messages.
-- Keep changes minimal and in your own area to keep merges painless; pull/merge `main` before starting a new issue.
-- **Do not open a pull request unless the user asks.** Do not push to `main` directly unless the user asks.
+- Push to your own branch only. **Never push directly to `main`**; changes reach `main` through a **pull request** from your branch.
+- Open a pull request into `main` when a change or issue is ready (don't wait for the end of the project). Put the issue number in the PR title/description (`Closes #13`). The other person reviews and merges, or the user merges it.
+- If your branch's previous PR has already been merged, bring your branch up to date with `main` before continuing, so you don't stack new commits on stale history.
+- Keep changes minimal and in your own area to keep merges painless (section 3).
 - Before committing: run typecheck, lint and tests (`npm run build`, `npm test`) once the scaffold exists.
 
 ## 7. Open decision (Nana resolves in issue #1)
