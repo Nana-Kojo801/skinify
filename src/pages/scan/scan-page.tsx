@@ -1,3 +1,4 @@
+import { ArrowLeft } from '@phosphor-icons/react'
 import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useEffect, useRef, useState } from 'react'
@@ -80,7 +81,7 @@ export function ScanPage() {
 
   if (result) {
     return (
-      <main className="mx-auto max-w-md p-4">
+      <main className="mx-auto max-w-3xl px-5 pt-8 pb-20 md:px-8 md:pt-14">
         <ScanResult result={result} />
       </main>
     )
@@ -89,7 +90,7 @@ export function ScanPage() {
   const blocked =
     usage !== undefined && !usage.canScan
       ? usage.isDemoAccount
-        ? 'The demo account runs on sample data, so live scans are turned off.'
+        ? 'The demo account runs on sample data, so live scans are turned off. Create your own account to scan.'
         : !usage.serviceAvailable
           ? 'Scanning is paused: the free scan budget for this app has been used up.'
           : usage.nextScanAt
@@ -97,43 +98,72 @@ export function ScanPage() {
             : 'Scanning is not available right now.'
       : null
 
+  const tips = [
+    ['Light', 'Face a window. Even daylight, no lamps behind you.'],
+    ['Bare skin', 'No filters, no makeup, hair off your face.'],
+    ['Distance', 'Hold the phone at arm\'s length, the same way every time.'],
+    ['Framing', 'Your whole face fills most of the frame.'],
+  ]
+
   return (
-    <main className="mx-auto flex max-w-md flex-col gap-4 p-4">
-      <div>
-        <Link to="/" className="text-sm underline">
-          ← Products
+    <main className="mx-auto grid max-w-6xl gap-10 px-5 pt-6 pb-20 md:grid-cols-[0.85fr_1.15fr] md:gap-14 md:px-8 md:pt-10">
+      <aside className="rise relative md:sticky md:top-28 md:self-start">
+        <img src="/images/scan-portrait.jpg" alt="" className="aspect-[4/3] w-full rounded-lg object-cover object-[50%_30%] md:aspect-[4/5]" />
+        <Link
+          to="/"
+          aria-label="Back to products"
+          className="absolute top-4 left-4 flex size-11 items-center justify-center rounded-full bg-white text-navy transition-transform active:scale-95"
+        >
+          <ArrowLeft size={20} weight="bold" />
         </Link>
-        <h1 className="text-xl font-semibold">New scan</h1>
+        <p className="mt-3 text-sm text-muted-foreground">Soft window light like this gives the most consistent scores.</p>
+      </aside>
+
+      <div className="flex flex-col gap-9">
+        <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
+          <h1 className="heading text-5xl md:text-6xl">
+            New <strong>scan</strong>
+          </h1>
+          <p className="mt-3 max-w-lg text-lg text-white/75">
+            Two photos, back to back. We average them and measure how much they disagree, so a change is real before we call it.
+          </p>
+        </div>
+
+        <dl className="rise grid gap-px overflow-hidden rounded-lg bg-white/10 sm:grid-cols-2" style={{ '--i': 2 } as React.CSSProperties}>
+          {tips.map(([term, text]) => (
+            <div key={term} className="bg-navy p-5">
+              <dt className="font-bold">{term}</dt>
+              <dd className="mt-1 text-sm text-white/75">{text}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {blocked ? (
+          <p className="rounded-lg bg-taupe p-6 text-white">{blocked}</p>
+        ) : (
+          <div className="rise flex flex-col gap-5" style={{ '--i': 3 } as React.CSSProperties}>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <PhotoSlot label="Photo 1" previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
+              <PhotoSlot label="Photo 2" previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
+            </div>
+            {error && (
+              <p role="alert" className="rounded-md bg-[#3d1717] px-4 py-3 text-sm text-[#f7c3bd]">
+                {error}
+              </p>
+            )}
+            <div className="flex flex-wrap items-center gap-5">
+              <Button size="lg" disabled={!photos[0] || !photos[1] || pending} onClick={() => void onSubmit()}>
+                {pending ? 'Analysing, about 10 seconds…' : 'Analyse my skin'}
+              </Button>
+              {usage && (
+                <span className="text-sm text-muted-foreground">
+                  {usage.remaining} of {usage.dailyLimit} scans left today. Photos are never stored.
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-
-      <section className="rounded-lg bg-neutral-50 p-3 text-sm">
-        <p className="font-medium">For a fair comparison every time:</p>
-        <ul className="mt-1 list-disc pl-5">
-          <li>Face a window with even light</li>
-          <li>No filters, no makeup, hair off your face</li>
-          <li>Hold the phone at the same distance each time</li>
-          <li>Your whole face should fill most of the frame</li>
-        </ul>
-        <p className="mt-2 text-xs text-neutral-500">Take two photos back to back. Photos are not stored, only the scores.</p>
-      </section>
-
-      {blocked ? (
-        <p className="rounded-lg border p-3 text-sm">{blocked}</p>
-      ) : (
-        <>
-          <PhotoSlot label="Photo 1" previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
-          <PhotoSlot label="Photo 2" previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
-          {error && (
-            <p role="alert" className="text-sm text-red-600">
-              {error}
-            </p>
-          )}
-          <Button size="lg" className="h-12 text-base" disabled={!photos[0] || !photos[1] || pending} onClick={() => void onSubmit()}>
-            {pending ? 'Analysing… (about 10 seconds)' : 'Analyse my skin'}
-          </Button>
-          {usage && <p className="text-xs text-neutral-500">{usage.remaining} of {usage.dailyLimit} scans left today.</p>}
-        </>
-      )}
     </main>
   )
 }

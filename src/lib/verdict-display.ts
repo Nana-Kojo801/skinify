@@ -8,10 +8,11 @@ export const VERDICT_LABELS: Record<Verdict, string> = {
   NO_VISIBLE_CHANGE: 'No visible change',
 }
 
+// Semantic colours only (they carry meaning). Light text on a dark tint, readable on navy and over photos.
 export const VERDICT_CLASSES: Record<Verdict, string> = {
-  TOO_EARLY: 'bg-neutral-100 text-neutral-700',
-  CANT_TELL: 'bg-amber-100 text-amber-800',
-  POSSIBLE_IRRITATION: 'bg-red-100 text-red-800',
-  WORKING: 'bg-green-100 text-green-800',
-  NO_VISIBLE_CHANGE: 'bg-blue-100 text-blue-800',
+  TOO_EARLY: 'bg-[#1b2246]/90 text-[#d4d7e6] border-white/15',
+  CANT_TELL: 'bg-[#3a2f12]/90 text-[#f3d98a] border-[#f3d98a]/25',
+  POSSIBLE_IRRITATION: 'bg-[#3d1717]/90 text-[#f7a8a0] border-[#f7a8a0]/25',
+  WORKING: 'bg-[#0f3326]/90 text-[#8fe0b6] border-[#8fe0b6]/25',
+  NO_VISIBLE_CHANGE: 'bg-[#13294a]/90 text-[#a9cdf5] border-[#a9cdf5]/25',
 }
