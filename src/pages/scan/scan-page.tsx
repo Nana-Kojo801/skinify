@@ -180,7 +180,7 @@ export function ScanPage() {
           ) : (
             <ul className="rise grid grid-cols-2 gap-2.5" style={{ '--i': 1 } as React.CSSProperties}>
               {TIPS.map(({ icon: Icon, term, text }) => (
-                <li key={term} className="rounded-(--radius-tile) bg-sand p-4">
+                <li key={term} className="tile p-4">
                   <Icon size={22} className="text-coral-ink" />
                   <p className="mt-2 font-semibold">{term}</p>
                   <p className="mt-0.5 text-[13px] leading-snug text-muted">{text}</p>
@@ -199,7 +199,7 @@ export function ScanPage() {
         <section className="mt-6 flex flex-col gap-4 md:mt-0">
           {blocked ? (
             <div className="rise relative overflow-hidden rounded-(--radius-card) bg-sand" style={{ '--i': 2 } as React.CSSProperties}>
-              <img src="/images/scan-portrait.webp" alt="" className="h-56 w-full object-cover object-[50%_35%] md:h-80" />
+              <img src="/images/scan-portrait.webp" alt="" className="h-56 w-full object-cover object-[50%_35%] shadow-(--shadow-photo) md:h-80" />
               <p className="flex items-start gap-2.5 p-5 text-[15px] text-cocoa-soft">
                 <Info size={20} className="mt-px shrink-0" />
                 {blocked}

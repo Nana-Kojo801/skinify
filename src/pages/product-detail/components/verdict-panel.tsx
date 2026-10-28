@@ -56,8 +56,8 @@ export function VerdictPanel({ verdict, reasons, inputs, targetConcern, day }: V
   }
 
   return (
-    <section ref={ref} className={cn('rounded-(--radius-card) px-5 pt-5.5 pb-5 md:px-7 md:pt-7 md:pb-6', style.panel, style.text)}>
-      <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-white px-3 text-[13px] font-semibold">
+    <section ref={ref} className={cn('rounded-(--radius-card) px-5 pt-5.5 pb-5 md:px-7 md:pt-7 md:pb-6', style.panel, style.text, style.depth)}>
+      <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-white px-3 text-[13px] font-semibold shadow-[0_1px_2px_rgb(46_36_32/0.08)]">
         <i className={cn('size-[7px] rounded-full', style.dot)} />
         {VERDICT_LABELS[verdict]}
       </span>

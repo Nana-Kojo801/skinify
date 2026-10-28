@@ -36,7 +36,7 @@ export function SettingsPage() {
 
       <section className="card rise flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between md:p-6" style={{ '--i': 1 } as React.CSSProperties}>
         <div className="flex min-w-0 items-center gap-3.5">
-          <span className="grid size-[52px] shrink-0 place-items-center rounded-full bg-coral text-xl font-bold text-white uppercase">
+          <span className="grid size-[52px] shrink-0 place-items-center rounded-full bg-coral text-xl font-bold text-white uppercase shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_8px_16px_-8px_rgb(168_81_58/0.7)]">
             {me?.email?.charAt(0) ?? ' '}
           </span>
           <span className="min-w-0">
@@ -50,7 +50,7 @@ export function SettingsPage() {
         </Button>
       </section>
 
-      <section className="rise relative h-40 overflow-hidden rounded-(--radius-card) md:h-48" style={{ '--i': 2 } as React.CSSProperties}>
+      <section className="photo rise relative h-40 overflow-hidden rounded-(--radius-card) md:h-48" style={{ '--i': 2 } as React.CSSProperties}>
         <img src="/images/dropper-skin.webp" alt="" className="size-full object-cover object-[50%_40%]" />
         <div className="absolute inset-x-0 bottom-0 flex items-end gap-3 bg-linear-to-b from-transparent to-cocoa/75 px-5 pt-10 pb-4 text-white">
           <LockSimple size={24} className="mb-0.5 shrink-0" />

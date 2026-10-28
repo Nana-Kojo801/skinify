@@ -35,7 +35,7 @@ export function AppShell() {
   return (
     <div className="min-h-dvh">
       {/* Desktop navigation */}
-      <header className="sticky top-0 z-30 hidden border-b border-line bg-cream/95 md:block">
+      <header className="sticky top-0 z-30 hidden border-b border-line bg-cream shadow-[0_10px_24px_-20px_rgb(46_36_32/0.4)] md:block">
         <div className="mx-auto flex h-[72px] max-w-6xl items-center gap-8 px-8">
           <Link to="/" aria-label="Receipts home">
             <Logo />
@@ -93,7 +93,7 @@ export function AppShell() {
             to="/scan"
             aria-label="New scan"
             aria-current={pathname === '/scan' ? 'page' : undefined}
-            className="press grid size-[58px] place-items-center justify-self-center rounded-full bg-cocoa text-cream shadow-[0_10px_24px_-8px_rgb(46_36_32/0.6)]"
+            className="press grid size-[60px] -translate-y-3.5 place-items-center justify-self-center rounded-full bg-cocoa text-cream shadow-(--shadow-button) ring-[6px] ring-card"
           >
             <ScanSmiley size={26} />
           </Link>

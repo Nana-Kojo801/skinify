@@ -80,8 +80,10 @@ export function ProductDetailPage() {
   return (
     <main className="mx-auto max-w-6xl md:px-8 md:pt-8">
       <div className="md:grid md:grid-cols-[0.85fr_1.15fr] md:items-start md:gap-10">
-        <div className="relative h-[300px] overflow-hidden rounded-b-[36px] md:sticky md:top-24 md:aspect-[4/5] md:h-auto md:rounded-[32px]">
-          <img src={productImage(productRank(products ?? [], product._id))} alt="" className="settle size-full object-cover object-[50%_55%]" />
+        <div className="relative h-[340px] overflow-hidden md:sticky md:shadow-(--shadow-photo) md:top-24 md:aspect-[4/5] md:h-auto md:rounded-[32px]">
+          <div className="parallax size-full">
+            <img src={productImage(productRank(products ?? [], product._id))} alt="" className="settle size-full object-cover object-[50%_55%]" />
+          </div>
           <div className="absolute inset-x-0 top-0 flex h-[72px] items-center justify-between px-4">
             <Link to="/" aria-label="Back to products" className="press grid size-11 place-items-center rounded-full bg-card shadow-[0_6px_16px_-6px_rgb(46_36_32/0.4)]">
               <CaretLeft size={20} weight="bold" />
@@ -95,7 +97,7 @@ export function ProductDetailPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3.5 px-4 md:gap-5 md:px-0">
+        <div className="relative z-10 -mt-9 flex flex-col gap-3.5 rounded-t-[32px] bg-cream px-4 shadow-[0_-14px_28px_-18px_rgb(46_36_32/0.35)] md:mt-0 md:gap-5 md:rounded-none md:bg-transparent md:px-0 md:shadow-none">
           <section className="rise px-1 pt-5 md:pt-0">
             <h1 className="text-[31px] leading-[1.08] font-semibold tracking-[-0.035em] md:text-5xl">{product.name}</h1>
             <p className="mt-1.5 text-muted md:text-[17px]">
@@ -140,11 +142,11 @@ export function ProductDetailPage() {
           )}
 
           {verdict && (
-            <Reveal as="section" className="rounded-(--radius-card) bg-sand px-5 py-5.5 md:px-7">
+            <Reveal as="section" className="tile rounded-(--radius-card) px-5 py-5.5 md:px-7">
               <h2 className="text-lg font-semibold">What this means</h2>
               <p className="mt-2 text-[15px] leading-relaxed whitespace-pre-line">{summary}</p>
               {nextStep && (
-                <div className="mt-3.5 rounded-[20px] bg-card px-4 py-3.5">
+                <div className="mt-3.5 rounded-[20px] bg-card px-4 py-3.5 shadow-(--shadow-card)">
                   <p className="text-xs font-bold tracking-[0.06em] text-coral-ink uppercase">Next step</p>
                   <p className="mt-0.5 font-semibold">{nextStep}</p>
                 </div>

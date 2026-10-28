@@ -33,7 +33,7 @@ export function PhotoSlot({ label, previewUrl, disabled, problem, analysing = fa
         <p className={cn('text-[13px] font-medium', problem ? 'text-irritation-ink' : 'text-muted')}>{problem ? 'Retake' : previewUrl ? 'Ready' : 'Empty'}</p>
       </div>
       {previewUrl ? (
-        <div className={cn('relative aspect-[3/4] overflow-hidden rounded-3xl bg-sand', problem && 'ring-[3px] ring-irritation')}>
+        <div className={cn('photo relative aspect-[3/4] overflow-hidden rounded-3xl bg-sand', problem && 'ring-[3px] ring-irritation')}>
           <img src={previewUrl} alt={label} className={cn('settle size-full object-cover', problem && 'opacity-60')} />
           {analysing && (
             <>
@@ -59,7 +59,7 @@ export function PhotoSlot({ label, previewUrl, disabled, problem, analysing = fa
           type="button"
           disabled={disabled}
           onClick={() => cameraRef.current?.click()}
-          className="press relative grid aspect-[3/4] w-full cursor-pointer place-items-center overflow-hidden rounded-3xl border-[1.5px] border-dashed border-nude bg-sand text-cocoa-soft transition-colors hover:bg-nude/60"
+          className="press relative grid aspect-[3/4] w-full cursor-pointer place-items-center overflow-hidden rounded-3xl border-[1.5px] border-dashed border-nude bg-sand text-cocoa-soft shadow-(--shadow-inset) transition-colors hover:bg-nude/60"
         >
           <span aria-hidden className="absolute top-[44%] left-1/2 h-[58%] w-[62%] -translate-x-1/2 -translate-y-1/2 animate-[breathe_3s_ease-in-out_infinite] rounded-[50%] border-2 border-dashed border-cocoa/25" />
           <span aria-hidden className={cn(corner, 'top-3 left-3 rounded-tl-xl border-t-2 border-l-2')} />

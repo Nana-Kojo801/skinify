@@ -6,6 +6,7 @@ import { Reveal } from '@/components/reveal'
 import { buttonVariants } from '@/components/ui/button'
 import { daysBetween, formatDate, formatPoints, formatSigned } from '@/lib/format'
 import { productImage, productRank } from '@/lib/product-image'
+import { VERDICT_STYLE } from '@/lib/verdict-display'
 import { CONCERNS, isConcernKey } from '@shared/concerns'
 import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
@@ -134,11 +135,11 @@ export function HomePage() {
           {insight && (
             <Link
               to={`/products/${insight.product._id}`}
-              className={`rise press flex items-center gap-3.5 rounded-3xl py-3.5 pr-4 pl-3.5 ${insight.tone === 'working' ? 'bg-working-bg text-[#234f37]' : 'bg-irritation-bg text-irritation-ink'}`}
+              className={`rise press flex items-center gap-3.5 rounded-3xl py-3.5 pr-4 pl-3.5 ${insight.tone === 'working' ? `bg-working-bg text-[#234f37] ${VERDICT_STYLE.WORKING.depth}` : `bg-irritation-bg text-irritation-ink ${VERDICT_STYLE.POSSIBLE_IRRITATION.depth}`}`}
               style={{ '--i': 2 } as React.CSSProperties}
             >
               {insight.tone === 'working' ? (
-                <img src={productImage(productRank(products ?? [], insight.product._id))} alt="" className="size-[52px] shrink-0 rounded-2xl object-cover" />
+                <img src={productImage(productRank(products ?? [], insight.product._id))} alt="" className="size-[52px] shrink-0 rounded-2xl object-cover shadow-[0_6px_14px_-6px_rgb(46_36_32/0.45)]" />
               ) : (
                 <span className="grid size-[52px] shrink-0 place-items-center rounded-2xl bg-white/70">
                   <Warning size={24} />
@@ -237,7 +238,7 @@ export function HomePage() {
         <HowItWorks />
       </Reveal>
 
-      <Reveal as="section" className="relative mt-4 h-[180px] overflow-hidden rounded-(--radius-card) md:mt-14 md:h-[260px]">
+      <Reveal as="section" className="photo relative mt-4 h-[180px] overflow-hidden rounded-(--radius-card) md:mt-14 md:h-[260px]">
         <img src="/images/dropper-skin.webp" alt="" loading="lazy" className="size-full object-cover object-[50%_40%]" />
         <div className="absolute inset-x-0 bottom-0 bg-linear-to-b from-transparent to-cocoa/75 px-5 pt-10 pb-[18px] text-white md:px-8 md:pb-7">
           <p className="text-xl font-semibold tracking-[-0.02em] md:text-3xl">Your photos are never stored</p>
@@ -254,7 +255,7 @@ function HowItWorks() {
       <h2 className="px-1 text-[22px] font-semibold tracking-[-0.02em] md:text-xl">How the verdict works</h2>
       <div className="grid grid-cols-2 gap-2.5">
         {RULES.map((rule) => (
-          <div key={rule.term} className="rounded-(--radius-tile) bg-sand p-4">
+          <div key={rule.term} className="tile p-4">
             <p className="font-bold">{rule.term}</p>
             <p className="mt-1 text-[13.5px] leading-snug text-muted">{rule.text}</p>
           </div>

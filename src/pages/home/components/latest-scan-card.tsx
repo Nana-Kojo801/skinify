@@ -19,7 +19,7 @@ export function LatestScanCard({ scan, canScan }: { scan: LatestScan; canScan: b
   }
   return (
     <div className="relative">
-      <div className="relative h-[210px] overflow-hidden rounded-(--radius-card) md:h-[250px]">
+      <div className="photo relative h-[210px] overflow-hidden rounded-(--radius-card) md:h-[250px]">
         <img src="/images/skin-texture.webp" alt="" className="settle size-full object-cover object-[50%_60%]" />
         <div className="absolute top-[18px] left-5 text-white">
           <p className="text-[13px] font-semibold opacity-90">{scan ? 'Latest scan' : 'No scans yet'}</p>
@@ -29,7 +29,7 @@ export function LatestScanCard({ scan, canScan }: { scan: LatestScan; canScan: b
         </div>
       </div>
       {scan ? (
-        <div className="card relative mx-3 -mt-16 px-2.5 pt-5 pb-4 md:px-4 md:pt-6">
+        <div className="card relative mx-3 -mt-16 px-2.5 pt-5 pb-4 shadow-(--shadow-raised) md:px-4 md:pt-6">
           <ul className="grid grid-cols-4 gap-y-4">
             {CONCERN_KEYS.filter((key) => scan.scores[key] !== undefined).map((key, index) => (
               <li key={key}>
@@ -42,7 +42,7 @@ export function LatestScanCard({ scan, canScan }: { scan: LatestScan; canScan: b
           </p>
         </div>
       ) : (
-        <div className="card relative mx-3 -mt-16 p-5 md:p-6">
+        <div className="card relative mx-3 -mt-16 p-5 shadow-(--shadow-raised) md:p-6">
           <h2 className="text-xl font-semibold tracking-[-0.02em]">Your first scan sets your baseline</h2>
           <p className="mt-1 text-[15px] text-muted">Scan before you start a product, so there is something to compare against.</p>
           {canScan && (

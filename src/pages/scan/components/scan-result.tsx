@@ -24,7 +24,7 @@ export function ScanResult({ result }: { result: ScanResultData }) {
           />
         ))}
         <span className="absolute inset-0 animate-[pop_.6s_var(--ease-pop)_both] rounded-full bg-working-bg" />
-        <span className="relative grid size-16 animate-[pop_.6s_var(--ease-pop)_.1s_both] place-items-center rounded-full bg-working-ink text-white">
+        <span className="relative grid size-16 animate-[pop_.6s_var(--ease-pop)_.1s_both] place-items-center rounded-full bg-working-ink text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_12px_24px_-10px_rgb(47_107_74/0.8)]">
           <Check size={32} weight="bold" />
         </span>
       </div>

@@ -76,7 +76,7 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
 
   return (
     <main className="mx-auto max-w-6xl md:grid md:grid-cols-[0.8fr_1.2fr] md:items-start md:gap-12 md:px-8 md:pt-8">
-      <aside className="relative hidden overflow-hidden rounded-[32px] md:sticky md:top-28 md:block md:aspect-[4/5]">
+      <aside className="photo relative hidden overflow-hidden rounded-[32px] md:sticky md:top-28 md:block md:aspect-[4/5]">
         <img src="/images/product-pour.webp" alt="" className="settle size-full object-cover" />
       </aside>
 
@@ -117,8 +117,8 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
                   <label
                     key={key}
                     className={cn(
-                      'press relative flex min-h-16 cursor-pointer items-center gap-3 rounded-[18px] border-[1.5px] px-3.5 py-2.5 transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-cocoa',
-                      checked ? 'border-cocoa bg-card' : 'border-nude bg-card/60 hover:border-cocoa/30',
+                      'press relative flex min-h-16 cursor-pointer items-center gap-3 rounded-[18px] border-[1.5px] px-3.5 py-2.5 transition-[background-color,border-color,box-shadow] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-cocoa',
+                      checked ? 'border-cocoa bg-card shadow-(--shadow-raised)' : 'border-transparent bg-sand shadow-(--shadow-inset) hover:bg-nude/60',
                     )}
                   >
                     <input
@@ -142,7 +142,7 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
             </div>
           </fieldset>
 
-          <div className="rise flex items-center gap-4 rounded-3xl bg-sand px-4 py-3.5" style={{ '--i': 3 } as React.CSSProperties}>
+          <div className="tile rise flex items-center gap-4 rounded-3xl px-4 py-3.5" style={{ '--i': 3 } as React.CSSProperties}>
             {latestScore !== undefined && <ScoreRing key={values.targetConcern} value={latestScore} size={56} />}
             <p className="text-[15px] text-cocoa-soft">
               The verdict will follow your <strong className="font-semibold text-cocoa">{concernLabel.toLowerCase()}</strong> score

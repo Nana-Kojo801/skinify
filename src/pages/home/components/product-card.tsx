@@ -24,10 +24,10 @@ export function ProductCard({ id, image, name, meta, verdict, stat, trend, index
   return (
     <Link
       to={`/products/${id}`}
-      className="card press group flex items-center gap-3.5 rounded-[26px] py-3 pr-3.5 pl-3 transition-shadow hover:shadow-(--shadow-float) md:flex-col md:items-stretch md:gap-0 md:p-0"
+      className="card lift group flex items-center gap-3.5 rounded-[26px] py-3 pr-3.5 pl-3 md:flex-col md:items-stretch md:gap-0 md:p-0"
       style={{ '--i': index } as React.CSSProperties}
     >
-      <div className="h-[92px] w-[78px] shrink-0 overflow-hidden rounded-[18px] md:h-48 md:w-auto md:rounded-b-none md:rounded-t-[26px]">
+      <div className="h-[92px] w-[78px] shrink-0 overflow-hidden rounded-[18px] shadow-[0_8px_16px_-8px_rgb(46_36_32/0.45)] md:h-48 md:w-auto md:rounded-b-none md:rounded-t-[26px] md:shadow-none">
         <img src={image} alt="" loading="lazy" className="size-full object-cover transition-transform duration-700 ease-(--ease-out-soft) group-hover:scale-105" />
       </div>
       <div className="flex min-w-0 flex-1 items-center gap-3 md:p-5">

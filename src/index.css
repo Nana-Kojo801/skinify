@@ -41,8 +41,17 @@
     --radius-tile: 22px;
     --radius-field: 18px;
 
-    --shadow-card: 0 1px 2px rgb(46 36 32 / 0.04), 0 14px 34px -16px rgb(46 36 32 / 0.18);
-    --shadow-float: 0 18px 40px -14px rgb(46 36 32 / 0.3);
+    /*
+     * Depth: three elevation levels, all lit from above with warm (cocoa-tinted) shadows.
+     * Recessed tiles sit below the page, cards rest on it, floating chrome hovers over it.
+     */
+    --shadow-inset: inset 0 1px 2px rgb(46 36 32 / 0.07), inset 0 0 0 1px rgb(46 36 32 / 0.035);
+    --shadow-card: 0 0 0 1px rgb(46 36 32 / 0.045), 0 1px 2px rgb(46 36 32 / 0.06), 0 6px 14px -6px rgb(46 36 32 / 0.08), 0 24px 44px -22px rgb(46 36 32 / 0.26);
+    --shadow-raised: 0 0 0 1px rgb(46 36 32 / 0.05), 0 2px 4px rgb(46 36 32 / 0.06), 0 12px 24px -8px rgb(46 36 32 / 0.14), 0 36px 60px -26px rgb(46 36 32 / 0.34);
+    --shadow-float: 0 0 0 1px rgb(46 36 32 / 0.05), 0 8px 18px -6px rgb(46 36 32 / 0.14), 0 30px 54px -18px rgb(46 36 32 / 0.38);
+    --shadow-photo: 0 2px 4px rgb(46 36 32 / 0.08), 0 26px 46px -22px rgb(46 36 32 / 0.5);
+    --shadow-button: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 1px 2px rgb(46 36 32 / 0.3), 0 10px 20px -10px rgb(46 36 32 / 0.6);
+    --shadow-button-soft: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 1px 2px rgb(46 36 32 / 0.1), 0 4px 10px -6px rgb(46 36 32 / 0.18);
 
     --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
     --ease-pop: cubic-bezier(0.3, 1.6, 0.5, 1);
@@ -70,11 +79,20 @@
 }
 
 @layer components {
+    /* Raised white surface. */
     .card {
         @apply rounded-(--radius-card) bg-card shadow-(--shadow-card);
     }
+    /* Recessed sand surface: sits below the page, so cards on the same screen read as raised. */
+    .tile {
+        @apply rounded-(--radius-tile) bg-sand shadow-(--shadow-inset);
+    }
+    /* Photos rest on the page with a soft grounding shadow. */
+    .photo {
+        @apply shadow-(--shadow-photo);
+    }
     .field {
-        @apply h-14 w-full rounded-(--radius-field) border-[1.5px] border-nude bg-card px-[18px] text-base text-cocoa outline-none transition-colors placeholder:text-[#a8988f] focus:border-cocoa;
+        @apply h-14 w-full rounded-(--radius-field) border-[1.5px] border-nude bg-card px-[18px] text-base text-cocoa shadow-[inset_0_1px_2px_rgb(46_36_32/0.06)] outline-none transition-colors placeholder:text-[#a8988f] focus:border-cocoa;
     }
     .skeleton {
         @apply rounded-(--radius-card) bg-sand;
@@ -133,6 +151,32 @@
         animation: fade 0.6s ease backwards;
         animation-delay: var(--d, 0s);
     }
+    /* Hero photos drift slower than the page as you scroll (scroll-driven, runs off the main thread). */
+    @supports (animation-timeline: scroll()) {
+        .parallax {
+            animation: parallax linear both;
+            animation-timeline: scroll(root);
+            animation-range: 0 420px;
+        }
+        /* Desktop: the hero photo is sticky beside the content, so it stays put. */
+        @media (width >= 48rem) {
+            .parallax {
+                animation: none;
+            }
+        }
+    }
+    /* Cards lift towards you on hover (desktop) and settle back on press. */
+    .lift {
+        transition:
+            transform 0.35s var(--ease-out-soft),
+            box-shadow 0.35s var(--ease-out-soft);
+    }
+    @media (hover: hover) {
+        .lift:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-raised);
+        }
+    }
     .press {
         transition: transform 0.16s var(--ease-out-soft);
     }
@@ -179,6 +223,11 @@
         transform: scale(0.3);
     }
 }
+@keyframes parallax {
+    to {
+        transform: translateY(70px);
+    }
+}
 @keyframes burst {
     from {
         opacity: 1;
@@ -218,5 +267,8 @@
         animation-iteration-count: 1 !important;
         transition-duration: 1ms !important;
         transition-delay: 0ms !important;
+    }
+    .parallax {
+        animation: none !important;
     }
 }

@@ -7,6 +7,7 @@ import { Reveal } from '@/components/reveal'
 import { buttonVariants } from '@/components/ui/button'
 import { formatDate, formatSigned } from '@/lib/format'
 import { useInView } from '@/lib/motion'
+import { VERDICT_STYLE } from '@/lib/verdict-display'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS } from '@shared/concerns'
 import { api } from '../../../convex/_generated/api'
@@ -52,9 +53,9 @@ function Dumbbell({ before, after, color, thick = false }: { before: number; aft
 
 const tone = (diff: number | null) => (diff === null || Number(diff.toFixed(1)) === 0 ? 'flat' : diff > 0 ? 'up' : 'down')
 const TONE = {
-  up: { panel: 'bg-working-bg text-[#234f37]', line: 'var(--color-working-ink)' },
-  down: { panel: 'bg-irritation-bg text-irritation-ink', line: 'var(--color-irritation-ink)' },
-  flat: { panel: 'bg-sand text-cocoa', line: 'var(--color-cocoa-soft)' },
+  up: { panel: `bg-working-bg text-[#234f37] ${VERDICT_STYLE.WORKING.depth}`, line: 'var(--color-working-ink)' },
+  down: { panel: `bg-irritation-bg text-irritation-ink ${VERDICT_STYLE.POSSIBLE_IRRITATION.depth}`, line: 'var(--color-irritation-ink)' },
+  flat: { panel: 'tile text-cocoa', line: 'var(--color-cocoa-soft)' },
 }
 
 // Before = average of the scans before the start date. After = average of the latest 2 scans from the start date on.

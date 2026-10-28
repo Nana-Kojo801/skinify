@@ -69,7 +69,7 @@ export function LoginPage() {
 
   return (
     <main className="min-h-dvh md:grid md:grid-cols-[1.05fr_1fr]">
-      <div className="relative h-[340px] overflow-hidden rounded-b-[36px] md:sticky md:top-4 md:m-4 md:h-[calc(100dvh-2rem)] md:rounded-[36px]">
+      <div className="photo relative h-[340px] overflow-hidden rounded-b-[36px] md:sticky md:top-4 md:m-4 md:h-[calc(100dvh-2rem)] md:rounded-[36px]">
         <img src="/images/scan-portrait.webp" alt="" className="settle size-full object-cover object-[50%_40%]" />
         <div className="absolute inset-x-0 top-0 h-32 bg-linear-to-b from-cocoa/45 to-transparent" />
         <header className="absolute inset-x-0 top-0 flex h-16 items-center justify-between px-[18px] text-white md:h-20 md:px-7">
@@ -98,7 +98,7 @@ export function LoginPage() {
         </p>
 
         <form onSubmit={onSubmit} className="rise mt-5 flex flex-col gap-3 md:mt-8" style={{ '--i': 2 } as React.CSSProperties}>
-          <div className="relative grid grid-cols-2 rounded-full bg-sand p-1" role="group" aria-label="Sign in or create an account">
+          <div className="relative grid grid-cols-2 rounded-full bg-sand p-1 shadow-(--shadow-inset)" role="group" aria-label="Sign in or create an account">
             <span
               aria-hidden
               className={cn(
