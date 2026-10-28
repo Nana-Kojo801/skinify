@@ -22,3 +22,10 @@ createRoot(document.getElementById('root')!).render(
     )}
   </StrictMode>,
 )
+
+// Installable PWA: register the service worker in production builds only (it would get in the way of dev HMR).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js')
+  })
+}
