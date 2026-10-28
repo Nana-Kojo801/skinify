@@ -1,0 +1,9 @@
+# Netlify build: deploys the Convex backend to production, then builds the frontend against it.
+# Needs the CONVEX_DEPLOY_KEY environment variable (a production deploy key from the Convex dashboard).
+# SPA routing and the service-worker cache rules are in public/_redirects and public/_headers.
+[build]
+  command = "npx convex deploy --cmd 'npm run build'"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

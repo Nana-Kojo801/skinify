@@ -70,11 +70,18 @@ npm run reset-demo -- --prod  # same, on the production deployment
 
 Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`, `npm run lint`, `npm run build`.
 
-### Deploying
+### Deploying (Convex + Netlify)
 
-1. `npx convex deploy` creates/updates the production deployment. Set the variables above on it (`npx convex env set ... --prod`).
-2. Host the frontend (Vercel or Netlify). The repo already has the routing and cache config for both (`vercel.json`, `public/_redirects`, `public/_headers`: every route serves the single-page app, and the service worker is never cached). Build command `npx convex deploy --cmd 'npm run build'`, output directory `dist`, and set `CONVEX_DEPLOY_KEY` (production deploy key from the Convex dashboard) in the host's environment variables. Set `SITE_URL` on the production Convex deployment to the hosted URL.
-3. `npm run reset-demo -- --prod` once, and again before judging if the demo data was touched.
+1. **Convex deploy key.** In the Convex dashboard, open the `receipts` project, switch to **Production**, then Settings, Deploy keys, and generate a production deploy key.
+2. **Netlify.** Add a new site from this GitHub repo. The build settings come from [`netlify.toml`](netlify.toml) (`npx convex deploy --cmd 'npm run build'`, publish `dist`; routing and cache rules are in `public/_redirects` and `public/_headers`). Add one environment variable: `CONVEX_DEPLOY_KEY` = the production deploy key. The build deploys the backend to Convex production and builds the frontend against it.
+3. **Production environment variables** (run on your machine, logged in to Convex; `--prod` targets production):
+   ```bash
+   npx convex env set YOUCAM_API_KEY <key> --prod
+   npx convex env set OPENROUTER_API_KEY <key> --prod
+   npx @convex-dev/auth --prod --web-server-url https://<your-site>.netlify.app   # login keys + SITE_URL
+   ```
+   Until the login keys exist, sign-in does not work.
+4. **Demo account:** `npm run reset-demo -- --prod` (and again before judging if the demo data was touched).
 
 ## How verdicts are calculated
 
