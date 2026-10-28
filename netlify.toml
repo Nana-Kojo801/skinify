@@ -1,0 +1,10 @@
+# Netlify build: builds the frontend only. The backend is Nana's Convex dev deployment (no production
+# deployment, on purpose: this is a hackathon project). Set VITE_CONVEX_URL in Netlify's environment
+# variables to that deployment's URL (see README, "Deploying").
+# SPA routing and the service-worker cache rules are in public/_redirects and public/_headers.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
