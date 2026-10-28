@@ -38,7 +38,7 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 
 | Area | Owner |
 |---|---|
-| `convex/**` (schema, functions, actions, `convex/lib/**` incl. the verdict engine), seed/reset scripts, README, deployment | **Nana** |
+| `convex/**` (schema, functions, actions), `shared/**` (the verdict engine and other code shared by server and client), `tests/**`, `scripts/**`, seed/reset scripts, README, deployment | **Nana** |
 | `src/pages/**`, `src/components/**`, PWA setup, `convex/auth.ts` + `convex/account.ts` (auth and account deletion) | **Dave** |
 
 - `convex/schema.ts` is **Nana's**. If Dave needs a table or field changed, comment on the schema issue (#4) instead of editing it.
@@ -52,7 +52,8 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 - OpenRouter (free model) for explanation text
 - **kebab-case file names**, per-page directories with nested `components/` (`src/pages/<page>/<page>-page.tsx`), **named exports only** (no default exports)
 - Mobile-first layout
-- Verdict thresholds live in **one config file** (`convex/lib/verdict/verdict-config.ts`); never hard-code thresholds elsewhere
+- Verdict thresholds live in **one config file** (`shared/verdict/verdict-config.ts`); never hard-code thresholds elsewhere
+- **Exception to kebab-case: files inside `convex/`.** Convex rejects hyphens in module paths, so name them `scans.ts`, `verdictActions.ts` or `verdict_actions.ts`. Put anything that needs a kebab-case name in `shared/` (Convex functions can import from it).
 
 ## 5. Hard rules
 

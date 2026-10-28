@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { computeVerdict } from '../convex/lib/verdict/compute-verdict'
-import { VERDICT_CONFIG } from '../convex/lib/verdict/verdict-config'
-import type { ScanInput } from '../convex/lib/verdict/verdict-types'
+import { computeVerdict } from '../shared/verdict/compute-verdict'
+import { VERDICT_CONFIG } from '../shared/verdict/verdict-config'
+import type { ScanInput } from '../shared/verdict/verdict-types'
 
 const DAY = 86_400_000
 const T0 = Date.UTC(2026, 8, 1) // scans are placed relative to this
