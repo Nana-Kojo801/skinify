@@ -32,7 +32,7 @@ When a task is done: check off the checklist in the issue, comment with what was
 
 ## 2. Project in one paragraph
 
-Mobile-first PWA where a user logs skincare products, scans their face weekly (2 photos per scan) with YouCam's Skin Analysis API, and gets an honest verdict on whether each product is working (TOO_EARLY, CANT_TELL, POSSIBLE_IRRITATION, WORKING, NO_VISIBLE_CHANGE). **Functionality first**: simple clean UI, no visual polish, don't ask for UI mock approval.
+Mobile-first PWA where a user logs skincare products, scans their face weekly (2 photos per scan) with YouCam's Skin Analysis API, and gets an honest verdict on whether each product is working (TOO_EARLY, CANT_TELL, POSSIBLE_IRRITATION, WORKING, NO_VISIBLE_CHANGE). **Functionality came first** and is done. The visual layer is now being redesigned in **issue #34**. For that issue the normal rule is reversed: **make the two design Artifacts first (mobile screens and desktop screens), share the links, and wait for Nana's explicit approval before writing any UI code.** The issue lists the process, what must keep working, and testing rules. For any other work, keep UI changes small.
 
 ## 3. Who owns what (to avoid merge conflicts)
 
@@ -41,6 +41,7 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 | `convex/**` (schema, functions, actions), `shared/**` (the verdict engine and other code shared by server and client), `tests/**`, `scripts/**`, seed/reset scripts, README, deployment | **Nana** |
 | `src/pages/**`, `src/components/**`, PWA setup, `convex/auth.ts` + `convex/account.ts` (auth and account deletion) | **Dave** |
 
+- While issue #34 (UI redesign) is in progress, Nana's session owns the visual layer of `src/` (styles, components, pages). Dave: comment on #34 instead of making large UI edits.
 - `convex/schema.ts` is **Nana's**. If Dave needs a table or field changed, comment on the schema issue (#4) instead of editing it.
 - Shared contract files: `docs/api-contract.md` (Convex function signatures, written by Nana) and `docs/youcam-api-notes.md` (written by Nana after the API spike). Read them before building against the backend. If a function doesn't exist yet, build against a mock and say so in the issue.
 - Tiny cross-area fixes (a typo, an import) are fine; mention them in the commit message.
