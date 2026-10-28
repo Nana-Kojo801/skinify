@@ -72,7 +72,7 @@ Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`
 
 ### Deploying (Convex + Netlify)
 
-1. **Convex deploy key.** In the Convex dashboard, open the `receipts` project, switch to **Production**, then Settings, Deploy keys, and generate a production deploy key.
+1. **Convex deploy key.** In the Convex dashboard, open the `receipts` project, switch to **Production**, create the production deployment if it does not exist yet (it uses one slot of the team's deployment quota), then Settings, Deploy keys, and generate a production deploy key.
 2. **Netlify.** Add a new site from this GitHub repo. The build settings come from [`netlify.toml`](netlify.toml) (`npx convex deploy --cmd 'npm run build'`, publish `dist`; routing and cache rules are in `public/_redirects` and `public/_headers`). Add one environment variable: `CONVEX_DEPLOY_KEY` = the production deploy key. The build deploys the backend to Convex production and builds the frontend against it.
 3. **Production environment variables** (run on your machine, logged in to Convex; `--prod` targets production):
    ```bash
