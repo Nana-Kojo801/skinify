@@ -22,8 +22,14 @@ interface Point {
 function scan({ day: d, acne, redness, diff = 1, poor = false }: Point): ScanInput {
   const scores: Record<string, number> = {}
   const noise: Record<string, number> = {}
-  if (acne !== undefined) (scores.acne = acne), (noise.acne = diff)
-  if (redness !== undefined) (scores.redness = redness), (noise.redness = diff)
+  if (acne !== undefined) {
+    scores.acne = acne
+    noise.acne = diff
+  }
+  if (redness !== undefined) {
+    scores.redness = redness
+    noise.redness = diff
+  }
   return { createdAt: day(d), scores, noise, qualityFlag: poor }
 }
 
