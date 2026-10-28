@@ -1,4 +1,4 @@
-import { ConvexProvider } from 'convex/react'
+import { ConvexAuthProvider } from '@convex-dev/auth/react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -8,10 +8,9 @@ import { convex } from './lib/convex-client'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {convex ? (
-      // The auth issue swaps this for ConvexAuthProvider.
-      <ConvexProvider client={convex}>
+      <ConvexAuthProvider client={convex}>
         <App />
-      </ConvexProvider>
+      </ConvexAuthProvider>
     ) : (
       <main className="mx-auto max-w-md p-4">
         <h1 className="text-xl font-semibold">Convex is not configured</h1>
@@ -23,3 +22,10 @@ createRoot(document.getElementById('root')!).render(
     )}
   </StrictMode>,
 )
+
+// Installable PWA: register the service worker in production builds only (it would get in the way of dev HMR).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js')
+  })
+}
