@@ -113,6 +113,24 @@ Balance went 1,000, then 984, then 968 for the two spike runs: **16 units per ph
 - Whether a `file_id` can be reused for a second task.
 - Whether the API honours a photo's EXIF rotation tag. The selfie was stored landscape but displays portrait, and it was accepted, so either works. The Scan UI should still draw photos through a canvas, which bakes the rotation in.
 
+### Image resolution changes the scores (live check, Oct 28)
+The same selfie sent at full size (3408x2556) and downscaled to 900x1200 gave different scores for the 8 proposed concerns:
+
+| Concern | Full size | 900x1200 | Difference |
+|---|---|---|---|
+| pore | 39.4 | 44.2 | +4.8 |
+| acne | 68.6 | 67.2 | -1.4 |
+| redness | 100 | 98.9 | -1.1 |
+| oiliness | 45.4 | 45.9 | +0.5 |
+| moisture | 35.2 | 34.7 | -0.5 |
+| texture | 54.8 | 54.6 | -0.3 |
+| radiance | 57.9 | 57.7 | -0.1 |
+| dark_circle_v2 | 75.2 | 75.1 | -0.1 |
+
+A third size (540x720, JPEG quality 55) gave pore 43.0, acne 69.9, moisture 33.0, so both size and compression matter. (The downscaled files were also re-oriented to portrait, so rotation may contribute.) A "real" change from a skincare product is a few points, so **every photo must be resized the same way**, or scans taken at different sizes would show fake changes. The Scan UI uses one fixed recipe: canvas resize to a 1200 px long side, JPEG quality 0.85 (see `docs/api-contract.md`). Also note redness is no longer exactly 100 at this size (98.9), so the "ceiling" concern above is milder than it looked.
+
+The scan backend client was checked live with this recipe: it took 4.3 s for one photo of 211 KB from Node, and 2.9 s for a 27 KB photo running inside the Convex runtime on the dev deployment.
+
 ### Proposed concern list to request (Nana to confirm)
 Request only what we show. Suggested 8: `acne`, `redness`, `pore`, `texture`, `oiliness`, `moisture`, `radiance`, `dark_circle_v2`. That is the 5 to 8 tier: **12 units per photo, 24 per scan, about 41 scans from 1,000 units.** Dropping to 4 concerns (e.g. acne, redness, texture, moisture) is 9 units per photo, 18 per scan, about 55 scans.
 

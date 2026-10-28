@@ -1,11 +1,14 @@
 import type { Direction } from './verdict-config'
 
-export type Verdict =
-  | 'TOO_EARLY'
-  | 'CANT_TELL'
-  | 'POSSIBLE_IRRITATION'
-  | 'WORKING'
-  | 'NO_VISIBLE_CHANGE'
+export const VERDICTS = [
+  'TOO_EARLY',
+  'CANT_TELL',
+  'POSSIBLE_IRRITATION',
+  'WORKING',
+  'NO_VISIBLE_CHANGE',
+] as const
+
+export type Verdict = (typeof VERDICTS)[number]
 
 export type CantTellReason = 'FEW_BASELINE_SCANS' | 'NOISY_SCANS' | 'POOR_QUALITY'
 
