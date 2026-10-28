@@ -16,6 +16,7 @@ export async function recomputeProductVerdict(
   ctx: MutationCtx,
   product: Doc<'products'>,
   scans?: Doc<'scans'>[],
+  options: { scheduleExplanation?: boolean } = {},
 ): Promise<Id<'verdicts'> | null> {
   const now = Date.now()
   const userScans =
@@ -54,7 +55,7 @@ export async function recomputeProductVerdict(
     summarySource: 'template',
   })
   // No key, no point scheduling: the templated summary stays.
-  if (process.env.OPENROUTER_API_KEY) {
+  if (options.scheduleExplanation !== false && process.env.OPENROUTER_API_KEY) {
     await ctx.scheduler.runAfter(0, internal.explanations.generate, { verdictId })
   }
   return verdictId

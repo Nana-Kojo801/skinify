@@ -85,8 +85,10 @@ Verdict row: `{ productId, userId, createdAt, verdict, summary, summarySource, r
 
 **When verdicts appear:** a product gets one as soon as it is created (usually `TOO_EARLY`), after every scan, when the product's start date or target concern changes, and once a day. Nothing to call from the UI. A product with no row yet (the first moment after creating it) means `verdict: null`: show "Add scans to get a verdict".
 
+## Demo account
+`DEMO_EMAIL` / `DEMO_PASSWORD` (`shared/demo-account.ts`) sign into a seeded account with 3 products (WORKING, NO_VISIBLE_CHANGE, CANT_TELL) and 7 weekly scans. It is **read-only**: `products.create/update/remove` throw `DEMO_ACCOUNT` and `scans.submit` throws `DEMO_ACCOUNT`, so hide those buttons when `scans.usage` says `isDemoAccount`. **Account deletion (#12) must refuse the demo user too**: use `isDemoUser(ctx, userId)` from `convex/helpers.ts` and throw the same `DEMO_ACCOUNT` error. The account and its data are created and restored by `npm run reset-demo` (Nana).
+
 ## Not yet available
-- Demo account and its seeded data (#9). `DEMO_EMAIL` and `DEMO_PASSWORD` are already in `shared/demo-account.ts` for the "Try the demo" button.
 - Account deletion and Convex Auth setup are yours (#12, #3). Every table has a `userId` index (`products.by_user`, `scans.by_user_and_createdAt`, `verdicts.by_user`) so wiping a user is a few queries. `usageCounters` is app-wide and must NOT be deleted.
 
 ## Mocks while the backend is incomplete

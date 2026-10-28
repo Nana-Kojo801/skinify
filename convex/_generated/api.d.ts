@@ -13,6 +13,7 @@ import type * as explanations from "../explanations.js";
 import type * as helpers from "../helpers.js";
 import type * as products from "../products.js";
 import type * as scans from "../scans.js";
+import type * as seed from "../seed.js";
 import type * as validators from "../validators.js";
 import type * as verdictCompute from "../verdictCompute.js";
 import type * as verdicts from "../verdicts.js";
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   helpers: typeof helpers;
   products: typeof products;
   scans: typeof scans;
+  seed: typeof seed;
   validators: typeof validators;
   verdictCompute: typeof verdictCompute;
   verdicts: typeof verdicts;
