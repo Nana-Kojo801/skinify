@@ -1,7 +1,7 @@
 import { v } from 'convex/values'
 import { checkExplanation } from '../shared/explanation/explanation-check'
 import { buildExplanationMessages } from '../shared/explanation/explanation-prompt'
-import { DEFAULT_MODEL, requestExplanation } from '../shared/explanation/openrouter-client'
+import { parseModelList, requestExplanation } from '../shared/explanation/openrouter-client'
 import { nextStepFor } from '../shared/verdict/verdict-templates'
 import { internal } from './_generated/api'
 import { internalAction, internalMutation, internalQuery } from './_generated/server'
@@ -33,13 +33,11 @@ export const generate = internalAction({
 
     const raw = await requestExplanation({
       apiKey,
-      model: process.env.OPENROUTER_MODEL || DEFAULT_MODEL,
+      models: parseModelList(process.env.OPENROUTER_MODEL),
       messages: buildExplanationMessages(row),
+      onFailure: (reason) => console.warn('Explanation: OpenRouter failed:', reason),
     })
-    if (raw === null) {
-      console.warn('Explanation: OpenRouter gave no usable answer, keeping the template')
-      return 'template'
-    }
+    if (raw === null) return 'template'
     const checked = checkExplanation(raw, row, nextStepFor(row))
     if (!checked.ok) {
       console.warn('Explanation rejected:', checked.reason)

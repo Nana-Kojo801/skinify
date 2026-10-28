@@ -154,21 +154,25 @@ describe('explanations (OpenRouter)', () => {
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
     expect(url).toBe('https://openrouter.ai/api/v1/chat/completions')
     const body = JSON.parse(init.body as string)
-    expect(body.model).toBe('openrouter/free')
+    expect(body.model).toBe('poolside/laguna-s-2.1:free')
     const sent = JSON.stringify(body)
     expect(sent).not.toContain('user@example.com')
     expect(sent).not.toContain('or-key-xyz')
     expect(body.messages[1].content).toContain('"verdict":"WORKING"')
   })
 
-  it('uses OPENROUTER_MODEL when set', async () => {
+  it('uses OPENROUTER_MODEL (comma-separated, tried in order) when set', async () => {
     const { t, verdict } = await withWorkingVerdict()
     vi.stubEnv('OPENROUTER_API_KEY', 'k')
-    vi.stubEnv('OPENROUTER_MODEL', 'google/gemma-4-31b-it:free')
-    const fetchMock = modelReplies(GOOD)
+    vi.stubEnv('OPENROUTER_MODEL', 'broken:free, google/gemma-4-31b-it:free')
+    const fetchMock = vi.fn(async (_url: unknown, init?: RequestInit) =>
+      JSON.parse(init!.body as string).model === 'broken:free'
+        ? new Response('rate limited', { status: 429 })
+        : new Response(JSON.stringify({ choices: [{ message: { content: GOOD } }] }), { status: 200 }),
+    )
     vi.stubGlobal('fetch', fetchMock)
-    await t.action(internal.explanations.generate, { verdictId: verdict._id })
-    expect(JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string).model).toBe('google/gemma-4-31b-it:free')
+    expect(await t.action(internal.explanations.generate, { verdictId: verdict._id })).toBe('model')
+    expect(fetchMock.mock.calls.map((c) => JSON.parse((c[1] as RequestInit).body as string).model)).toEqual(['broken:free', 'google/gemma-4-31b-it:free'])
   })
 
   it('keeps the template when the model invents a number', async () => {

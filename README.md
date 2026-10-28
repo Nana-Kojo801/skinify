@@ -58,7 +58,7 @@ Then set the server-side environment variables on your Convex deployment (they a
 |---|---|---|
 | `YOUCAM_API_KEY` | Real scans. Without it scanning shows an error; everything else works. | `npx convex env set YOUCAM_API_KEY <key>` |
 | `OPENROUTER_API_KEY` | AI-written explanations. Without it a built-in templated explanation is used. | `npx convex env set OPENROUTER_API_KEY <key>` |
-| `OPENROUTER_MODEL` | Optional. Default `openrouter/free` (any available free model). | `npx convex env set OPENROUTER_MODEL <id>` |
+| `OPENROUTER_MODEL` | Optional. One or more OpenRouter model ids, comma-separated, tried in order. Default: a few free chat models (see `shared/explanation/openrouter-client.ts`). | `npx convex env set OPENROUTER_MODEL <ids>` |
 | `JWT_PRIVATE_KEY`, `JWKS`, `SITE_URL` | Login (Convex Auth). | Run `npx @convex-dev/auth`, or follow the manual setup in the [Convex Auth docs](https://labs.convex.dev/auth/setup/manual). `SITE_URL` is your frontend URL, e.g. `http://localhost:5173`. |
 
 Create the demo account on your deployment:
