@@ -1,39 +1,112 @@
 # Receipts
 
-"Is this product actually working?" A mobile-first web app where you log skincare products, scan your face weekly with the YouCam Skin Analysis API, and get an honest verdict on whether each product is working.
+**"Is this product actually working?"** A mobile-first web app (PWA) where you log your skincare products, scan your face once a week, and get an honest verdict on whether each product is doing anything, with the numbers to back it up.
 
-> README skeleton. The final content is written in the README/deployment issue.
+Built for the YouCam API hackathon.
 
 ## What it does
 
-TODO
+1. **Add a product** and pick the skin concern it should help with (acne, redness, pores, texture, oiliness, moisture, radiance or dark circles) and the day you started it.
+2. **Scan weekly.** Each scan is two photos taken back to back. The photos are analysed by YouCam and **thrown away**; only the scores are stored.
+3. **Get a verdict** for each product, with a short plain-language explanation and one next step:
 
-## YouCam API used
+| Verdict | Meaning |
+|---|---|
+| `TOO_EARLY` | Under 4 weeks or under 3 scans since you started. Keep going. |
+| `CANT_TELL` | Not enough clean data (too few "before" scans, jumpy photos, or a poor-quality latest scan). Says what rescan would fix it. |
+| `POSSIBLE_IRRITATION` | Redness (or the targeted concern) got clearly worse than before you started. |
+| `WORKING` | The targeted concern improved by more than the normal scan-to-scan variation. |
+| `NO_VISIBLE_CHANGE` | The change is within normal variation. |
 
-TODO
+The honest part: two photos of the same face never score exactly the same (light, angle, distance), so every scan measures its own noise, and a change only counts if it is bigger than that noise.
 
-## Setup
+## Which YouCam API it uses
+
+The **[YouCam AI Skin Analysis API](https://yce.perfectcorp.com/ai-api)** (standard definition, v2.0 endpoints). For every photo the server uploads the image, creates a `skin-analysis` task, polls it, and reads the `raw_score` (1 to 100, higher is healthier) for 8 concerns: `acne, redness, pore, texture, oiliness, moisture, radiance, dark_circle_v2`.
+
+- All YouCam calls happen **server-side** in Convex actions. The API key never reaches the browser.
+- **Privacy:** photos are sent to YouCam for analysis (YouCam states uploads are deleted after 24 hours). Receipts itself never stores, logs or caches a photo; it keeps only the numbers.
+- **Free-tier budget:** the API allows 1,000 free units in total, and one scan costs 24. So the app limits each user to **3 scans per rolling 24 hours** and stops live scanning for everyone after 900 units. The demo account runs on seeded data and never spends units.
+- What we learned about the API (noise, score ranges, errors, costs) is in [`docs/youcam-api-notes.md`](docs/youcam-api-notes.md).
+
+## Try it
+
+**Demo account** (read-only, pre-filled with 6 weeks of sample scans and 3 products showing `WORKING`, `NO_VISIBLE_CHANGE` and `CANT_TELL`):
+
+| | |
+|---|---|
+| Email | `demo@receipts.example` |
+| Password | `receipts-demo-2026` |
+
+On the login screen, **"Try the demo"** signs in with one tap. Or sign up with any email and password (no verification) to scan for real.
+
+## Run it yourself
+
+Needs Node 22+.
 
 ```bash
+git clone https://github.com/Nana-Kojo801/receipts.git
+cd receipts
 npm install
-npx convex dev   # creates a dev deployment, writes VITE_CONVEX_URL to .env.local
-npm run dev
+npx convex dev        # creates your own Convex dev deployment, writes VITE_CONVEX_URL to .env.local
+npm run dev           # in a second terminal: http://localhost:5173
 ```
 
-Commands: `npm run dev`, `npm run build`, `npm run lint`, `npm run typecheck`, `npm test`.
+Then set the server-side environment variables on your Convex deployment (they are **not** read from `.env.local`):
 
-## Environment variables
+| Variable | Needed for | How |
+|---|---|---|
+| `YOUCAM_API_KEY` | Real scans. Without it scanning shows an error; everything else works. | `npx convex env set YOUCAM_API_KEY <key>` |
+| `OPENROUTER_API_KEY` | AI-written explanations. Without it a built-in templated explanation is used. | `npx convex env set OPENROUTER_API_KEY <key>` |
+| `OPENROUTER_MODEL` | Optional. Default `openrouter/free` (any available free model). | `npx convex env set OPENROUTER_MODEL <id>` |
+| `JWT_PRIVATE_KEY`, `JWKS`, `SITE_URL` | Login (Convex Auth). | Run `npx @convex-dev/auth`, or follow the manual setup in the [Convex Auth docs](https://labs.convex.dev/auth/setup/manual). `SITE_URL` is your frontend URL, e.g. `http://localhost:5173`. |
 
-See `.env.example`.
+Create the demo account on your deployment:
 
-## Demo account
+```bash
+npm run reset-demo            # creates the demo login if missing and (re)seeds it; safe to repeat
+npm run reset-demo -- --prod  # same, on the production deployment
+```
 
-TODO (credentials)
+Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`, `npm run lint`, `npm run build`.
+
+### Deploying
+
+1. `npx convex deploy` creates/updates the production deployment. Set the variables above on it (`npx convex env set ... --prod`).
+2. Host the frontend (Vercel, Netlify or similar) with build command `npx convex deploy --cmd 'npm run build'`, output directory `dist`, SPA fallback to `index.html`, and `CONVEX_DEPLOY_KEY` set from the Convex dashboard. Set `SITE_URL` on the production deployment to the hosted URL.
+3. `npm run reset-demo -- --prod` once, and again before judging if the demo data was touched.
 
 ## How verdicts are calculated
 
-TODO
+The engine is a pure TypeScript function in [`shared/verdict/compute-verdict.ts`](shared/verdict/compute-verdict.ts), and every threshold lives in one file, [`shared/verdict/verdict-config.ts`](shared/verdict/verdict-config.ts).
+
+- **Baseline** = scans up to the end of the day you started the product. **After** = later scans.
+- **Noise** = the larger of (a) the standard deviation of the baseline scores and (b) the average difference between the two photos of each scan (at least 1 point).
+- **Change** = the mean of the last 2 scans after the start minus the mean of the baseline. Whether up or down is "better" is a config map (for YouCam's `raw_score`, higher is healthier for every concern).
+- Checked in this order, the first match wins:
+  1. `TOO_EARLY`: fewer than 28 days since the start, or fewer than 3 scans after it.
+  2. `CANT_TELL`: fewer than 2 baseline scans, or noise above 15% of the score range, or the latest scans flagged as poor quality.
+  3. `POSSIBLE_IRRITATION`: redness worse than its baseline by more than 2x its noise at **any** scan after the start (or the targeted concern clearly worse).
+  4. `WORKING`: improvement on the targeted concern larger than 2x the noise.
+  5. `NO_VISIBLE_CHANGE`: otherwise (the change is within 2x the noise).
+- **Explanation text:** a template per verdict is stored immediately. An AI model (OpenRouter free model) then rewrites it, but it is only ever given the verdict's numbers (no photos, no personal data) and its answer is discarded unless it passes checks (no invented numbers, no diagnoses, exactly one next step). Any failure keeps the template.
+- Verdicts are recomputed after every scan, whenever a product changes, and once a day. None of that calls YouCam.
+
+This is an estimate from photos, **not medical advice**.
+
+## Project structure
+
+```
+src/            React app: pages/<page>/<page>-page.tsx with nested components/, shared UI in components/
+convex/         Backend: schema, products / scans / verdicts functions, scan action, explanations, seed, crons
+shared/         Code used by both: verdict engine, concerns, scan limits, YouCam client, OpenRouter client, demo data
+tests/          Vitest tests (engine, clients, and the Convex functions with a mocked YouCam / OpenRouter)
+scripts/        YouCam API spike and a live check script (need an API key)
+docs/           SPEC.md, youcam-api-notes.md, api-contract.md
+```
+
+Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions, Convex Auth with email + password), recharts.
 
 ## License
 
-MIT, see `LICENSE`.
+MIT, see [`LICENSE`](LICENSE).
