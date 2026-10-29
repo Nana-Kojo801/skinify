@@ -1,6 +1,6 @@
-import { useAuthActions } from '@convex-dev/auth/react'
+import { useClerk } from '@clerk/react'
 import { LockSimple, SignOut, Sparkle, Trash } from '@phosphor-icons/react'
-import { useMutation, useQuery } from 'convex/react'
+import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { ConfirmDialog } from '@/components/confirm-dialog'
@@ -9,8 +9,8 @@ import { api } from '../../../convex/_generated/api'
 
 export function SettingsPage() {
   const me = useQuery(api.account.me)
-  const deleteMyAccount = useMutation(api.account.deleteMyAccount)
-  const { signOut } = useAuthActions()
+  const deleteMyAccount = useAction(api.account.deleteMyAccount)
+  const { signOut } = useClerk()
   const [confirming, setConfirming] = useState(false)
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -20,7 +20,9 @@ export function SettingsPage() {
     setPending(true)
     try {
       await deleteMyAccount()
-      await signOut()
+      // The Clerk login is already gone, so signing out may complain; either way we leave for the login page.
+      await signOut().catch(() => undefined)
+      window.location.assign('/login')
     } catch (e) {
       setError(e instanceof ConvexError ? String(e.data.message) : 'Could not delete the account. Try again.')
       setPending(false)

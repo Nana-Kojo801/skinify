@@ -1,4 +1,3 @@
-import { getAuthUserId } from '@convex-dev/auth/server'
 import { ConvexError, v } from 'convex/values'
 import { CONCERN_KEYS } from '../shared/concerns'
 import { DEMO_EMAIL } from '../shared/demo-account'
@@ -9,6 +8,7 @@ import { YoucamError, analysePhoto } from '../shared/youcam/youcam-client'
 import { internal } from './_generated/api'
 import type { Doc, Id } from './_generated/dataModel'
 import { action, internalMutation, internalQuery, query, type QueryCtx } from './_generated/server'
+import { getUserId } from './helpers'
 import { recomputeUserVerdicts } from './verdictCompute'
 
 const DAY_MS = 86_400_000
@@ -48,7 +48,7 @@ function usageFrom(recent: Doc<'scans'>[]) {
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getUserId(ctx)
     if (userId === null) return []
     return await ctx.db
       .query('scans')
@@ -62,7 +62,7 @@ export const list = query({
 export const latest = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getUserId(ctx)
     if (userId === null) return null
     return await ctx.db
       .query('scans')
@@ -77,7 +77,7 @@ export const usage = query({
   args: {},
   handler: async (ctx) => {
     const now = Date.now()
-    const userId = await getAuthUserId(ctx)
+    const userId = await getUserId(ctx)
     const recent = userId === null ? [] : await scansInLastDay(ctx, userId, now)
     const user = userId === null ? null : await ctx.db.get(userId)
     const isDemoAccount = user?.email === DEMO_EMAIL
@@ -150,7 +150,8 @@ export const submit = action({
     photos: v.array(v.object({ data: v.bytes(), contentType: v.string() })),
   },
   handler: async (ctx, { photos }): Promise<SubmitResult> => {
-    const userId = await getAuthUserId(ctx)
+    // Actions can't read the database, so ask an internal query (it runs with the caller's identity).
+    const userId = await ctx.runQuery(internal.users.currentUserId, {})
     if (userId === null) throw scanError({ code: 'NOT_AUTHENTICATED', message: 'Please sign in to scan.' })
 
     // Cheap checks first: nothing below spends YouCam units.

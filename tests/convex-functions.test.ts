@@ -3,6 +3,7 @@ import { convexTest } from 'convex-test'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../convex/_generated/api'
 import schema from '../convex/schema'
+import { clerkIdFor } from './helpers/clerk-id'
 import { DEMO_EMAIL } from '../shared/demo-account'
 import { SCAN_CONFIG } from '../shared/scan/scan-config'
 import { mockYoucam, PHOTO_1_BYTES, PHOTO_2_BYTES } from './helpers/youcam-mock'
@@ -18,13 +19,13 @@ const goodPhotos = () => [photo(PHOTO_1_BYTES), photo(PHOTO_2_BYTES)]
 
 async function setup(email = 'user@example.com') {
   const t = convexTest(schema, modules)
-  const userId = await t.run((ctx) => ctx.db.insert('users', { email }))
-  const other = await t.run((ctx) => ctx.db.insert('users', { email: 'other@example.com' }))
+  const userId = await t.run((ctx) => ctx.db.insert('users', { email, clerkId: clerkIdFor(email) }))
+  await t.run((ctx) => ctx.db.insert('users', { email: 'other@example.com', clerkId: clerkIdFor('other@example.com') }))
   return {
     t,
     userId,
-    me: t.withIdentity({ subject: `${userId}|session` }),
-    otherUser: t.withIdentity({ subject: `${other}|session` }),
+    me: t.withIdentity({ subject: clerkIdFor(email) }),
+    otherUser: t.withIdentity({ subject: clerkIdFor('other@example.com') }),
   }
 }
 

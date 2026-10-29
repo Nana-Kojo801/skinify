@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { api, internal } from '../convex/_generated/api'
 import type { Id } from '../convex/_generated/dataModel'
 import schema from '../convex/schema'
+import { clerkIdFor } from './helpers/clerk-id'
 
 const modules = import.meta.glob('../convex/**/*.ts')
 const DAY = 86_400_000
@@ -15,9 +16,9 @@ const START = startOfDay(Date.now() - 40 * DAY)
 
 async function setup() {
   const t = convexTest(schema, modules)
-  const userId = await t.run((ctx) => ctx.db.insert('users', { email: 'user@example.com' }))
-  const otherId = await t.run((ctx) => ctx.db.insert('users', { email: 'other@example.com' }))
-  return { t, userId, otherId, me: t.withIdentity({ subject: `${userId}|s` }) }
+  const userId = await t.run((ctx) => ctx.db.insert('users', { email: 'user@example.com', clerkId: clerkIdFor('user@example.com') }))
+  const otherId = await t.run((ctx) => ctx.db.insert('users', { email: 'other@example.com', clerkId: clerkIdFor('other@example.com') }))
+  return { t, userId, otherId, me: t.withIdentity({ subject: clerkIdFor('user@example.com') }) }
 }
 
 type TestConvex = Awaited<ReturnType<typeof setup>>['t']

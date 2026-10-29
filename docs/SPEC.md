@@ -5,7 +5,7 @@ A mobile-first web app (PWA) where a user logs skincare products, scans their fa
 
 ## Stack and conventions
 - React + Vite + TypeScript + TailwindCSS + shadcn/ui + Convex
-- Convex Auth, email + password only. No email verification, no password reset.
+- Sign-in with Google through Clerk (replaced Convex Auth, issue #39). No email + password.
 - OpenRouter (free model) for the explanation text
 - kebab-case file names, per-page directories with nested components/, named exports only
 - Mobile-first layout
@@ -21,7 +21,7 @@ A mobile-first web app (PWA) where a user logs skincare products, scans their fa
 A standalone script or Convex action that sends one test selfie to the YouCam Skin Analysis API and prints the RAW response. Show me the full output. List which concern scores come back and their ranges. I will tell you what to build on after seeing it. Also run the same photo twice and report how much the scores differ between identical inputs.
 
 ### Milestone 1: Auth
-Email + password sign up and login with Convex Auth. Anonymous visitors see only the login screen.
+Sign in with Google (Clerk), plus a one-tap read-only demo. Anonymous visitors see only the login screen.
 - Add a "Try the demo" button on the login screen that signs into the demo account in one tap.
 - Settings page with a "Delete my account and data" button that wipes everything.
 
@@ -34,7 +34,7 @@ Email + password sign up and login with Convex Auth. Anonymous visitors see only
 
 ### Milestone 3: Products and data model
 Convex tables:
-- `users` (via Convex Auth)
+- `users` (one row per Clerk user, `clerkId`)
 - `products`: userId, name, targetConcern, startDate, endDate (optional)
 - `scans`: userId, createdAt, scores (object of concern -> averaged score), noise (object of concern -> |photo1 - photo2|), qualityFlag
 - `verdicts`: productId, createdAt, verdict, summary, inputs (the numbers used)
