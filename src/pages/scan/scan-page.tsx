@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/lib/format'
 import { preparePhoto, type PreparedPhoto } from '@/lib/prepare-photo'
 import { cn } from '@/lib/utils'
+import { meanGap } from '@shared/scan/photo-agreement'
 import { isScanErrorData } from '@shared/scan/scan-errors'
 import { api } from '../../../convex/_generated/api'
 import { PhotoSlot } from './components/photo-slot'
 import { ScanResult, type ScanResultData } from './components/scan-result'
+import { WhyTwoPhotos } from './components/why-two-photos'
 
 type Slot = PreparedPhoto | null
 
@@ -78,7 +80,7 @@ export function ScanPage() {
       const scan = await submit({ photos: payload })
       photos.forEach((photo) => photo && URL.revokeObjectURL(photo.previewUrl))
       setPhotos([null, null])
-      setResult({ scores: scan.scores, qualityFlag: scan.qualityFlag })
+      setResult({ scores: scan.scores, qualityFlag: scan.qualityFlag, gap: meanGap(scan.noise) })
     } catch (e) {
       if (e instanceof ConvexError && isScanErrorData(e.data)) {
         if (e.data.code === 'LOW_QUALITY_PHOTO' && (e.data.photo === 1 || e.data.photo === 2)) {
@@ -142,9 +144,7 @@ export function ScanPage() {
           ) : (
             <div className="rise px-1">
               <h1 className="text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] md:text-5xl">New scan</h1>
-              <p className="mt-2 text-muted md:text-[17px]">
-                Two photos, back to back. We average them and measure how much they disagree, so a change is real before we call it.
-              </p>
+              <p className="mt-2 text-muted md:text-[17px]">Take two photos, one right after the other. Your scan needs both.</p>
             </div>
           )}
 
@@ -207,6 +207,11 @@ export function ScanPage() {
             </div>
           ) : (
             <>
+              {!pending && (
+                <div className="rise" style={{ '--i': 2 } as React.CSSProperties}>
+                  <WhyTwoPhotos />
+                </div>
+              )}
               {error && (
                 <p role="alert" className="flex animate-[pop_.35s_var(--ease-out-soft)_both] items-start gap-2.5 rounded-2xl bg-irritation-bg px-4 py-3 text-sm text-irritation-ink">
                   <Warning size={18} className="mt-px shrink-0" />
@@ -214,15 +219,23 @@ export function ScanPage() {
                 </p>
               )}
               <div className="rise grid grid-cols-2 gap-3 md:gap-5" style={{ '--i': 2 } as React.CSSProperties}>
-                <PhotoSlot label="Photo 1" previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
-                <PhotoSlot label="Photo 2" previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
+                <PhotoSlot label="Photo 1 of 2" hint="Look straight at the camera." previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
+                <PhotoSlot label="Photo 2 of 2" hint="Right after photo 1: same spot, same light." previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
               </div>
               {!pending && (
                 <div className="rise flex flex-col gap-2.5" style={{ '--i': 3 } as React.CSSProperties}>
                   <Button size="lg" disabled={!photos[0] || !photos[1]} onClick={() => void onSubmit()}>
                     Analyse my skin
                   </Button>
-                  {usage && <p className="text-center text-[13px] text-muted md:hidden">Photos are never stored.</p>}
+                  {!photos[0] || !photos[1] ? (
+                    <p className="text-center text-[13px] leading-snug text-muted" aria-live="polite">
+                      {!photos[0] && !photos[1]
+                        ? 'Take both photos to continue.'
+                        : 'One more photo to go. The second one lets us measure how steady your scan is.'}
+                    </p>
+                  ) : (
+                    usage && <p className="text-center text-[13px] text-muted md:hidden">Photos are never stored.</p>
+                  )}
                 </div>
               )}
             </>

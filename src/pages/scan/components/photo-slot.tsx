@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils'
 
 type PhotoSlotProps = {
   label: string
+  /** One line telling the person what to do for this photo. */
+  hint?: string
   previewUrl: string | null
   disabled: boolean
   problem?: string
@@ -16,7 +18,7 @@ type PhotoSlotProps = {
 const corner = 'absolute size-6 border-cocoa/45'
 
 // Two hidden file inputs: one opens the front camera (capture="user"), the other the gallery.
-export function PhotoSlot({ label, previewUrl, disabled, problem, analysing = false, onFile }: PhotoSlotProps) {
+export function PhotoSlot({ label, hint, previewUrl, disabled, problem, analysing = false, onFile }: PhotoSlotProps) {
   const cameraRef = useRef<HTMLInputElement>(null)
   const galleryRef = useRef<HTMLInputElement>(null)
 
@@ -32,6 +34,7 @@ export function PhotoSlot({ label, previewUrl, disabled, problem, analysing = fa
         <p className="text-[15px] font-semibold">{label}</p>
         <p className={cn('text-[13px] font-medium', problem ? 'text-irritation-ink' : 'text-muted')}>{problem ? 'Retake' : previewUrl ? 'Ready' : 'Empty'}</p>
       </div>
+      {hint && !analysing && <p className="-mt-1 min-h-[2.5em] px-1 text-[12.5px] leading-snug text-muted">{hint}</p>}
       {previewUrl ? (
         <div className={cn('photo relative aspect-[3/4] overflow-hidden rounded-3xl bg-sand', problem && 'ring-[3px] ring-irritation')}>
           <img src={previewUrl} alt={label} className={cn('settle size-full object-cover', problem && 'opacity-60')} />
