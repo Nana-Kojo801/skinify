@@ -69,16 +69,20 @@ npm run reset-demo            # creates the demo login if missing and (re)seeds 
 
 Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`, `npm run lint`, `npm run build`.
 
-### Deploying (Netlify + a Convex deployment)
+### Deploying (Netlify and/or Vercel, plus a Convex deployment)
 
 For this hackathon the live app runs on a Convex **development** deployment (no separate production deployment). That deployment already has the environment variables above and the demo account; the code is pushed to it with `npx convex dev --once` (or while `npx convex dev` runs). Note that anything pushed there goes live at once, so don't leave `npx convex dev` running with half-finished edits while the app is being judged.
 
-1. **Netlify:** add a new site from this GitHub repo. The build settings come from [`netlify.toml`](netlify.toml) (`npm run build`, publish `dist`; routing and cache rules are in `public/_redirects` and `public/_headers`).
-2. **One environment variable in Netlify:** `VITE_CONVEX_URL` = the Convex deployment's URL (it is the `VITE_CONVEX_URL` line in your `.env.local`, for example `https://dashing-chameleon-912.convex.cloud`; it is public, not a secret).
-3. Optional: set `SITE_URL` on the Convex deployment to the Netlify URL (`npx convex env set SITE_URL https://<your-site>.netlify.app`).
-4. Before judging, restore the demo data if it was touched: `npm run reset-demo`.
+The website is a static single-page app, so it can be hosted on **Netlify and Vercel at the same time**: each one builds the same repo and talks to the same Convex deployment, and each gets its own address. Both hosts need the same one environment variable:
 
-If you ever want a separate production deployment instead: create it in the Convex dashboard, add a production deploy key to Netlify as `CONVEX_DEPLOY_KEY`, use the build command `npx convex deploy --cmd 'npm run build'`, set the environment variables with `--prod`, and run `npx @convex-dev/auth --prod --web-server-url <site>` and `npm run reset-demo -- --prod`.
+> `VITE_CONVEX_URL` = the Convex deployment's URL (the `VITE_CONVEX_URL` line in your `.env.local`, for example `https://dashing-chameleon-912.convex.cloud`). It is public, not a secret.
+
+- **Netlify:** add a new site from this GitHub repo. Settings come from [`netlify.toml`](netlify.toml) (`npm run build`, publish `dist`); routing and cache rules are in `public/_redirects` and `public/_headers`.
+- **Vercel:** add a new project from this GitHub repo. Settings come from [`vercel.json`](vercel.json) (Vite, `npm run build`, output `dist`, single-page routing and the same cache rules). Add the environment variable above under Settings, Environment Variables (Production), then redeploy.
+- Optional: set `SITE_URL` on the Convex deployment to one of the site addresses (`npx convex env set SITE_URL https://<your-site>`). Sign-in works from any address without it.
+- Before judging, restore the demo data if it was touched: `npm run reset-demo`.
+
+If you ever want a separate production deployment instead: create it in the Convex dashboard, add a production deploy key to the host as `CONVEX_DEPLOY_KEY`, use the build command `npx convex deploy --cmd 'npm run build'`, set the environment variables with `--prod`, and run `npx @convex-dev/auth --prod --web-server-url <site>` and `npm run reset-demo -- --prod`.
 
 ## How verdicts are calculated
 
