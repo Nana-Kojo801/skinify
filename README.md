@@ -55,6 +55,8 @@ Then set the server-side environment variables on your Convex deployment (they a
 | `OPENROUTER_API_KEY` | AI-written explanations. Without it a built-in templated explanation is used. | `npx convex env set OPENROUTER_API_KEY <key>` |
 | `OPENROUTER_MODEL` | Optional. One or more OpenRouter model ids, comma-separated, tried in order. Default: a few free chat models (see `shared/explanation/openrouter-client.ts`). | `npx convex env set OPENROUTER_MODEL <ids>` |
 | `CLERK_JWT_ISSUER_DOMAIN` | Login (Clerk). Convex only accepts sign-in tokens from this Clerk instance. | The **Frontend API URL** from the Clerk dashboard, e.g. `npx convex env set CLERK_JWT_ISSUER_DOMAIN https://your-name-00.clerk.accounts.dev`. |
+| `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL` | Scan reminder emails ([Resend](https://resend.com)). Without them no email is sent and everything else works. | `npx convex env set RESEND_API_KEY <re_...>`; `EMAIL_FROM` like `Receipts <onboarding@resend.dev>` (the sender must be on a domain verified in Resend, except Resend's test sender); `APP_URL` is the site address used in the email links, e.g. `https://receipts-three-tau.vercel.app`. |
+| `EMAIL_ALLOWED_TO` | Who really gets reminder emails. Unset or empty = nobody (safe default), `*` = everyone, otherwise a comma-separated list of addresses. Everyone else only sees the preview in Settings. | `npx convex env set EMAIL_ALLOWED_TO you@example.org`. Resend's test sender can only reach the Resend account owner, so use that address until a domain is verified, then set `*`. |
 | `CLERK_SECRET_KEY` | Creating the demo user, "Try the demo" tickets and account deletion. Server-side only. | `npx convex env set CLERK_SECRET_KEY <sk_...>` (Clerk dashboard, API keys). |
 
 The frontend also needs `VITE_CLERK_PUBLISHABLE_KEY` (the `pk_...` key, public) in `.env.local`, and in the Netlify and Vercel environment variables.
@@ -83,6 +85,12 @@ The website is a static single-page app, so it can be hosted on **Netlify and Ve
 - Before judging, restore the demo data if it was touched: `npm run reset-demo`.
 
 If you ever want a separate production deployment instead: create it in the Convex dashboard, add a production deploy key to the host as `CONVEX_DEPLOY_KEY`, use the build command `npx convex deploy --cmd 'npm run build'`, set the environment variables with `--prod`, and use a Clerk production instance (needs your own domain) and run `npm run reset-demo -- --prod`.
+
+## Scan reminders
+
+People can turn on **"Email me a reminder"** in Settings (off by default). The next scan is due 7 days after the latest scan, and the email goes out at **9:00 local time the day before** (their time zone is read from the browser when they switch it on). Scanning early moves the due date, so the reminder moves too: the due date is always computed from the latest scan. There is at most one email per due date, and after **3** ignored reminders in a row it stops until the person switches it off and on again. Every email has an unsubscribe link (no sign-in needed). The email contains no scores, only "time for your weekly scan" and a link.
+
+Never emailed: the demo account, addresses on test domains (`example.com`, `example.org`, `example.net`, ...), and addresses not on `EMAIL_ALLOWED_TO` (those users see a preview of the email in Settings instead). An hourly cron (`convex/crons.ts`) runs `reminders:sendDueReminders`. All numbers (interval, lead time, hour, miss limit, test domains) are in [`shared/reminders/reminder-config.ts`](shared/reminders/reminder-config.ts); the provider is behind one function in [`shared/email/send-email.ts`](shared/email/send-email.ts).
 
 ## How verdicts are calculated
 

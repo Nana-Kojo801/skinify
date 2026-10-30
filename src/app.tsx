@@ -6,6 +6,7 @@ import { RedirectIfAuthed, RequireAuth } from '@/components/auth-guard'
 // Route-level code splitting: each page is its own chunk, loaded on first visit.
 const LoginPage = lazy(() => import('@/pages/login/login-page').then((m) => ({ default: m.LoginPage })))
 const SsoCallbackPage = lazy(() => import('@/pages/login/sso-callback-page').then((m) => ({ default: m.SsoCallbackPage })))
+const UnsubscribePage = lazy(() => import('@/pages/unsubscribe/unsubscribe-page').then((m) => ({ default: m.UnsubscribePage })))
 const HomePage = lazy(() => import('@/pages/home/home-page').then((m) => ({ default: m.HomePage })))
 const ScanPage = lazy(() => import('@/pages/scan/scan-page').then((m) => ({ default: m.ScanPage })))
 const ProductFormPage = lazy(() => import('@/pages/product-form/product-form-page').then((m) => ({ default: m.ProductFormPage })))
@@ -32,6 +33,14 @@ export function App() {
           element={
             <Suspense fallback={null}>
               <SsoCallbackPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/unsubscribe"
+          element={
+            <Suspense fallback={null}>
+              <UnsubscribePage />
             </Suspense>
           }
         />

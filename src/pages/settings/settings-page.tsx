@@ -4,6 +4,7 @@ import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { ReminderSettings } from './components/reminder-settings'
 import { Button } from '@/components/ui/button'
 import { api } from '../../../convex/_generated/api'
 
@@ -63,7 +64,9 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="card rise p-5 md:p-6" style={{ '--i': 3 } as React.CSSProperties}>
+      <ReminderSettings />
+
+      <section className="card rise p-5 md:p-6" style={{ '--i': 4 } as React.CSSProperties}>
         <h2 className="text-lg font-semibold">Your data</h2>
         {me?.isDemoAccount ? (
           <p className="mt-2 flex items-start gap-2.5 text-[15px] text-muted">
@@ -84,7 +87,7 @@ export function SettingsPage() {
         )}
       </section>
 
-      <p className="rise px-1 pt-2 text-center text-[13px] text-muted" style={{ '--i': 4 } as React.CSSProperties}>
+      <p className="rise px-1 pt-2 text-center text-[13px] text-muted" style={{ '--i': 5 } as React.CSSProperties}>
         Scores are estimates from photos, not a medical assessment.
       </p>
 

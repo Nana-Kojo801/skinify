@@ -14,6 +14,7 @@ import type * as demo from "../demo.js";
 import type * as explanations from "../explanations.js";
 import type * as helpers from "../helpers.js";
 import type * as products from "../products.js";
+import type * as reminders from "../reminders.js";
 import type * as scans from "../scans.js";
 import type * as seed from "../seed.js";
 import type * as users from "../users.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   explanations: typeof explanations;
   helpers: typeof helpers;
   products: typeof products;
+  reminders: typeof reminders;
   scans: typeof scans;
   seed: typeof seed;
   users: typeof users;

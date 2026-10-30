@@ -3,6 +3,7 @@ import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import { NextScanDue } from '@/components/next-scan-due'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/lib/format'
 import { preparePhoto, type PreparedPhoto } from '@/lib/prepare-photo'
@@ -145,6 +146,7 @@ export function ScanPage() {
             <div className="rise px-1">
               <h1 className="text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] md:text-5xl">New scan</h1>
               <p className="mt-2 text-muted md:text-[17px]">Take two photos, one right after the other. Your scan needs both.</p>
+              <NextScanDue className="mt-3" />
             </div>
           )}
 

@@ -2,6 +2,7 @@ import { CaretRight, Info, Plus, ScanSmiley, Warning } from '@phosphor-icons/rea
 import { useQuery } from 'convex/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { NextScanDue } from '@/components/next-scan-due'
 import { Reveal } from '@/components/reveal'
 import { buttonVariants } from '@/components/ui/button'
 import { daysBetween, formatDate, formatPoints, formatSigned } from '@/lib/format'
@@ -103,6 +104,7 @@ export function HomePage() {
                 ? 'No scans yet. Start with one today.'
                 : `${scans.length} scan${scans.length === 1 ? '' : 's'} so far, tracking ${products?.length ?? 0} product${products?.length === 1 ? '' : 's'}.`}
           </p>
+          <NextScanDue className="mt-3" />
         </div>
         <div className="hidden gap-2.5 md:flex">
           {canScan && (

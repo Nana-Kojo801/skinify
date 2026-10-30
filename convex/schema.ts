@@ -11,9 +11,22 @@ export default defineSchema({
     clerkId: v.string(),
     email: v.optional(v.string()),
     name: v.optional(v.string()),
+    // Scan reminders (issue #40). Off unless reminderOptIn is true.
+    reminderOptIn: v.optional(v.boolean()),
+    /** IANA time zone from the browser, so the reminder arrives at 9:00 where the person is. */
+    timeZone: v.optional(v.string()),
+    /** Random secret in the unsubscribe link; no login needed to use it. */
+    unsubscribeToken: v.optional(v.string()),
+    /** The scan (createdAt) that remindersSent counts for: a newer scan starts the count again. */
+    reminderScanAt: v.optional(v.number()),
+    remindersSent: v.optional(v.number()),
+    /** The due date we last emailed about, so each due date is emailed once. */
+    lastReminderDue: v.optional(v.number()),
   })
     .index('by_clerk_id', ['clerkId'])
-    .index('email', ['email']),
+    .index('email', ['email'])
+    .index('by_reminder_opt_in', ['reminderOptIn'])
+    .index('by_unsubscribe_token', ['unsubscribeToken']),
 
   products: defineTable({
     userId: v.id('users'),
