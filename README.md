@@ -108,6 +108,10 @@ When two **active** products target the same concern and **started within 28 day
 
 Each verdict card (except "Too early") has an **Evidence** strip: **Thin**, **Fair** or **Solid**, with the facts behind it ("5 scans since you started, 35 days tracked", "your change is 3.8 times normal variation"). Two yes/no checks decide it: a *clear margin* (a change at least 1.5 times the noise threshold for Working and Possible irritation, or at most half of it for No visible change) and *deep data* (at least 5 scans over at least 35 days). Two yes = Solid, one = Fair, none = Thin; "Can't tell yet" is always Thin. It rates the measurement, not the product, and never promises that more scans will confirm anything. It is display only: the verdict engine and the stored verdicts are unchanged. The cut-offs are first guesses in `EVIDENCE_CONFIG` in [`shared/verdict/verdict-config.ts`](shared/verdict/verdict-config.ts); the rule is in [`shared/verdict/evidence.ts`](shared/verdict/evidence.ts).
 
+## Skin overview
+
+On Home, "Your skin overview" draws a radar chart of the 8 concerns, **first scan vs latest** (only scans without a quality warning count), with the concerns that moved listed underneath, and YouCam's own **overall skin score** when the scans have one. YouCam returns that overall number (`all`) with every analysis, so it costs nothing extra: each scan stores the mean of its two photos as `scans.overall` (older and demo scans have none). It is display only: no verdict uses it, and we never invent a combined score ourselves. The chart is hand-drawn SVG and says that scores of different concerns are not on one common scale. YouCam's `skin_age` is ignored. The logic is in [`shared/overview/overview.ts`](shared/overview/overview.ts).
+
 ## How verdicts are calculated
 
 The engine is a pure TypeScript function in [`shared/verdict/compute-verdict.ts`](shared/verdict/compute-verdict.ts), and every threshold lives in one file, [`shared/verdict/verdict-config.ts`](shared/verdict/verdict-config.ts).

@@ -27,3 +27,9 @@ export function isPoorQuality(noise: ScoreMap, meanDiffThreshold: number): boole
   if (values.length === 0) return true
   return values.reduce((sum, n) => sum + n, 0) / values.length >= meanDiffThreshold
 }
+
+/** The overall score of a scan: the mean of the two photos' overall scores, or null unless BOTH photos have one. */
+export function combineOverall(photo1: number | null, photo2: number | null): number | null {
+  if (photo1 === null || photo2 === null || !Number.isFinite(photo1) || !Number.isFinite(photo2)) return null
+  return Math.round(((photo1 + photo2) / 2) * 10) / 10
+}

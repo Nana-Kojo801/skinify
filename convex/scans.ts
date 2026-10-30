@@ -1,11 +1,11 @@
 import { ConvexError, v } from 'convex/values'
 import { CONCERN_KEYS } from '../shared/concerns'
 import { DEMO_EMAIL } from '../shared/demo-account'
-import { combinePhotoScores, isPoorQuality } from '../shared/scan/combine-scores'
+import { combineOverall, combinePhotoScores, isPoorQuality } from '../shared/scan/combine-scores'
 import { cleanBrightness } from '../shared/scan/lighting'
 import { SCAN_CONFIG, unitsPerPhoto } from '../shared/scan/scan-config'
 import { QUALITY_ERROR_MESSAGES, type ScanErrorData } from '../shared/scan/scan-errors'
-import { YoucamError, analysePhoto } from '../shared/youcam/youcam-client'
+import { YoucamError, analysePhotoFull, type PhotoAnalysis } from '../shared/youcam/youcam-client'
 import { internal } from './_generated/api'
 import type { Doc, Id } from './_generated/dataModel'
 import { action, internalMutation, internalQuery, query, type QueryCtx } from './_generated/server'
@@ -125,6 +125,7 @@ export const recordScan = internalMutation({
     noise: v.record(v.string(), v.number()),
     qualityFlag: v.boolean(),
     brightness: v.optional(v.number()),
+    overall: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const scanId = await ctx.db.insert('scans', { ...args, createdAt: Date.now() })
@@ -205,7 +206,7 @@ export const submit = action({
     // so a rejected photo costs nothing; a success next to a failure does cost the successful photo.
     const settled = await Promise.allSettled(
       photos.map((photo, i) =>
-        analysePhoto({
+        analysePhotoFull({
           apiKey,
           photo: new Uint8Array(photo.data),
           contentType: photo.contentType.toLowerCase(),
@@ -239,8 +240,9 @@ export const submit = action({
       })
     }
 
-    const [first, second] = settled.map((r) => (r as PromiseFulfilledResult<Record<string, number>>).value)
-    const { scores, noise } = combinePhotoScores(first, second)
+    const [first, second] = settled.map((r) => (r as PromiseFulfilledResult<PhotoAnalysis>).value)
+    const { scores, noise } = combinePhotoScores(first.scores, second.scores)
+    const overall = combineOverall(first.overall, second.overall)
     if (Object.keys(scores).length === 0) {
       throw scanError({ code: 'API_ERROR', message: 'The analysis returned no usable results. Please try again.' })
     }
@@ -251,6 +253,7 @@ export const submit = action({
       noise,
       qualityFlag,
       ...(cleanBrightness(brightness) !== null && { brightness: cleanBrightness(brightness)! }),
+      ...(overall !== null && { overall }),
     })
     return { scanId, scores, noise, qualityFlag }
   },
