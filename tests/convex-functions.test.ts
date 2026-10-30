@@ -152,6 +152,19 @@ describe('scans.submit', () => {
     expect(await me.query(api.scans.latest, {})).toMatchObject({ scores: { acne: 60 } })
   })
 
+  it("stores YouCam's overall score as the mean of the two photos, and only when both photos have one", async () => {
+    const { t, me } = await setup()
+    mockYoucam((bytes) => ({ scores: flat(60), overall: bytes === PHOTO_1_BYTES ? 80 : 83 }))
+    await me.action(api.scans.submit, { photos: goodPhotos() })
+    mockYoucam((bytes) => ({ scores: flat(60), ...(bytes === PHOTO_1_BYTES ? { overall: 80 } : {}) }))
+    await me.action(api.scans.submit, { photos: goodPhotos() })
+    mockYoucam(() => ({ scores: flat(60) }))
+    await me.action(api.scans.submit, { photos: goodPhotos() })
+    const stored = await t.run((ctx) => ctx.db.query('scans').order('asc').collect())
+    expect(stored.map((scan) => scan.overall)).toEqual([81.5, undefined, undefined])
+    expect(await me.query(api.scans.latest, {})).toMatchObject({ scores: { acne: 60 } })
+  })
+
   it('similar photos give no quality flag', async () => {
     const { me } = await setup()
     mockYoucam((bytes) => ({ scores: flat(bytes === PHOTO_1_BYTES ? 60 : 62) }))

@@ -15,6 +15,7 @@ import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
 import { api } from '../../../convex/_generated/api'
 import { LatestScanCard } from './components/latest-scan-card'
+import { SkinOverview } from './components/skin-overview'
 import { ProductCard } from './components/product-card'
 
 const RULES = [
@@ -135,6 +136,11 @@ export function HomePage() {
       <div className="mt-5 grid gap-4 md:mt-8 md:grid-cols-[1.4fr_1fr] md:gap-6">
         <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
           <LatestScanCard scan={latestScan} canScan={canScan} />
+          {latestScan && (
+            <div className="mt-4 md:mt-6">
+              <SkinOverview scans={scans} />
+            </div>
+          )}
           {latestScan && (
             <div className="mt-4 md:mt-6">
               <IdeasToTest scores={latestScan.scores} qualityFlag={latestScan.qualityFlag} products={products} canCreate={canEdit} />

@@ -52,6 +52,9 @@ export default defineSchema({
     /** Average brightness of the two photos, 0 to 255, measured in the browser. One number, never a photo: it only
      *  lets the scan page say "lighting differs from your last scan". Absent on older and demo scans. */
     brightness: v.optional(v.number()),
+    /** YouCam's own overall skin score for the scan (mean of the two photos, 0 to 100). Display only: no verdict uses it.
+     *  Absent on older and demo scans. */
+    overall: v.optional(v.number()),
   }).index('by_user_and_createdAt', ['userId', 'createdAt']),
 
   verdicts: defineTable({

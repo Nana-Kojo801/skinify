@@ -4,7 +4,7 @@ import { vi } from 'vitest'
 export const PHOTO_1_BYTES = 1000
 export const PHOTO_2_BYTES = 2000
 
-export type TaskResult = { scores: Record<string, number> } | { error: string; message?: string }
+export type TaskResult = { scores: Record<string, number>; overall?: number } | { error: string; message?: string }
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
@@ -65,6 +65,7 @@ export function mockYoucam(
         url: null,
       }))
       output.push({ type: 'skin_type', skin_type: 'Oily' } as never)
+      if (typeof result.overall === 'number') output.push({ type: 'all', score: result.overall, url: null } as never)
       return json({ status: 200, data: { error: null, results: { output }, task_status: 'success' } })
     }
     return json({ status: 404, error: 'unexpected request in test' }, 404)

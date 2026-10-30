@@ -55,8 +55,20 @@ function apiError(res: Response, body: Json): YoucamError {
   return new YoucamError('api', code, message)
 }
 
+export interface PhotoAnalysis {
+  /** raw_score for each requested concern that came back. */
+  scores: Record<string, number>
+  /** YouCam's own overall skin score (its `all` output, comes back with any request), or null if it is missing. */
+  overall: number | null
+}
+
 /** Sends one photo to YouCam and returns the raw_score for each requested concern that came back. */
 export async function analysePhoto(options: AnalysePhotoOptions): Promise<Record<string, number>> {
+  return (await analysePhotoFull(options)).scores
+}
+
+/** Like analysePhoto, plus YouCam's overall score. The overall is display-only: verdicts never use it. */
+export async function analysePhotoFull(options: AnalysePhotoOptions): Promise<PhotoAnalysis> {
   const {
     apiKey,
     photo,
@@ -121,7 +133,9 @@ export async function analysePhoto(options: AnalysePhotoOptions): Promise<Record
       if (Object.keys(scores).length === 0) {
         throw new YoucamError('api', 'BAD_RESPONSE', 'YouCam returned no scores for the requested concerns.')
       }
-      return scores
+      const allOutput = ((poll.data?.results?.output ?? []) as Json[]).find((output) => output.type === 'all')
+      const overall = typeof allOutput?.score === 'number' && Number.isFinite(allOutput.score) && allOutput.score >= 0 && allOutput.score <= 100 ? allOutput.score : null
+      return { scores, overall }
     }
     if (status === 'error') {
       const code = String(poll.data?.error ?? 'unknown_error')

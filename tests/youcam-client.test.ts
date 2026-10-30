@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { analysePhoto, YoucamError } from '../shared/youcam/youcam-client'
+import { analysePhoto, analysePhotoFull, YoucamError } from '../shared/youcam/youcam-client'
 import { mockYoucam, PHOTO_1_BYTES } from './helpers/youcam-mock'
 
 afterEach(() => vi.unstubAllGlobals())
@@ -61,5 +61,25 @@ describe('analysePhoto', () => {
   it('errors when no requested concern comes back', async () => {
     mockYoucam(() => ({ scores: { pore: 50 } }))
     await expect(analysePhoto(base)).rejects.toMatchObject({ code: 'BAD_RESPONSE' })
+  })
+})
+
+describe('analysePhotoFull', () => {
+  it("returns YouCam's overall score next to the scores, and analysePhoto still returns the scores alone", async () => {
+    mockYoucam(() => ({ scores: { acne: 70.5, redness: 88 }, overall: 82 }))
+    expect(await analysePhotoFull(base)).toEqual({ scores: { acne: 70.5, redness: 88 }, overall: 82 })
+    expect(await analysePhoto(base)).toEqual({ acne: 70.5, redness: 88 })
+  })
+
+  it('has a null overall when YouCam sends none', async () => {
+    mockYoucam(() => ({ scores: { acne: 70.5 } }))
+    expect((await analysePhotoFull(base)).overall).toBeNull()
+  })
+
+  it('ignores an overall that is not a sensible 0 to 100 number', async () => {
+    mockYoucam(() => ({ scores: { acne: 70.5 }, overall: 250 }))
+    expect((await analysePhotoFull(base)).overall).toBeNull()
+    mockYoucam(() => ({ scores: { acne: 70.5 }, overall: -3 }))
+    expect((await analysePhotoFull(base)).overall).toBeNull()
   })
 })
