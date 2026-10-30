@@ -5,8 +5,10 @@ import { formatPoints, formatSigned } from '@/lib/format'
 import { VERDICT_LABELS, VERDICT_STYLE, verdictHeadline } from '@/lib/verdict-display'
 import { cn } from '@/lib/utils'
 import { CONCERNS, isConcernKey } from '@shared/concerns'
+import { describeEvidence } from '@shared/verdict/evidence'
 import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
+import { EvidenceStrip } from './evidence-strip'
 
 const lower = (key: string) => (isConcernKey(key) ? CONCERNS[key].label.toLowerCase() : key)
 
@@ -38,6 +40,7 @@ export function VerdictPanel({ verdict, reasons, inputs, targetConcern, day }: V
   const style = VERDICT_STYLE[verdict]
   const concern = lower(targetConcern)
   const [ref, inView] = useInView<HTMLDivElement>()
+  const evidence = describeEvidence(verdict, inputs, day)
 
   // The measured change in the "better" direction, and the normal variation it is judged against.
   const signal =
@@ -92,6 +95,7 @@ export function VerdictPanel({ verdict, reasons, inputs, targetConcern, day }: V
           ))}
         </ul>
       )}
+      {evidence && verdict !== 'TOO_EARLY' && <EvidenceStrip evidence={evidence} color={METER[verdict].fill} />}
     </section>
   )
 }
