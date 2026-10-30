@@ -100,6 +100,10 @@ After a scan (and on Home), a card lists the 1 to 3 concerns with the lowest sco
 
 On the Scan page, each photo gets a small lighting hint as soon as it is chosen ("Lighting looks good", "Looks quite dark", "Looks very bright"), plus notes when the two photos have different light or when the light differs from the last scan. It is measured in the browser from the middle of the photo (average brightness, 0 to 255), sends nothing new to YouCam and **never blocks a scan**. To compare with the last scan, one number per scan is stored (`scans.brightness`, the mean of the two photos): never a photo. The thresholds are first guesses in [`shared/scan/lighting.ts`](shared/scan/lighting.ts) and need tuning on real photos.
 
+## Same-concern warning
+
+When two **active** products target the same concern and **started within 28 days** of each other, Receipts says so: a note on both product pages, a chip on the Home cards, and a heads-up in the new-product form before saving (it never blocks saving). The verdict compares your score before and after a start date, so it can't tell overlapping products apart. This is a warning only: the verdict engine is unchanged. The rule and the 28 days live in [`shared/products/overlap.ts`](shared/products/overlap.ts).
+
 ## How verdicts are calculated
 
 The engine is a pure TypeScript function in [`shared/verdict/compute-verdict.ts`](shared/verdict/compute-verdict.ts), and every threshold lives in one file, [`shared/verdict/verdict-config.ts`](shared/verdict/verdict-config.ts).

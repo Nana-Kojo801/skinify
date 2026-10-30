@@ -3,12 +3,14 @@ import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
+import { OverlapWarning } from '@/components/overlap-warning'
 import { PageSkeleton } from '@/components/page-skeleton'
 import { ScoreRing } from '@/components/score-ring'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { fromDateInputValue, toDateInputValue } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS, isConcernKey } from '@shared/concerns'
+import { overlapsFor } from '@shared/products/overlap'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 
@@ -55,7 +57,9 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
   const create = useMutation(api.products.create)
   const update = useMutation(api.products.update)
   const latest = useQuery(api.scans.latest)
+  const products = useQuery(api.products.list)
   const [values, setValues] = useState(initial)
+  const [now] = useState(() => Date.now())
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
   const back = productId ? `/products/${productId}` : '/'
@@ -81,6 +85,18 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
 
   const concernLabel = isConcernKey(values.targetConcern) ? CONCERNS[values.targetConcern].label : values.targetConcern
   const latestScore = latest?.scores[values.targetConcern]
+  // Heads-up only (never blocks saving): another active product on this concern that started close to this one.
+  const overlaps = overlapsFor(
+    {
+      id: productId,
+      targetConcern: values.targetConcern,
+      startDate: fromDateInputValue(values.startDate),
+      // An ended product being edited has no overlaps; a product that is about to be created is active.
+      endDate: products?.find((p) => p._id === productId)?.endDate,
+    },
+    products ?? [],
+    now,
+  )
 
   return (
     <main className="mx-auto max-w-6xl md:grid md:grid-cols-[0.8fr_1.2fr] md:items-start md:gap-12 md:px-8 md:pt-8">
@@ -149,6 +165,8 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
               })}
             </div>
           </fieldset>
+
+          {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concernLabel.toLowerCase()} variant="form" className="rise" />}
 
           <div className="tile rise flex items-center gap-4 rounded-3xl px-4 py-3.5" style={{ '--i': 3 } as React.CSSProperties}>
             {latestScore !== undefined && <ScoreRing key={values.targetConcern} value={latestScore} size={56} />}

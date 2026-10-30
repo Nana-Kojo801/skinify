@@ -1,4 +1,4 @@
-import { CaretRight } from '@phosphor-icons/react'
+import { CaretRight, WarningCircle } from '@phosphor-icons/react'
 import { Link } from 'react-router'
 import { Sparkline } from '@/components/sparkline'
 import { VerdictPill } from '@/components/verdict-pill'
@@ -16,10 +16,12 @@ type ProductCardProps = {
   stat: string | null
   trend: number[]
   index: number
+  /** Names of other active products on the same concern that started close by (feature: same-concern warning). */
+  overlapsWith?: string
 }
 
 // A row with the product photo on phones; a tall card with the photo on top on desktop.
-export function ProductCard({ id, image, name, meta, verdict, stat, trend, index }: ProductCardProps) {
+export function ProductCard({ id, image, name, meta, verdict, stat, trend, index, overlapsWith }: ProductCardProps) {
   const style = verdict ? VERDICT_STYLE[verdict] : null
   return (
     <Link
@@ -35,6 +37,12 @@ export function ProductCard({ id, image, name, meta, verdict, stat, trend, index
           <h3 className="text-base leading-tight font-semibold md:text-lg">{name}</h3>
           <p className="text-[13px] text-muted">{meta}</p>
           <VerdictPill verdict={verdict} className="mt-1 self-start" />
+          {overlapsWith && (
+            <span className="mt-0.5 flex max-w-full items-start gap-1.5 self-start rounded-2xl bg-canttell-bg px-2.5 py-1 text-[12px] leading-snug font-semibold text-canttell-ink">
+              <WarningCircle size={13} weight="fill" className="mt-0.5 shrink-0" />
+              <span className="min-w-0">Overlaps with {overlapsWith}</span>
+            </span>
+          )}
         </div>
         <div className="flex shrink-0 flex-col items-end gap-0.5">
           {stat && <span className={cn('text-xl font-semibold tracking-[-0.02em]', style?.text)}>{stat}</span>}

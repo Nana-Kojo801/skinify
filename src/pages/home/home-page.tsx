@@ -10,6 +10,7 @@ import { daysBetween, formatDate, formatPoints, formatSigned } from '@/lib/forma
 import { productImage, productRank } from '@/lib/product-image'
 import { VERDICT_STYLE } from '@/lib/verdict-display'
 import { CONCERNS, isConcernKey } from '@shared/concerns'
+import { joinNames, overlapMap } from '@shared/products/overlap'
 import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
 import { api } from '../../../convex/_generated/api'
@@ -51,6 +52,7 @@ export function HomePage() {
   const usage = useQuery(api.scans.usage)
   const [now] = useState(() => Date.now())
 
+  const overlaps = overlapMap(products ?? [], now)
   const verdictByProduct = new Map(verdicts?.map((entry) => [entry.productId, entry.verdict]))
   const isDemo = usage?.isDemoAccount ?? false
   // Only offer editing once we know this isn't the read-only demo account (avoids a flash of buttons that would fail).
@@ -234,6 +236,7 @@ export function HomePage() {
                     stat={row ? verdictStat(row.verdict, row.inputs) : null}
                     trend={trend}
                     index={index}
+                    overlapsWith={overlaps.has(product._id) ? joinNames(overlaps.get(product._id)!.map((o) => o.name)) : undefined}
                   />
                 </Reveal>
               )
