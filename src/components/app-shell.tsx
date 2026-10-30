@@ -1,4 +1,4 @@
-import { useAuthActions } from '@convex-dev/auth/react'
+import { useClerk } from '@clerk/react'
 import { House, ScanSmiley, SignOut, SlidersHorizontal } from '@phosphor-icons/react'
 import { useQuery } from 'convex/react'
 import { Suspense } from 'react'
@@ -15,7 +15,7 @@ const TOP_LEVEL = new Set(['/', '/settings'])
 // Shell for every signed-in page: a top nav on desktop, a slim top bar plus a floating tab bar on phones,
 // and a short page transition on every navigation.
 export function AppShell() {
-  const { signOut } = useAuthActions()
+  const { signOut } = useClerk()
   const usage = useQuery(api.scans.usage)
   const { pathname } = useLocation()
   const isForm = pathname === '/products/new' || pathname.endsWith('/edit')

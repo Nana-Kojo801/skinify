@@ -39,7 +39,7 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 | Area | Owner |
 |---|---|
 | `convex/**` (schema, functions, actions), `shared/**` (the verdict engine and other code shared by server and client), `tests/**`, `scripts/**`, seed/reset scripts, README, deployment | **Nana** |
-| `src/pages/**`, `src/components/**`, PWA setup, `convex/auth.ts` + `convex/account.ts` (auth and account deletion) | **Dave** |
+| `src/pages/**`, `src/components/**`, PWA setup, `convex/users.ts` + `convex/account.ts` (auth and account deletion) | **Dave** |
 
 - While issue #34 (UI redesign) is in progress, Nana's session owns the visual layer of `src/` (styles, components, pages). Dave: comment on #34 instead of making large UI edits.
 - `convex/schema.ts` is **Nana's**. If Dave needs a table or field changed, comment on the schema issue (#4) instead of editing it.
@@ -49,7 +49,7 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 ## 4. Stack and conventions
 
 - React + Vite + TypeScript + TailwindCSS + shadcn/ui + Convex
-- Convex Auth, **email + password only**. No email verification, no password reset.
+- Sign-in: **Clerk** (replaced Convex Auth in issue #39): Google, or email + password verified by an emailed code (Clerk sends it). Convex verifies Clerk's token; each person has a `users` row keyed by `clerkId`. "Try the demo" uses a server-minted Clerk sign-in ticket (the demo user has no password).
 - OpenRouter (free model) for explanation text
 - **kebab-case file names**, per-page directories with nested `components/` (`src/pages/<page>/<page>-page.tsx`), **named exports only** (no default exports)
 - Mobile-first layout
@@ -85,7 +85,7 @@ Each person develops against **their own Convex dev deployment**, so schema push
 
 - **Nana**: the main `receipts` Convex project, **dev deployment only**. There is deliberately no production deployment: that dev deployment is also the live backend for the Netlify site (decided with Nana; it's a hackathon project). So don't leave `npx convex dev` running with unfinished edits, and don't run tests or experiments that write test data to it without cleaning up afterwards.
 - **Dave**: a **separate** Convex project, created once with `npx convex dev --configure new` (name it e.g. `receipts-dave`). It is written to the git-ignored `.env.local`, so nothing leaks between machines.
-- Every deployment needs its own env vars (`YOUCAM_API_KEY`, `OPENROUTER_API_KEY`, and the Convex Auth keys from `npx @convex-dev/auth`). See `.env.example`.
+- Every deployment needs its own env vars (`YOUCAM_API_KEY`, `OPENROUTER_API_KEY`, `CLERK_JWT_ISSUER_DOMAIN`, `CLERK_SECRET_KEY`; the frontend also needs `VITE_CLERK_PUBLISHABLE_KEY`). See `.env.example`.
 - `convex/_generated/` **is committed**, so a fresh clone typechecks. Re-run `npx convex dev` after changing `convex/` and commit the regenerated files.
 - Never point `npx convex dev` at someone else's deployment. If unsure which one `.env.local` points to, ask the user.
 - Dave's dev deployment starts empty: run the demo seed there (from the seed issue) to get sample data without spending YouCam units.

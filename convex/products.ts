@@ -1,9 +1,8 @@
-import { getAuthUserId } from '@convex-dev/auth/server'
 import { v } from 'convex/values'
 import { isConcernKey } from '../shared/concerns'
 import type { Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
-import { invalidInput, rejectDemoUser, requireUserId } from './helpers'
+import { getUserId, invalidInput, rejectDemoUser, requireUserId } from './helpers'
 import { recomputeProductVerdict } from './verdictCompute'
 
 const MAX_NAME_LENGTH = 80
@@ -52,7 +51,7 @@ export const create = mutation({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getUserId(ctx)
     if (userId === null) return []
     return await ctx.db.query('products').withIndex('by_user', (q) => q.eq('userId', userId)).order('desc').collect()
   },
@@ -62,7 +61,7 @@ export const list = query({
 export const get = query({
   args: { productId: v.id('products') },
   handler: async (ctx, { productId }) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getUserId(ctx)
     if (userId === null) return null
     const product = await ctx.db.get(productId)
     return product && product.userId === userId ? product : null

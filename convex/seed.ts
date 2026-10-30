@@ -1,10 +1,11 @@
-import { createAccount } from '@convex-dev/auth/server'
 import { v } from 'convex/values'
-import { DEMO_EMAIL, DEMO_PASSWORD } from '../shared/demo-account'
+import { createClerkUser, findClerkUserIdByEmail } from '../shared/clerk/clerk-api'
+import { DEMO_EMAIL } from '../shared/demo-account'
 import { buildDemoData } from '../shared/demo/demo-data'
 import { internal } from './_generated/api'
 import type { Id } from './_generated/dataModel'
 import { internalAction, internalMutation, internalQuery } from './_generated/server'
+import { requireClerkSecretKey } from './helpers'
 import { recomputeProductVerdict } from './verdictCompute'
 
 export const findDemoUser = internalQuery({
@@ -12,6 +13,28 @@ export const findDemoUser = internalQuery({
   handler: async (ctx) => {
     const user = await ctx.db.query('users').withIndex('email', (q) => q.eq('email', DEMO_EMAIL)).unique()
     return user?._id ?? null
+  },
+})
+
+/** The demo user's Clerk id, for the "Try the demo" sign-in ticket. */
+export const findDemoClerkId = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const user = await ctx.db.query('users').withIndex('email', (q) => q.eq('email', DEMO_EMAIL)).unique()
+    return user?.clerkId ?? null
+  },
+})
+
+/** Makes sure the demo `users` row exists and points at the demo's Clerk user. */
+export const ensureDemoUser = internalMutation({
+  args: { clerkId: v.string() },
+  handler: async (ctx, { clerkId }) => {
+    const user = await ctx.db.query('users').withIndex('email', (q) => q.eq('email', DEMO_EMAIL)).unique()
+    if (user) {
+      if (user.clerkId !== clerkId) await ctx.db.patch(user._id, { clerkId })
+      return { userId: user._id, created: false }
+    }
+    return { userId: await ctx.db.insert('users', { email: DEMO_EMAIL, name: 'Demo', clerkId }), created: true }
   },
 })
 
@@ -57,26 +80,16 @@ export const seedDemoData = internalMutation({
 })
 
 /**
- * Creates the demo account if it doesn't exist yet and (re)seeds it. Run with `npm run reset-demo`
- * (add `-- --prod` for production). Needs Convex Auth (convex/auth.ts) to create the login.
+ * Creates the demo account if it doesn't exist yet (a passwordless Clerk user plus our `users` row) and (re)seeds
+ * it. Run with `npm run reset-demo` (add `-- --prod` for production). Needs CLERK_SECRET_KEY on the deployment.
+ * The demo signs in through a one-time ticket (convex/demo.ts), so it has no password.
  */
 export const resetDemo = internalAction({
   args: {},
   handler: async (ctx): Promise<{ userId: Id<'users'>; created: boolean; scans: number; products: { name: string; verdict: string }[] }> => {
-    let userId = await ctx.runQuery(internal.seed.findDemoUser, {})
-    const created = userId === null
-    if (userId === null) {
-      try {
-        const { user } = await createAccount(ctx, {
-          provider: 'password',
-          account: { id: DEMO_EMAIL, secret: DEMO_PASSWORD },
-          profile: { email: DEMO_EMAIL },
-        })
-        userId = user._id
-      } catch (error) {
-        throw new Error(`Could not create the demo account (is Convex Auth set up in convex/auth.ts?): ${error instanceof Error ? error.message : String(error)}`)
-      }
-    }
+    const secretKey = requireClerkSecretKey()
+    const clerkId = (await findClerkUserIdByEmail(secretKey, DEMO_EMAIL)) ?? (await createClerkUser(secretKey, DEMO_EMAIL))
+    const { userId, created } = await ctx.runMutation(internal.seed.ensureDemoUser, { clerkId })
     const seeded = await ctx.runMutation(internal.seed.seedDemoData, { userId })
     return { userId, created, ...seeded }
   },

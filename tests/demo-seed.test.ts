@@ -3,6 +3,7 @@ import { convexTest } from 'convex-test'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { api, internal } from '../convex/_generated/api'
 import schema from '../convex/schema'
+import { clerkIdFor } from './helpers/clerk-id'
 import { CONCERN_KEYS } from '../shared/concerns'
 import { buildDemoData } from '../shared/demo/demo-data'
 import { DEMO_EMAIL } from '../shared/demo-account'
@@ -78,9 +79,9 @@ describe('buildDemoData', () => {
 
 async function setup() {
   const t = convexTest(schema, modules)
-  const demoId = await t.run((ctx) => ctx.db.insert('users', { email: DEMO_EMAIL }))
-  const otherId = await t.run((ctx) => ctx.db.insert('users', { email: 'other@example.com' }))
-  return { t, demoId, otherId, demo: t.withIdentity({ subject: `${demoId}|s` }), other: t.withIdentity({ subject: `${otherId}|s` }) }
+  const demoId = await t.run((ctx) => ctx.db.insert('users', { email: DEMO_EMAIL, clerkId: clerkIdFor(DEMO_EMAIL) }))
+  const otherId = await t.run((ctx) => ctx.db.insert('users', { email: 'other@example.com', clerkId: clerkIdFor('other@example.com') }))
+  return { t, demoId, otherId, demo: t.withIdentity({ subject: clerkIdFor(DEMO_EMAIL) }), other: t.withIdentity({ subject: clerkIdFor('other@example.com') }) }
 }
 
 describe('seedDemoData', () => {
@@ -116,7 +117,7 @@ describe('seedDemoData', () => {
 
   it('wipes what was there before, and touches nothing of other users or the counters', async () => {
     const { t, demoId, otherId, other } = await setup()
-    const mine = await t.withIdentity({ subject: `${demoId}|s` })
+    const mine = await t.withIdentity({ subject: clerkIdFor(DEMO_EMAIL) })
     await t.run(async (ctx) => {
       await ctx.db.insert('products', { userId: demoId, name: 'Vandalism', targetConcern: 'acne', startDate: 0 })
       await ctx.db.insert('scans', { userId: demoId, createdAt: 1, scores: { acne: 1 }, noise: { acne: 1 }, qualityFlag: false })

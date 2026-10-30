@@ -31,14 +31,9 @@ The **[YouCam AI Skin Analysis API](https://yce.perfectcorp.com/ai-api)** (stand
 
 ## Try it
 
-**Demo account** (read-only, pre-filled with 6 weeks of sample scans and 3 products showing `WORKING`, `NO_VISIBLE_CHANGE` and `CANT_TELL`):
+**Demo account** (read-only, pre-filled with 6 weeks of sample scans and 3 products showing `WORKING`, `NO_VISIBLE_CHANGE` and `CANT_TELL`): on the login screen, **"Try the demo"** signs in with one tap. It has no password.
 
-| | |
-|---|---|
-| Email | `demo@receipts.example` |
-| Password | `receipts-demo-2026` |
-
-On the login screen, **"Try the demo"** signs in with one tap. Or sign up with any email and password (no verification) to scan for real.
+To scan for real, tap **"Continue with Google"**, or create an account with an email and password (Clerk emails a 6-digit code to confirm the address). Sign-in is handled by [Clerk](https://clerk.com).
 
 ## Run it yourself
 
@@ -59,12 +54,17 @@ Then set the server-side environment variables on your Convex deployment (they a
 | `YOUCAM_API_KEY` | Real scans. Without it scanning shows an error; everything else works. | `npx convex env set YOUCAM_API_KEY <key>` |
 | `OPENROUTER_API_KEY` | AI-written explanations. Without it a built-in templated explanation is used. | `npx convex env set OPENROUTER_API_KEY <key>` |
 | `OPENROUTER_MODEL` | Optional. One or more OpenRouter model ids, comma-separated, tried in order. Default: a few free chat models (see `shared/explanation/openrouter-client.ts`). | `npx convex env set OPENROUTER_MODEL <ids>` |
-| `JWT_PRIVATE_KEY`, `JWKS`, `SITE_URL` | Login (Convex Auth). | Run `npx @convex-dev/auth`, or follow the manual setup in the [Convex Auth docs](https://labs.convex.dev/auth/setup/manual). `SITE_URL` is your frontend URL, e.g. `http://localhost:5173`. |
+| `CLERK_JWT_ISSUER_DOMAIN` | Login (Clerk). Convex only accepts sign-in tokens from this Clerk instance. | The **Frontend API URL** from the Clerk dashboard, e.g. `npx convex env set CLERK_JWT_ISSUER_DOMAIN https://your-name-00.clerk.accounts.dev`. |
+| `CLERK_SECRET_KEY` | Creating the demo user, "Try the demo" tickets and account deletion. Server-side only. | `npx convex env set CLERK_SECRET_KEY <sk_...>` (Clerk dashboard, API keys). |
 
-Create the demo account on your deployment:
+The frontend also needs `VITE_CLERK_PUBLISHABLE_KEY` (the `pk_...` key, public) in `.env.local`, and in the Netlify and Vercel environment variables.
+
+**Clerk setup (once per Clerk instance):** create an application; under User & authentication turn on **Email address** (sign-up and sign-in, verified at sign-up with an email verification code) and **Password**; enable **Google** under SSO connections (a development instance uses Clerk's shared Google credentials, so no Google Cloud project is needed); and activate the **Convex** integration (Integrations). A Clerk *production* instance needs a domain you own and your own Google OAuth client.
+
+Create the demo account on your deployment (needs `CLERK_SECRET_KEY`):
 
 ```bash
-npm run reset-demo            # creates the demo login if missing and (re)seeds it; safe to repeat
+npm run reset-demo            # creates the demo user in Clerk if missing and (re)seeds it; safe to repeat
 ```
 
 Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`, `npm run lint`, `npm run build`.
@@ -79,10 +79,10 @@ The website is a static single-page app, so it can be hosted on **Netlify and Ve
 
 - **Netlify:** add a new site from this GitHub repo. Settings come from [`netlify.toml`](netlify.toml) (`npm run build`, publish `dist`); routing and cache rules are in `public/_redirects` and `public/_headers`.
 - **Vercel:** add a new project from this GitHub repo. Settings come from [`vercel.json`](vercel.json) (Vite, `npm run build`, output `dist`, single-page routing and the same cache rules). Add the environment variable above under Settings, Environment Variables (Production), then redeploy.
-- Optional: set `SITE_URL` on the Convex deployment to one of the site addresses (`npx convex env set SITE_URL https://<your-site>`). Sign-in works from any address without it.
+- Both hosts need `VITE_CLERK_PUBLISHABLE_KEY` as well. A Clerk development instance accepts sign-in from any address, so Netlify, Vercel and localhost all work.
 - Before judging, restore the demo data if it was touched: `npm run reset-demo`.
 
-If you ever want a separate production deployment instead: create it in the Convex dashboard, add a production deploy key to the host as `CONVEX_DEPLOY_KEY`, use the build command `npx convex deploy --cmd 'npm run build'`, set the environment variables with `--prod`, and run `npx @convex-dev/auth --prod --web-server-url <site>` and `npm run reset-demo -- --prod`.
+If you ever want a separate production deployment instead: create it in the Convex dashboard, add a production deploy key to the host as `CONVEX_DEPLOY_KEY`, use the build command `npx convex deploy --cmd 'npm run build'`, set the environment variables with `--prod`, and use a Clerk production instance (needs your own domain) and run `npm run reset-demo -- --prod`.
 
 ## How verdicts are calculated
 
@@ -113,7 +113,7 @@ scripts/        YouCam API spike and a live check script (need an API key)
 docs/           SPEC.md, youcam-api-notes.md, api-contract.md
 ```
 
-Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions, Convex Auth with email + password). Charts are hand-drawn SVG; Figtree (Fontsource, OFL) is the typeface.
+Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions), Clerk (Google and email + password sign-in). Charts are hand-drawn SVG; Figtree (Fontsource, OFL) is the typeface.
 
 ## License
 

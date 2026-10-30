@@ -1,13 +1,13 @@
-import { getAuthUserId } from '@convex-dev/auth/server'
 import { v } from 'convex/values'
 import { internalMutation, query } from './_generated/server'
+import { getUserId } from './helpers'
 import { recomputeProductVerdict, recomputeUserVerdicts } from './verdictCompute'
 
 /** The newest verdict for a product, or null if none yet / not the user's. */
 export const latestForProduct = query({
   args: { productId: v.id('products') },
   handler: async (ctx, { productId }) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getUserId(ctx)
     if (userId === null) return null
     const product = await ctx.db.get(productId)
     if (!product || product.userId !== userId) return null
@@ -23,7 +23,7 @@ export const latestForProduct = query({
 export const latestForAll = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getUserId(ctx)
     if (userId === null) return []
     const products = await ctx.db.query('products').withIndex('by_user', (q) => q.eq('userId', userId)).collect()
     return await Promise.all(
