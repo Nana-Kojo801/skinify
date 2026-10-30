@@ -184,9 +184,9 @@ export function HomePage() {
               <LatestScanCard scan={latestScan} />
             </div>
             <div className="flex flex-col gap-2.5 md:col-span-5 md:gap-3.5">
-              <div className="flex gap-2.5 md:flex-col md:gap-3.5">
-                {rhythmReady && <RhythmCard streak={streak} className="rise min-w-0 flex-1 md:flex-none" />}
-                <NextScanDue variant="tile" className="rise min-w-0 flex-1 md:flex-none" />
+              <div className="flex flex-col gap-2.5 md:gap-3.5">
+                {rhythmReady && <RhythmCard streak={streak} className="rise" />}
+                <NextScanDue variant="tile" className="rise" />
               </div>
               {blocked && (
                 <p className="tile-accent-2 rise hidden items-start gap-3 p-5 text-[14.5px] leading-snug font-semibold md:flex" style={{ '--i': 2 } as React.CSSProperties}>
