@@ -65,10 +65,10 @@ export function TimelineChart({ points, startDate, color }: { points: TimelinePo
       <div ref={boxRef} className="w-full" style={{ height: HEIGHT }}>
         {width > 0 && inView && (
           <svg width={w} height={HEIGHT} viewBox={`0 0 ${w} ${HEIGHT}`} role="img" aria-label={`Score for each scan, from ${Math.round(scores[0])} to ${Math.round(scores[scores.length - 1])}`} className="block overflow-visible">
-            <rect x={PAD.left} y={PAD.top - 4} width={Math.max(0, sx - PAD.left)} height={HEIGHT - PAD.top - PAD.bottom + 4} rx={8} fill="rgb(35 24 29 / 0.035)" />
+            <rect x={PAD.left} y={PAD.top - 4} width={Math.max(0, sx - PAD.left)} height={HEIGHT - PAD.top - PAD.bottom + 4} rx={8} fill="rgb(14 23 38 / 0.035)" />
             {[hi, mid, lo].map((v) => (
               <g key={v}>
-                <line x1={PAD.left} x2={w} y1={y(v)} y2={y(v)} stroke="rgb(35 24 29 / 0.07)" />
+                <line x1={PAD.left} x2={w} y1={y(v)} y2={y(v)} stroke="rgb(14 23 38 / 0.07)" />
                 <text x={0} y={y(v) + 4} fontSize="11" fontWeight="600" fill="var(--color-ink-3)">
                   {v}
                 </text>

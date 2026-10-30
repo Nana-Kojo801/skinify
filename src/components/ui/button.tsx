@@ -8,11 +8,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-[radial-gradient(120%_120%_at_50%_0%,#4a3c43_0%,var(--color-ink)_60%)] text-white shadow-(--shadow-button)',
-        accent: 'bg-[image:var(--sheen)] bg-accent text-ink shadow-(--shadow-depth-color)',
+        primary: 'bg-[radial-gradient(120%_120%_at_50%_0%,var(--color-primary-hi)_0%,var(--color-primary)_62%)] text-white shadow-(--shadow-button)',
+        accent: 'bg-[image:var(--sheen)] bg-primary text-white shadow-(--shadow-cta)',
+        tint: 'bg-[image:var(--sheen)] bg-accent text-ink shadow-(--shadow-depth-color)',
         soft: 'bg-[image:var(--sheen)] bg-tile text-ink shadow-(--shadow-depth)',
         white: 'bg-[image:var(--sheen)] bg-tile text-ink shadow-(--shadow-depth)',
-        outline: 'bg-tile text-ink shadow-[inset_0_0_0_1.5px_rgb(35_24_29/0.14)]',
+        outline: 'bg-tile text-ink shadow-[inset_0_0_0_1.5px_rgb(14_23_38/0.14)]',
         ghost: 'text-ink hover:bg-well',
         glass: 'glass-clear text-white',
         danger: 'bg-transparent text-irritation-ink shadow-[inset_0_0_0_1.5px_rgb(158_34_22/0.25)] hover:bg-irritation-bg/50',

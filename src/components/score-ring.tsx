@@ -28,7 +28,7 @@ export function ScoreRing({ value, label, size = 62, stroke = 'var(--color-ink)'
     <div ref={ref} className="flex flex-col items-center gap-1.5">
       <div className="relative" style={{ width: size, height: size }}>
         <svg viewBox="0 0 64 64" className="size-full -rotate-90" aria-hidden>
-          <circle cx="32" cy="32" r={r} fill="none" stroke="rgb(35 24 29 / 0.08)" strokeWidth={thickness} />
+          <circle cx="32" cy="32" r={r} fill="none" stroke="rgb(14 23 38 / 0.08)" strokeWidth={thickness} />
           <circle
             cx="32"
             cy="32"

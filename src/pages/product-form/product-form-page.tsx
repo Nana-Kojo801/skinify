@@ -152,7 +152,7 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
                       key={key}
                       className={cn(
                         'press relative flex min-h-[66px] cursor-pointer flex-col justify-center rounded-[18px] px-3.5 py-2.5 pr-9 transition-[background-color,box-shadow] duration-500 ease-(--ease-liquid) has-focus-visible:outline-[2.5px] has-focus-visible:outline-offset-2 has-focus-visible:outline-ink',
-                        checked ? 'bg-tile shadow-[inset_0_0_0_2px_var(--color-ink),0_12px_22px_-14px_rgb(35_24_29/0.45)]' : 'bg-well shadow-[inset_0_1px_2px_rgb(35_24_29/0.06)] hover:bg-ink/8',
+                        checked ? 'bg-tile shadow-[inset_0_0_0_2px_var(--color-ink),0_12px_22px_-14px_rgb(14_23_38/0.45)]' : 'bg-well shadow-[inset_0_1px_2px_rgb(14_23_38/0.06)] hover:bg-ink/8',
                       )}
                     >
                       <input

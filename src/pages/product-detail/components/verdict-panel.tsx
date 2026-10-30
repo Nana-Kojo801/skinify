@@ -146,7 +146,7 @@ function Progress({ label, value, total, start }: { label: string; value: number
           <CountUp value={value} start={start} className="text-[22px] font-extrabold tabular-nums" /> of {total}
         </span>
       </div>
-      <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/70 shadow-[inset_0_1px_2px_rgb(35_24_29/0.12)]">
+      <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/70 shadow-[inset_0_1px_2px_rgb(14_23_38/0.12)]">
         <div
           className="h-full origin-left rounded-full bg-early"
           style={{ transform: `scaleX(${start ? ratio : 0})`, transition: 'transform 1.2s var(--ease-liquid) .3s' }}

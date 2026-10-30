@@ -80,7 +80,7 @@ export function ProductDetailPage() {
     <Reveal as="section" className="tile p-5">
       <h2 className="text-[21px] font-extrabold tracking-[-0.02em]">Before and now</h2>
       <div className="mt-4 flex items-center justify-center gap-4">
-        <ScoreRing value={inputs.baselineMean} label="Before" size={104} thickness={7} stroke="rgb(35 24 29 / 0.25)" numberClassName="text-[32px]" labelClassName="text-[13px]" />
+        <ScoreRing value={inputs.baselineMean} label="Before" size={104} thickness={7} stroke="rgb(14 23 38 / 0.25)" numberClassName="text-[32px]" labelClassName="text-[13px]" />
         <ArrowRight size={22} weight="bold" className="mb-7 text-ink-3" aria-hidden />
         <ScoreRing value={inputs.recentPostMean} label="Now" size={104} thickness={7} stroke={lineColor} numberClassName="text-[32px]" labelClassName="text-[13px] text-ink" index={3} />
       </div>
@@ -217,7 +217,7 @@ export function ProductDetailPage() {
       <div className="hidden md:block">
         <BackLink to="/" label="Products" />
         <div className="rise mt-5 flex items-center gap-5">
-          <img src={image} alt="" className="size-[108px] shrink-0 rounded-[30px] object-cover shadow-[0_14px_30px_-14px_rgb(60_25_20/0.55)]" />
+          <img src={image} alt="" className="size-[108px] shrink-0 rounded-[30px] object-cover shadow-[0_14px_30px_-14px_rgb(20_40_80/0.55)]" />
           <div className="min-w-0 flex-1">
             <h1 className="display text-[46px] leading-[1.02]">{product.name}</h1>
             <p className="mt-2 text-base text-ink-2">{meta}</p>

@@ -52,7 +52,7 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
               {block.ideas.map((idea) => {
                 const to = `/products/new?${new URLSearchParams({ concern: block.concern, name: idea.name.replace(/\s*\(.*\)$/, '') })}`
                 return (
-                  <li key={idea.name} className="flex items-center justify-between gap-3 rounded-[18px] bg-white/60 py-2.5 pr-2.5 pl-4 shadow-[inset_0_0_0_1px_rgb(35_24_29/0.05)]">
+                  <li key={idea.name} className="flex items-center justify-between gap-3 rounded-[18px] bg-white/60 py-2.5 pr-2.5 pl-4 shadow-[inset_0_0_0_1px_rgb(14_23_38/0.05)]">
                     <span className="min-w-0">
                       <span className="block text-[15px] font-bold">{idea.name}</span>
                       <span className="block text-[13px] leading-snug text-ink-2">{idea.for}</span>
