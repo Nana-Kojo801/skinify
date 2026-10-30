@@ -3,6 +3,7 @@ import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import { IdeasToTest } from '@/components/ideas-to-test'
 import { NextScanDue } from '@/components/next-scan-due'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/lib/format'
@@ -30,6 +31,7 @@ const STEP_MS = 2400
 
 export function ScanPage() {
   const usage = useQuery(api.scans.usage)
+  const products = useQuery(api.products.list)
   const submit = useAction(api.scans.submit)
   const [photos, setPhotos] = useState<[Slot, Slot]>([null, null])
   const [problems, setProblems] = useState<[string?, string?]>([])
@@ -106,6 +108,9 @@ export function ScanPage() {
     return (
       <main className="mx-auto max-w-2xl px-4 pt-4 md:px-8 md:pt-10">
         <ScanResult result={result} />
+        <div className="mt-8 pb-10">
+          <IdeasToTest scores={result.scores} qualityFlag={result.qualityFlag} products={products} canCreate={!usage?.isDemoAccount} />
+        </div>
       </main>
     )
   }

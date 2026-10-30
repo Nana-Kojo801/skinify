@@ -2,7 +2,7 @@ import { CaretLeft, Warning } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { PageSkeleton } from '@/components/page-skeleton'
 import { ScoreRing } from '@/components/score-ring'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -17,6 +17,10 @@ export function ProductFormPage() {
   const { id } = useParams()
   const product = useQuery(api.products.get, id ? { productId: id as Id<'products'> } : 'skip')
   const [today] = useState(() => toDateInputValue(Date.now()))
+  // "Test this" on an idea opens /products/new?concern=pore&name=Niacinamide: only a known concern and a short name are used.
+  const [search] = useSearchParams()
+  const hintedConcern = search.get('concern')
+  const hintedName = (search.get('name') ?? '').slice(0, 60)
   if (id && product === undefined) return <PageSkeleton />
   if (id && product === null) {
     return (
@@ -34,7 +38,11 @@ export function ProductFormPage() {
       initial={
         product
           ? { name: product.name, targetConcern: product.targetConcern, startDate: toDateInputValue(product.startDate) }
-          : { name: '', targetConcern: CONCERN_KEYS[0], startDate: today }
+          : {
+              name: hintedName,
+              targetConcern: hintedConcern !== null && isConcernKey(hintedConcern) ? hintedConcern : CONCERN_KEYS[0],
+              startDate: today,
+            }
       }
     />
   )
