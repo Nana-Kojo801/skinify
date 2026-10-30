@@ -49,13 +49,13 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
           return (
             <div key={row.key} className="grid grid-cols-[92px_1fr_auto] items-center gap-3 text-[14px] font-semibold">
               <span className="truncate">{row.label}</span>
-              <span className="relative h-3 rounded-full bg-ink/7 shadow-[inset_0_1px_2px_rgb(35_24_29/0.08)]">
+              <span className="relative h-3 rounded-full bg-ink/7 shadow-[inset_0_1px_2px_rgb(14_23_38/0.08)]">
                 <span
-                  className="grow-x absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-[#4a3c43] to-ink"
+                  className="grow-x absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-primary-hi to-primary"
                   style={{ width: `${Math.max(2, Math.min(100, row.now))}%`, '--i': index } as React.CSSProperties}
                 />
                 <span
-                  className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent-strong shadow-[0_1px_3px_rgb(0_0_0/0.25)]"
+                  className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-ink shadow-[0_1px_3px_rgb(0_0_0/0.25)]"
                   style={{ left: `${Math.max(0, Math.min(100, row.before))}%` }}
                   title={`First scan: ${Math.round(row.before)}`}
                 />
@@ -73,11 +73,11 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
 
       <p className="mt-4 flex items-center gap-4 text-[12.5px] font-bold text-ink-2" aria-hidden>
         <span className="inline-flex items-center gap-1.5">
-          <i className="size-3 rounded-full border-2 border-white bg-accent-strong shadow-[0_1px_3px_rgb(0_0_0/0.25)]" />
+          <i className="size-3 rounded-full border-2 border-white bg-ink shadow-[0_1px_3px_rgb(0_0_0/0.25)]" />
           First scan
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <i className="h-2.5 w-5 rounded-full bg-ink" />
+          <i className="h-2.5 w-5 rounded-full bg-linear-to-r from-primary-hi to-primary" />
           Latest scan
         </span>
       </p>

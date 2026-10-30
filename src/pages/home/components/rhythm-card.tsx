@@ -5,7 +5,7 @@ import type { Milestone } from '@shared/rhythm/milestones'
 import { RHYTHM_CONFIG } from '@shared/rhythm/rhythm-config'
 import type { Streak } from '@shared/rhythm/streak'
 
-// "Your rhythm": a weekly scan streak that pauses gently instead of "breaking". Compact blush tile near the top of Home.
+// "Your rhythm": a weekly scan streak that pauses gently instead of "breaking". Compact pale-blue tile near the top of Home.
 export function RhythmCard({ streak, className }: { streak: Streak; className?: string }) {
   if (streak.lastScanAt === null) return null
   return (
@@ -40,7 +40,7 @@ export function RhythmCard({ streak, className }: { streak: Streak; className?: 
             aria-label={scanned ? 'Scanned' : 'No scan'}
             className={cn(
               'pop-in size-[22px] shrink-0 rounded-[7px] md:size-6',
-              scanned ? 'bg-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.25)]' : 'bg-ink/12',
+              scanned ? 'bg-primary shadow-[inset_0_1px_0_rgb(255_255_255/0.3)]' : 'bg-ink/12',
               index === streak.recent.length - 1 && 'outline-2 outline-offset-2 outline-ink/40 outline-dashed',
             )}
             style={{ '--i': index + 3 } as React.CSSProperties}

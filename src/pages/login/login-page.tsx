@@ -98,7 +98,7 @@ export function LoginPage() {
             <GoogleMark />
             Continue with Google
           </Button>
-          <Button variant="accent" size="lg" onClick={() => void onDemo()} disabled={pending}>
+          <Button variant="tint" size="lg" onClick={() => void onDemo()} disabled={pending}>
             <Sparkle size={18} weight="fill" />
             Try the demo
           </Button>

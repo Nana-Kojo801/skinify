@@ -40,7 +40,7 @@ export function AppShell() {
   return (
     <div className="min-h-dvh">
       {/* Desktop navigation */}
-      <header className="sticky top-0 z-30 hidden bg-fog/60 shadow-[inset_0_-1px_0_rgb(35_24_29/0.06)] backdrop-blur-[22px] backdrop-saturate-[1.8] md:block">
+      <header className="sticky top-0 z-30 hidden bg-fog/60 shadow-[inset_0_-1px_0_rgb(14_23_38/0.06)] backdrop-blur-[22px] backdrop-saturate-[1.8] md:block">
         <div className="mx-auto flex h-[76px] max-w-[1260px] items-center gap-4 px-10">
           <Link to="/" aria-label="Receipts home" className="press">
             <Logo />
@@ -100,7 +100,7 @@ export function AppShell() {
               aria-label="New scan"
               aria-current={scanActive ? 'page' : undefined}
               className={cn(
-                'press grid h-[50px] w-20 place-items-center rounded-full bg-[image:var(--sheen)] bg-accent text-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.7),0_6px_16px_-6px_rgb(228_154_171/0.9)] transition-transform duration-500 ease-(--ease-spring)',
+                'press grid h-[50px] w-20 place-items-center rounded-full bg-[image:var(--sheen)] bg-primary text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.5),0_6px_16px_-6px_rgb(0_104_224/0.7)] transition-transform duration-500 ease-(--ease-spring)',
                 scanActive && 'scale-105',
               )}
             >
@@ -119,7 +119,7 @@ export function AppShell() {
 function desktopLink(active: boolean) {
   return cn(
     'press grid h-10 place-items-center rounded-full px-5 text-[14.5px] font-bold transition-[background-color,color,box-shadow] duration-500 ease-(--ease-liquid)',
-    active ? 'bg-[radial-gradient(120%_120%_at_50%_0%,#4a3c43_0%,var(--color-ink)_60%)] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]' : 'text-ink-2 hover:text-ink',
+    active ? 'bg-[radial-gradient(120%_120%_at_50%_0%,var(--color-primary-hi)_0%,var(--color-primary)_62%)] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.25)]' : 'text-ink-2 hover:text-ink',
   )
 }
 

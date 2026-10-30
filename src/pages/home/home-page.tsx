@@ -207,7 +207,7 @@ export function HomePage() {
                     <img
                       src={productImage(productRank(products ?? [], insight.product._id))}
                       alt=""
-                      className="size-[76px] shrink-0 rounded-[22px] object-cover shadow-[0_8px_16px_-8px_rgb(60_25_20/0.45)] md:size-[88px]"
+                      className="size-[76px] shrink-0 rounded-[22px] object-cover shadow-[0_8px_16px_-8px_rgb(20_40_80/0.45)] md:size-[88px]"
                     />
                   ) : (
                     <span className="grid size-[76px] shrink-0 place-items-center rounded-[22px] bg-white/70 md:size-[88px]">

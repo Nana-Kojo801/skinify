@@ -27,9 +27,9 @@ export function SignalMeter({ value, threshold, color }: SignalMeterProps) {
   return (
     <div ref={ref}>
       <div className="relative h-9">
-        <div className="absolute inset-x-0 top-[13px] h-2.5 rounded-full bg-white/70 shadow-[inset_0_1px_2px_rgb(35_24_29/0.12)]" />
+        <div className="absolute inset-x-0 top-[13px] h-2.5 rounded-full bg-white/70 shadow-[inset_0_1px_2px_rgb(14_23_38/0.12)]" />
         <div
-          className="absolute top-[7px] h-[22px] rounded-lg bg-[repeating-linear-gradient(135deg,rgb(35_24_29/0.15)_0_4px,rgb(35_24_29/0.04)_4px_8px)]"
+          className="absolute top-[7px] h-[22px] rounded-lg bg-[repeating-linear-gradient(135deg,rgb(14_23_38/0.15)_0_4px,rgb(14_23_38/0.04)_4px_8px)]"
           style={{
             left: `${50 - bandHalf}%`,
             width: `${bandHalf * 2}%`,
