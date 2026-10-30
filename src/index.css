@@ -272,3 +272,18 @@
         animation: none !important;
     }
 }
+
+/* The printable report (issue #41): A4 with sensible margins, no table row split across pages. */
+@media print {
+    @page {
+        size: A4;
+        margin: 14mm;
+    }
+    html,
+    body {
+        background: #fff !important;
+    }
+    tr {
+        break-inside: avoid;
+    }
+}
