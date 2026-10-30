@@ -104,6 +104,10 @@ On the Scan page, each photo gets a small lighting hint as soon as it is chosen 
 
 When two **active** products target the same concern and **started within 28 days** of each other, Receipts says so: a note on both product pages, a chip on the Home cards, and a heads-up in the new-product form before saving (it never blocks saving). The verdict compares your score before and after a start date, so it can't tell overlapping products apart. This is a warning only: the verdict engine is unchanged. The rule and the 28 days live in [`shared/products/overlap.ts`](shared/products/overlap.ts).
 
+## Evidence strength
+
+Each verdict card (except "Too early") has an **Evidence** strip: **Thin**, **Fair** or **Solid**, with the facts behind it ("5 scans since you started, 35 days tracked", "your change is 3.8 times normal variation"). Two yes/no checks decide it: a *clear margin* (a change at least 1.5 times the noise threshold for Working and Possible irritation, or at most half of it for No visible change) and *deep data* (at least 5 scans over at least 35 days). Two yes = Solid, one = Fair, none = Thin; "Can't tell yet" is always Thin. It rates the measurement, not the product, and never promises that more scans will confirm anything. It is display only: the verdict engine and the stored verdicts are unchanged. The cut-offs are first guesses in `EVIDENCE_CONFIG` in [`shared/verdict/verdict-config.ts`](shared/verdict/verdict-config.ts); the rule is in [`shared/verdict/evidence.ts`](shared/verdict/evidence.ts).
+
 ## How verdicts are calculated
 
 The engine is a pure TypeScript function in [`shared/verdict/compute-verdict.ts`](shared/verdict/compute-verdict.ts), and every threshold lives in one file, [`shared/verdict/verdict-config.ts`](shared/verdict/verdict-config.ts).

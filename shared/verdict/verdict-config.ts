@@ -62,3 +62,22 @@ export const VERDICT_CONFIG: VerdictConfig = {
   defaultDirection: 'higher',
   irritationConcerns: ['redness'],
 }
+
+/**
+ * "Evidence strength" shown on the verdict card (issue #41, feature 5). Display only: the verdict itself never
+ * reads these. Two yes/no checks, both first guesses that need tuning on real data:
+ *  - clear margin: the change is far from the line (see describeEvidence in evidence.ts)
+ *  - deep data: enough scans over enough days, comfortably past the minimums above
+ */
+export const EVIDENCE_CONFIG = {
+  /** WORKING / POSSIBLE_IRRITATION: the change is at least this many times the noise threshold (the engine's bar is 1x). */
+  clearMargin: 1.5,
+  /** NO_VISIBLE_CHANGE: the change is at most this fraction of the noise threshold, meaning clearly flat. */
+  flatMargin: 0.5,
+  /** Deep data: at least this many scans since the start... */
+  deepPostScans: 5,
+  /** ...and at least this many days tracked. */
+  deepDays: 35,
+  /** Below this a WORKING margin is described as "only just past the line". */
+  justPastLineBelow: 1.25,
+}
