@@ -303,6 +303,20 @@ describe('reminders.sendDueReminders', () => {
   })
 })
 
+describe('reminders.sendTestEmail', () => {
+  it('sends the real email once to an allow-listed address, and refuses anyone else', async () => {
+    const fetchMock = vi.fn(async () => ok())
+    vi.stubGlobal('fetch', fetchMock)
+    const t = convexTest(schema, modules)
+    expect(await t.action(internal.reminders.sendTestEmail, { email: 'nana@gmail.com' })).toEqual({ id: 'email_1' })
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string)).toMatchObject({ to: 'nana@gmail.com' })
+    await expect(t.action(internal.reminders.sendTestEmail, { email: 'stranger@gmail.com' })).rejects.toThrow(/not on EMAIL_ALLOWED_TO/)
+    await expect(t.action(internal.reminders.sendTestEmail, { email: 'a@example.com' })).rejects.toThrow()
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+})
+
 describe('reminders.unsubscribe', () => {
   it('turns reminders off from the link, repeatably, and rejects a wrong token', async () => {
     const { t, userId, me } = await setup()

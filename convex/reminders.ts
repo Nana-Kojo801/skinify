@@ -188,3 +188,32 @@ export const sendDueReminders = internalAction({
     return result
   },
 })
+
+export const unsubscribeTokenFor = internalQuery({
+  args: { email: v.string() },
+  handler: async (ctx, { email }) => {
+    const user = await ctx.db.query('users').withIndex('email', (q) => q.eq('email', email)).first()
+    return user?.unsubscribeToken ?? null
+  },
+})
+
+/**
+ * Sends the real reminder email once, right now, to an address on EMAIL_ALLOWED_TO. For checking delivery by hand:
+ * `npx convex run reminders:sendTestEmail '{"email":"you@example.org"}'`. It is not on a schedule and not in the app.
+ */
+export const sendTestEmail = internalAction({
+  args: { email: v.string() },
+  handler: async (ctx, { email }): Promise<{ id: string }> => {
+    const apiKey = process.env.RESEND_API_KEY
+    const from = process.env.EMAIL_FROM
+    const base = appUrl()
+    if (!apiKey || !from || !base) throw new Error('Set RESEND_API_KEY, EMAIL_FROM and APP_URL first.')
+    if (isBlockedAddress(email) || !isAllowedRecipient(email, process.env.EMAIL_ALLOWED_TO)) {
+      throw new Error('That address is not on EMAIL_ALLOWED_TO, so no email is sent to it.')
+    }
+    const token = (await ctx.runQuery(internal.reminders.unsubscribeTokenFor, { email })) ?? 'test-token-not-a-real-user'
+    const dueAt = Date.now() + 24 * 60 * 60 * 1000
+    const message = buildReminderEmail({ dueLabel: formatDueLabel(dueAt, REMINDER_CONFIG.fallbackTimeZone), appUrl: base, unsubscribeUrl: unsubscribeUrl(token) })
+    return { id: await sendEmail({ to: email, ...message }, { apiKey, from }) }
+  },
+})
