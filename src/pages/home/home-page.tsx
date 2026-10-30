@@ -15,7 +15,10 @@ import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
 import { api } from '../../../convex/_generated/api'
 import { LatestScanCard } from './components/latest-scan-card'
+import { MilestoneCelebration } from './components/milestone-celebration'
+import { RhythmCard } from './components/rhythm-card'
 import { SkinOverview } from './components/skin-overview'
+import { useRhythm } from './use-rhythm'
 import { ProductCard } from './components/product-card'
 
 const RULES = [
@@ -51,6 +54,7 @@ export function HomePage() {
   const latestScan = useQuery(api.scans.latest)
   const scans = useQuery(api.scans.list)
   const usage = useQuery(api.scans.usage)
+  const firstWorking = useQuery(api.milestones.firstWorking)
   const [now] = useState(() => Date.now())
 
   const overlaps = overlapMap(products ?? [], now)
@@ -93,6 +97,14 @@ export function HomePage() {
     return null
   })()
 
+  const { streak, milestones } = useRhythm({
+    scanTimes: (scans ?? []).map((scan) => scan.createdAt),
+    products: products ?? [],
+    firstWorking: firstWorking ?? null,
+    now,
+  })
+  const rhythmReady = scans !== undefined && products !== undefined && firstWorking !== undefined
+
   const today = new Date(now).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })
 
   return (
@@ -126,6 +138,8 @@ export function HomePage() {
         </div>
       </section>
 
+      {rhythmReady && <MilestoneCelebration milestones={milestones} currentStreak={streak.weeks} now={now} />}
+
       {blocked && (
         <p className="rise mt-4 flex items-start gap-2.5 rounded-2xl bg-sand px-4 py-3 text-sm text-cocoa-soft" style={{ '--i': 1 } as React.CSSProperties}>
           <Info size={18} className="mt-px shrink-0" />
@@ -136,6 +150,11 @@ export function HomePage() {
       <div className="mt-5 grid gap-4 md:mt-8 md:grid-cols-[1.4fr_1fr] md:gap-6">
         <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
           <LatestScanCard scan={latestScan} canScan={canScan} />
+          {rhythmReady && (
+            <div className="mt-4 md:mt-6">
+              <RhythmCard streak={streak} milestones={milestones} />
+            </div>
+          )}
           {latestScan && (
             <div className="mt-4 md:mt-6">
               <SkinOverview scans={scans} />

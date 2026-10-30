@@ -13,6 +13,7 @@ import type * as crons from "../crons.js";
 import type * as demo from "../demo.js";
 import type * as explanations from "../explanations.js";
 import type * as helpers from "../helpers.js";
+import type * as milestones from "../milestones.js";
 import type * as products from "../products.js";
 import type * as reminders from "../reminders.js";
 import type * as scans from "../scans.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   demo: typeof demo;
   explanations: typeof explanations;
   helpers: typeof helpers;
+  milestones: typeof milestones;
   products: typeof products;
   reminders: typeof reminders;
   scans: typeof scans;
