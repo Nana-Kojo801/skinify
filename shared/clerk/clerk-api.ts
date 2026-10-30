@@ -54,3 +54,24 @@ export async function createSignInTicket(secretKey: string, clerkUserId: string)
 export async function deleteClerkUser(secretKey: string, clerkUserId: string): Promise<void> {
   await clerkRequest(secretKey, 'DELETE', `/users/${encodeURIComponent(clerkUserId)}`)
 }
+
+type ClerkUser = {
+  first_name: string | null
+  last_name: string | null
+  primary_email_address_id: string | null
+  email_addresses: { id: string; email_address: string; verification: { status?: string } | null }[]
+}
+
+/**
+ * The name and verified primary email of a Clerk user. The session token Convex receives carries neither, so the
+ * server asks Clerk. An unverified address is never returned: it could belong to someone else.
+ */
+export async function getClerkProfile(secretKey: string, clerkUserId: string): Promise<{ email: string | null; name: string | null }> {
+  const user = await clerkRequest<ClerkUser>(secretKey, 'GET', `/users/${encodeURIComponent(clerkUserId)}`)
+  const primary = user.email_addresses.find((address) => address.id === user.primary_email_address_id)
+  const name = [user.first_name, user.last_name].filter(Boolean).join(' ')
+  return {
+    email: primary?.verification?.status === 'verified' ? primary.email_address : null,
+    name: name || null,
+  }
+}
