@@ -202,7 +202,17 @@ export function HomePage() {
             </Link>
           )}
         </div>
-        <p className="mt-1 px-1 text-[15px] text-muted">Each one is judged on the skin concern it targets.</p>
+        <p className="mt-1 px-1 text-[15px] text-muted">
+          Each one is judged on the skin concern it targets.
+          {scans && scans.length > 0 && (
+            <>
+              {' '}
+              <Link to="/report" className="font-semibold text-cocoa underline underline-offset-4">
+                Make a report to share
+              </Link>
+            </>
+          )}
+        </p>
 
         {products === undefined ? (
           <div className="mt-4 grid gap-3 md:grid-cols-3 md:gap-5" aria-hidden>

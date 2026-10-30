@@ -12,6 +12,7 @@ const ScanPage = lazy(() => import('@/pages/scan/scan-page').then((m) => ({ defa
 const ProductFormPage = lazy(() => import('@/pages/product-form/product-form-page').then((m) => ({ default: m.ProductFormPage })))
 const ProductDetailPage = lazy(() => import('@/pages/product-detail/product-detail-page').then((m) => ({ default: m.ProductDetailPage })))
 const ComparePage = lazy(() => import('@/pages/compare/compare-page').then((m) => ({ default: m.ComparePage })))
+const ReportPage = lazy(() => import('@/pages/report/report-page').then((m) => ({ default: m.ReportPage })))
 const SettingsPage = lazy(() => import('@/pages/settings/settings-page').then((m) => ({ default: m.SettingsPage })))
 
 export function App() {
@@ -45,6 +46,14 @@ export function App() {
           }
         />
         <Route element={<RequireAuth />}>
+          <Route
+            path="/report"
+            element={
+              <Suspense fallback={null}>
+                <ReportPage />
+              </Suspense>
+            }
+          />
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/scan" element={<ScanPage />} />
