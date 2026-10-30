@@ -16,8 +16,13 @@ async function clerkRequest<T>(secretKey: string, method: string, path: string, 
     body: body === undefined ? undefined : JSON.stringify(body),
   })
   if (!response.ok) {
-    // Clerk's error bodies carry no secrets; keep the status for the Convex logs.
-    throw new Error(`Clerk API ${method} ${path} failed with status ${response.status}`)
+    // Clerk's error bodies carry no secrets (just an error code and message), so keep them for the Convex logs.
+    const detail = await response
+      .json()
+      .then((body: { errors?: { code?: string; message?: string; meta?: { param_name?: string } }[] }) =>
+        body.errors?.map((e) => `${e.code}${e.meta?.param_name ? ` [${e.meta.param_name}]` : ''}: ${e.message}`).join('; '),)
+      .catch(() => undefined)
+    throw new Error(`Clerk API ${method} ${path} failed with status ${response.status}${detail ? ` (${detail})` : ''}`)
   }
   return (await response.json()) as T
 }
