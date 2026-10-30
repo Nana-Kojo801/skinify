@@ -2,6 +2,7 @@ import { CaretRight, Info, Plus, ScanSmiley, Warning } from '@phosphor-icons/rea
 import { useQuery } from 'convex/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { IdeasToTest } from '@/components/ideas-to-test'
 import { NextScanDue } from '@/components/next-scan-due'
 import { Reveal } from '@/components/reveal'
 import { buttonVariants } from '@/components/ui/button'
@@ -132,6 +133,11 @@ export function HomePage() {
       <div className="mt-5 grid gap-4 md:mt-8 md:grid-cols-[1.4fr_1fr] md:gap-6">
         <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
           <LatestScanCard scan={latestScan} canScan={canScan} />
+          {latestScan && (
+            <div className="mt-4 md:mt-6">
+              <IdeasToTest scores={latestScan.scores} qualityFlag={latestScan.qualityFlag} products={products} canCreate={canEdit} />
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-4 md:gap-6">
           {insight && (
