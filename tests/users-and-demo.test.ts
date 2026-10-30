@@ -147,35 +147,3 @@ describe('seed.resetDemo', () => {
     expect(await t.run((ctx) => ctx.db.query('users').collect())).toHaveLength(1)
   })
 })
-
-describe('cutover.wipeLegacyAccounts', () => {
-  it('removes accounts that predate Clerk with their data, and leaves Clerk users alone', async () => {
-    const t = convexTest(schema, modules)
-    const { legacy, clerkUser } = await t.run(async (ctx) => {
-      const legacy = await ctx.db.insert('users', { email: 'old@example.com' })
-      const clerkUser = await ctx.db.insert('users', { email: 'new@example.com', clerkId: 'user_new' })
-      await ctx.db.insert('products', { userId: legacy, name: 'Old', targetConcern: 'acne', startDate: 0 })
-      await ctx.db.insert('products', { userId: clerkUser, name: 'New', targetConcern: 'acne', startDate: 0 })
-      await ctx.db.insert('scans', { userId: legacy, createdAt: 1, scores: { acne: 1 }, noise: { acne: 1 }, qualityFlag: false })
-      await ctx.db.insert('authAccounts', { userId: legacy, provider: 'password', providerAccountId: 'old@example.com' })
-      await ctx.db.insert('authSessions', { userId: legacy })
-      await ctx.db.insert('usageCounters', { name: 'youcam_units', value: 5 })
-      return { legacy, clerkUser }
-    })
-
-    expect(await t.mutation(internal.cutover.wipeLegacyAccounts, {})).toEqual({ users: 1, authDocs: 2 })
-    expect(await t.mutation(internal.cutover.wipeLegacyAccounts, {})).toEqual({ users: 0, authDocs: 0 })
-
-    const left = await t.run(async (ctx) => ({
-      users: (await ctx.db.query('users').collect()).map((u) => u._id),
-      products: (await ctx.db.query('products').collect()).map((p) => p.name),
-      scans: await ctx.db.query('scans').collect(),
-      counters: await ctx.db.query('usageCounters').collect(),
-    }))
-    expect(left.users).toEqual([clerkUser])
-    expect(left.users).not.toContain(legacy)
-    expect(left.products).toEqual(['New'])
-    expect(left.scans).toEqual([])
-    expect(left.counters).toHaveLength(1)
-  })
-})

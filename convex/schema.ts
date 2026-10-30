@@ -5,28 +5,15 @@ import { verdictInputsValidator, verdictValidator } from './validators'
 // Convex requires a default export here.
 export default defineSchema({
   // One row per signed-in person, created the first time they open the app (users.store). Sign-in itself is
-  // Clerk; `clerkId` is the Clerk user id (the token's `subject`).
+  // Clerk; `clerkId` is the Clerk user id (the token's `subject`). The email is the verified primary email,
+  // read from Clerk's Backend API.
   users: defineTable({
-    clerkId: v.optional(v.string()),
+    clerkId: v.string(),
     email: v.optional(v.string()),
     name: v.optional(v.string()),
-    // Fields of the old Convex Auth users table. Rows without a clerkId are wiped by cutover:wipeLegacyAccounts.
-    image: v.optional(v.string()),
-    emailVerificationTime: v.optional(v.number()),
-    phone: v.optional(v.string()),
-    phoneVerificationTime: v.optional(v.number()),
-    isAnonymous: v.optional(v.boolean()),
   })
     .index('by_clerk_id', ['clerkId'])
     .index('email', ['email']),
-
-  // Old Convex Auth tables. Kept only so cutover:wipeLegacyAccounts can empty them; delete these lines after it ran.
-  authAccounts: defineTable(v.any()),
-  authSessions: defineTable(v.any()),
-  authRefreshTokens: defineTable(v.any()),
-  authVerificationCodes: defineTable(v.any()),
-  authVerifiers: defineTable(v.any()),
-  authRateLimits: defineTable(v.any()),
 
   products: defineTable({
     userId: v.id('users'),
