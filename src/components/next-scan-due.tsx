@@ -57,15 +57,15 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
 
   if (variant === 'tile') {
     return (
-      <section className={cn('tile-accent-2 flex flex-col gap-3 p-4 md:flex-row md:flex-wrap md:items-center md:gap-x-4 md:gap-y-2', className)} aria-label="Next scan">
-        <div className="flex items-center gap-3 md:contents">
+      <section className={cn('tile-accent-2 flex flex-wrap items-center gap-x-4 gap-y-3 p-4', className)} aria-label="Next scan">
+        <div className="contents">
           <span className="grid h-[68px] w-16 shrink-0 grid-rows-[22px_1fr] overflow-hidden rounded-[18px] bg-tile text-center shadow-[0_6px_14px_-8px_rgb(150_64_28/0.6)]" aria-hidden>
             <span className="bg-accent-2-ink text-[11px] leading-[22px] font-extrabold tracking-[0.08em] text-white uppercase">
               {date.toLocaleDateString(undefined, { weekday: 'short' })}
             </span>
             <span className="text-[32px] leading-[46px] font-extrabold tracking-[-0.03em] tabular-nums">{date.getDate()}</span>
           </span>
-          <div className="min-w-0 md:flex-1">
+          <div className="min-w-[150px] flex-1">
             <p className="eyebrow text-accent-2-ink">
               <CalendarBlank size={16} weight="bold" />
               Next scan
@@ -80,9 +80,9 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
             )}
           </div>
         </div>
-        {addButton('self-start md:self-center')}
+        {addButton()}
         {downloaded && (
-          <p className="text-[12.5px] leading-snug font-medium text-ink-2 md:basis-full" role="status">
+          <p className="basis-full text-[12.5px] leading-snug font-medium text-ink-2" role="status">
             {SAVED}
           </p>
         )}

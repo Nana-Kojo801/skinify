@@ -9,7 +9,7 @@ import type { Streak } from '@shared/rhythm/streak'
 export function RhythmCard({ streak, className }: { streak: Streak; className?: string }) {
   if (streak.lastScanAt === null) return null
   return (
-    <section className={cn('tile-accent flex flex-col gap-3 p-4 md:flex-row md:items-end md:justify-between md:gap-5 md:px-5', className)} aria-labelledby="rhythm-title">
+    <section className={cn('tile-accent flex flex-wrap items-end justify-between gap-x-5 gap-y-3 p-4 md:px-5', className)} aria-labelledby="rhythm-title">
       <div>
         <h2 id="rhythm-title" className="eyebrow">
           <Flame size={16} weight="bold" />
@@ -39,7 +39,7 @@ export function RhythmCard({ streak, className }: { streak: Streak; className?: 
             key={index}
             aria-label={scanned ? 'Scanned' : 'No scan'}
             className={cn(
-              'pop-in aspect-square max-w-7 min-w-0 flex-1 rounded-[7px] md:size-6 md:max-w-none md:flex-none',
+              'pop-in size-[22px] shrink-0 rounded-[7px] md:size-6',
               scanned ? 'bg-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.25)]' : 'bg-ink/12',
               index === streak.recent.length - 1 && 'outline-2 outline-offset-2 outline-ink/40 outline-dashed',
             )}
