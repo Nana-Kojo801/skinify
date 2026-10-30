@@ -33,7 +33,7 @@ The **[YouCam AI Skin Analysis API](https://yce.perfectcorp.com/ai-api)** (stand
 
 **Demo account** (read-only, pre-filled with 6 weeks of sample scans and 3 products showing `WORKING`, `NO_VISIBLE_CHANGE` and `CANT_TELL`): on the login screen, **"Try the demo"** signs in with one tap. It has no password.
 
-To scan for real, tap **"Continue with Google"**. That creates your account (sign-in is handled by [Clerk](https://clerk.com); email + password sign-up was removed).
+To scan for real, tap **"Continue with Google"**, or create an account with an email and password (Clerk emails a 6-digit code to confirm the address). Sign-in is handled by [Clerk](https://clerk.com).
 
 ## Run it yourself
 
@@ -59,7 +59,7 @@ Then set the server-side environment variables on your Convex deployment (they a
 
 The frontend also needs `VITE_CLERK_PUBLISHABLE_KEY` (the `pk_...` key, public) in `.env.local`, and in the Netlify and Vercel environment variables.
 
-**Clerk setup (once per Clerk instance):** create an application, enable **Google** under SSO connections (a development instance uses Clerk's shared Google credentials, so no Google Cloud project is needed), keep Email address as an identifier but turn off password and email-code sign-in, and activate the **Convex** integration (Integrations). A Clerk *production* instance needs a domain you own and your own Google OAuth client.
+**Clerk setup (once per Clerk instance):** create an application; under User & authentication turn on **Email address** (sign-up and sign-in, verified at sign-up with an email verification code) and **Password**; enable **Google** under SSO connections (a development instance uses Clerk's shared Google credentials, so no Google Cloud project is needed); and activate the **Convex** integration (Integrations). A Clerk *production* instance needs a domain you own and your own Google OAuth client.
 
 Create the demo account on your deployment (needs `CLERK_SECRET_KEY`):
 
@@ -113,7 +113,7 @@ scripts/        YouCam API spike and a live check script (need an API key)
 docs/           SPEC.md, youcam-api-notes.md, api-contract.md
 ```
 
-Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions), Clerk (sign in with Google). Charts are hand-drawn SVG; Figtree (Fontsource, OFL) is the typeface.
+Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions), Clerk (Google and email + password sign-in). Charts are hand-drawn SVG; Figtree (Fontsource, OFL) is the typeface.
 
 ## License
 

@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
+import { EmailAuthForm } from './components/email-auth-form'
 import { SCAN_CONFIG } from '@shared/scan/scan-config'
 import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 import { api } from '../../../convex/_generated/api'
@@ -46,7 +47,7 @@ export function LoginPage() {
       })
       if (finalizeError) throw new Error('finalize failed')
     } catch {
-      setError('The demo account is not available right now. Please sign in with Google instead.')
+      setError('The demo account is not available right now. Please create an account instead.')
       setPending(false)
     }
   }
@@ -82,20 +83,22 @@ export function LoginPage() {
         </p>
 
         <div className="rise mt-6 flex flex-col gap-3 md:mt-8" style={{ '--i': 2 } as React.CSSProperties}>
+          <EmailAuthForm pending={pending} setPending={setPending} setError={setError} />
           {error && (
             <p role="alert" className="flex items-start gap-2.5 rounded-2xl bg-irritation-bg px-4 py-3 text-sm text-irritation-ink">
               <Warning size={18} className="mt-px shrink-0" />
               {error}
             </p>
           )}
-          <Button size="lg" onClick={() => void onGoogle()} disabled={pending}>
+          <p className="my-1 flex items-center gap-3 text-[13px] text-muted before:h-px before:flex-1 before:bg-nude after:h-px after:flex-1 after:bg-nude">or</p>
+          <Button variant="outline" size="lg" onClick={() => void onGoogle()} disabled={pending}>
             <GoogleLogo size={20} weight="bold" />
-            {pending ? 'Please wait…' : 'Continue with Google'}
+            Continue with Google
           </Button>
           <Button variant="soft" size="lg" onClick={() => void onDemo()} disabled={pending}>
             Try the demo
           </Button>
-          <p className="px-1 text-[13px] text-muted">New here? Continue with Google creates your account. The demo is a read-only account with sample scans.</p>
+          <p className="px-1 text-[13px] text-muted">The demo is a read-only account with sample scans.</p>
         </div>
 
         <ul className="rise mt-5 flex justify-between border-t border-nude px-1 pt-4 md:mt-10" style={{ '--i': 3 } as React.CSSProperties}>
