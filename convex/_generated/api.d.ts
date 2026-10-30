@@ -10,7 +10,6 @@
 
 import type * as account from "../account.js";
 import type * as crons from "../crons.js";
-import type * as cutover from "../cutover.js";
 import type * as demo from "../demo.js";
 import type * as explanations from "../explanations.js";
 import type * as helpers from "../helpers.js";
@@ -31,7 +30,6 @@ import type {
 declare const fullApi: ApiFromModules<{
   account: typeof account;
   crons: typeof crons;
-  cutover: typeof cutover;
   demo: typeof demo;
   explanations: typeof explanations;
   helpers: typeof helpers;
