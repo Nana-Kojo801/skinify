@@ -141,6 +141,17 @@ describe('scans.submit', () => {
     expect(await me.query(api.scans.latest, {})).toMatchObject({ scores: { acne: 65 } })
   })
 
+  it('stores the brightness number the browser measured (one number, never a photo), and drops a nonsense one', async () => {
+    const { t, me } = await setup()
+    mockYoucam(() => ({ scores: flat(60) }))
+    await me.action(api.scans.submit, { photos: goodPhotos(), brightness: 123.46 })
+    await me.action(api.scans.submit, { photos: goodPhotos(), brightness: 9999 })
+    await me.action(api.scans.submit, { photos: goodPhotos(), brightness: Number.NaN })
+    const stored = await t.run((ctx) => ctx.db.query('scans').order('asc').collect())
+    expect(stored.map((scan) => scan.brightness)).toEqual([123.5, undefined, undefined])
+    expect(await me.query(api.scans.latest, {})).toMatchObject({ scores: { acne: 60 } })
+  })
+
   it('similar photos give no quality flag', async () => {
     const { me } = await setup()
     mockYoucam((bytes) => ({ scores: flat(bytes === PHOTO_1_BYTES ? 60 : 62) }))

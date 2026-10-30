@@ -49,6 +49,9 @@ export default defineSchema({
     noise: v.record(v.string(), v.number()),
     /** true = the two photos disagreed broadly, treat the scan as poor quality */
     qualityFlag: v.boolean(),
+    /** Average brightness of the two photos, 0 to 255, measured in the browser. One number, never a photo: it only
+     *  lets the scan page say "lighting differs from your last scan". Absent on older and demo scans. */
+    brightness: v.optional(v.number()),
   }).index('by_user_and_createdAt', ['userId', 'createdAt']),
 
   verdicts: defineTable({
