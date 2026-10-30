@@ -17,19 +17,19 @@ const POINTS = [
 // Answers the first thing people wonder on this page: why not just one photo?
 export function WhyTwoPhotos() {
   return (
-    <section className="card p-5" aria-labelledby="why-two-photos">
-      <h2 id="why-two-photos" className="text-[17px] font-semibold tracking-[-0.02em]">
+    <section className="tile p-5 md:p-6" aria-labelledby="why-two-photos">
+      <h2 id="why-two-photos" className="text-[21px] font-extrabold tracking-[-0.02em]">
         Why two photos?
       </h2>
-      <ul className="mt-3.5 flex flex-col gap-4">
+      <ul className="mt-4 flex flex-col gap-4">
         {POINTS.map(({ icon: Icon, term, text }) => (
-          <li key={term} className="flex gap-3.5">
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-sand text-coral-ink">
-              <Icon size={19} />
+          <li key={term} className="flex items-start gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-[13px] bg-well">
+              <Icon size={19} weight="bold" />
             </span>
             <span>
-              <span className="block text-[15px] font-semibold">{term}</span>
-              <span className="mt-0.5 block text-[13.5px] leading-snug text-muted">{text}</span>
+              <strong className="block text-[15px] font-bold">{term}</strong>
+              <span className="text-[13.5px] leading-snug text-ink-2">{text}</span>
             </span>
           </li>
         ))}

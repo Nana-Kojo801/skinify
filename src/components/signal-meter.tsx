@@ -5,10 +5,8 @@ type SignalMeterProps = {
   value: number
   /** Normal variation: changes inside ±threshold are noise. */
   threshold: number
-  /** Fill colour (a verdict token, e.g. var(--color-working-ink)). */
+  /** Marker colour (a verdict token, e.g. var(--color-working)). */
   color: string
-  /** Shaded band colour. */
-  bandColor: string
 }
 
 /** 1, 2, 2.5, 5, 10, 20, 25, 50 ... at or above n. */
@@ -18,9 +16,9 @@ function niceCeil(n: number): number {
   return step * exp
 }
 
-// "Signal vs noise": a track with the shaded normal-variation band around zero and a dot at the measured change,
-// so the verdict is visibly earned. Animates (scale and opacity only) when it scrolls into view.
-export function SignalMeter({ value, threshold, color, bandColor }: SignalMeterProps) {
+// "Signal vs noise": a track with the hatched normal-variation band around zero and a marker at the measured change,
+// so the verdict is visibly earned. The marker slides in from zero on a spring once it scrolls into view.
+export function SignalMeter({ value, threshold, color }: SignalMeterProps) {
   const [ref, inView] = useInView<HTMLDivElement>()
   const half = niceCeil(Math.max(Math.abs(value), threshold) * 1.35)
   const pos = (n: number) => 50 + (Math.max(-half, Math.min(half, n)) / half) * 50
@@ -29,43 +27,30 @@ export function SignalMeter({ value, threshold, color, bandColor }: SignalMeterP
   return (
     <div ref={ref}>
       <div className="relative h-9">
-        <div className="absolute inset-x-0 top-[13px] h-2.5 rounded-full bg-white/75" />
+        <div className="absolute inset-x-0 top-[13px] h-2.5 rounded-full bg-white/70 shadow-[inset_0_1px_2px_rgb(35_24_29/0.12)]" />
         <div
-          className="absolute top-[9px] h-[18px] rounded-md"
+          className="absolute top-[7px] h-[22px] rounded-lg bg-[repeating-linear-gradient(135deg,rgb(35_24_29/0.15)_0_4px,rgb(35_24_29/0.04)_4px_8px)]"
           style={{
             left: `${50 - bandHalf}%`,
             width: `${bandHalf * 2}%`,
-            background: bandColor,
             opacity: inView ? 1 : 0,
-            transform: inView ? 'none' : 'scaleX(0.4)',
-            transition: 'opacity .6s var(--ease-out-soft) .2s, transform .8s var(--ease-out-soft) .2s',
+            transform: inView ? 'none' : 'scaleX(0.3)',
+            transition: 'opacity .6s var(--ease-liquid) .2s, transform .9s var(--ease-liquid) .2s',
           }}
         />
+        <div className="absolute inset-y-[3px] left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-ink/40" />
         <div
-          className="absolute top-[13px] h-2.5"
-          style={{
-            left: `${Math.min(50, dot)}%`,
-            width: `${Math.abs(dot - 50)}%`,
-            background: color,
-            borderRadius: value >= 0 ? '0 6px 6px 0' : '6px 0 0 6px',
-            transformOrigin: value >= 0 ? 'left center' : 'right center',
-            transform: inView ? 'none' : 'scaleX(0)',
-            transition: 'transform 1s var(--ease-out-soft) .5s',
-          }}
-        />
-        <div className="absolute inset-y-[5px] left-1/2 w-0.5 -translate-x-1/2 bg-cocoa/30" />
-        <div
-          className="absolute top-[18px] size-6 rounded-full border-[5px] bg-white shadow-[0_4px_10px_-2px_rgb(46_36_32/0.35)]"
+          className="absolute top-[18px] size-[22px] rounded-full border-[3.5px] border-white shadow-[0_4px_10px_-3px_rgb(0_0_0/0.45)]"
           style={{
             left: `${dot}%`,
-            borderColor: color,
-            transform: `translate(-50%, -50%) scale(${inView ? 1 : 0.3})`,
+            background: color,
+            transform: `translate(calc(-50% + ${inView ? 0 : (50 - dot) * 3}px), -50%) scale(${inView ? 1 : 0.4})`,
             opacity: inView ? 1 : 0,
-            transition: 'transform .6s var(--ease-pop) 1.3s, opacity .3s ease 1.3s',
+            transition: 'transform 1.1s var(--ease-spring) .5s, opacity .4s ease .5s',
           }}
         />
       </div>
-      <div className="flex justify-between text-xs font-semibold opacity-75">
+      <div className="mt-1 flex justify-between text-xs font-bold opacity-70">
         <span>Worse</span>
         <span>No change</span>
         <span>Better</span>

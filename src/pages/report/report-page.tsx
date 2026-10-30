@@ -1,7 +1,9 @@
-import { CaretLeft, Printer } from "@phosphor-icons/react";
+import { Printer } from "@phosphor-icons/react";
 import { useQuery } from "convex/react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { BackLink } from "@/components/back-link";
+import { LogoMark } from "@/components/logo";
+import { buttonVariants } from "@/components/ui/button";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { formatDate } from "@/lib/format";
 import {
@@ -12,8 +14,8 @@ import {
 import { api } from "../../../convex/_generated/api";
 
 const th =
-  "border-b-[1.5px] border-[#1d1714] px-1.5 py-1.5 text-left text-[11px] font-semibold tracking-[0.04em] text-[#4a3b35] uppercase";
-const td = "border-b border-[#d7ccc3] px-1.5 py-1.5 align-top print:py-1";
+  "border-b-[1.5px] border-[#111216] px-1.5 py-1.5 text-left text-[11px] font-semibold tracking-[0.04em] text-[#4a4d55] uppercase";
+const td = "border-b border-[#e1e2e6] px-1.5 py-1.5 align-top print:py-1";
 
 // A plain black-and-white document for a pharmacist or dermatologist: products, results and every scan as numbers,
 // with a clear "not a medical assessment" box. Printed (or saved as PDF) with the browser's own print dialog.
@@ -39,45 +41,37 @@ export function ReportPage() {
   const trimmedName = name.trim();
 
   return (
-    <main className="min-h-dvh bg-[#e9e4de] pb-10 print:min-h-0 print:bg-white print:pb-0">
-      <div className="mx-auto flex max-w-[794px] flex-wrap items-center justify-between gap-3 px-4 pt-4 print:hidden">
-        <Link
-          to="/settings"
-          className="press -ml-1 flex min-h-11 items-center gap-2 font-semibold"
-        >
-          <span className="grid size-10 place-items-center rounded-full bg-white">
-            <CaretLeft size={18} weight="bold" />
-          </span>
-          Back
-        </Link>
-        <div className="flex flex-wrap items-center gap-2.5">
-          <label className="sr-only" htmlFor="report-name">
-            Your name (optional, not saved)
-          </label>
+    <main className="min-h-dvh pb-12 print:min-h-0 print:bg-white print:pb-0">
+      <div className="mx-auto grid max-w-[860px] gap-3 px-3 pt-[max(14px,env(safe-area-inset-top))] sm:flex sm:flex-wrap sm:items-end md:px-4 md:pt-8 print:hidden">
+        <BackLink to="/settings" label="Back" className="justify-self-start" />
+        <label className="flex min-w-[200px] flex-1 flex-col gap-1.5 text-sm font-bold" htmlFor="report-name">
+          Your name (optional, not saved)
           <input
             id="report-name"
             value={name}
             onChange={(event) => setName(event.target.value)}
             maxLength={60}
             placeholder="Your name (optional, not saved)"
-            className="h-11 w-64 max-w-full rounded-xl border-[1.5px] border-[#cdbdb1] bg-white px-3 text-sm"
+            className="field"
           />
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="press inline-flex h-11 cursor-pointer items-center gap-2 rounded-full bg-cocoa px-5 text-sm font-semibold text-cream"
-          >
-            <Printer size={18} />
-            Print or save as PDF
-          </button>
-        </div>
+        </label>
+        <button type="button" onClick={() => window.print()} className={buttonVariants({ size: "lg" })}>
+          <Printer size={18} weight="bold" />
+          Print or save as PDF
+        </button>
       </div>
 
-      <article className="mx-auto my-3 max-w-[794px] bg-white p-5 text-[13px] leading-[1.45] text-[#1d1714] shadow-[0_8px_30px_rgb(0_0_0/0.18)] sm:p-11 print:m-0 print:max-w-none print:p-0 print:text-[12px] print:leading-[1.35] print:shadow-none">
-        <h1 className="text-[26px] font-semibold tracking-[-0.02em]">
-          Skin tracking report
-        </h1>
-        <div className="mt-1.5 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[#4a3b35]">
+      <article className="rise mx-3 my-4 max-w-[860px] rounded-lg bg-white p-5 text-[13px] leading-[1.45] text-[#111216] shadow-[0_1px_2px_rgb(0_0_0/0.08),0_30px_60px_-30px_rgb(0_0_0/0.35)] sm:mx-auto sm:p-11 print:m-0 print:max-w-none print:p-0 print:text-[12px] print:leading-[1.35] print:shadow-none">
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em]">
+            Skin tracking report
+          </h1>
+          <span className="inline-flex shrink-0 items-center gap-2 text-[15px] font-extrabold tracking-[-0.02em]">
+            <LogoMark className="size-7" />
+            Receipts
+          </span>
+        </div>
+        <div className="mt-1.5 flex flex-wrap justify-between gap-x-6 gap-y-1 text-[#4a4d55]">
           <span className={trimmedName ? "" : "print:hidden"}>
             Prepared for:{" "}
             <strong>{trimmedName || "(add your name above)"}</strong>
@@ -90,11 +84,11 @@ export function ReportPage() {
           </span>
         </div>
 
-        <p className="mt-3.5 rounded-md border-[1.5px] border-[#1d1714] px-3 py-2.5 text-[12.5px]">
+        <p className="mt-3.5 rounded-xl border-[1.5px] border-[#111216] px-3 py-2.5 text-[12.5px]">
           <strong>Please read first.</strong> {REPORT_DISCLAIMER}
         </p>
 
-        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#1d1714] pb-1 text-[15px] font-semibold print:mt-4 print:break-after-avoid">
+        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-[17px] font-extrabold tracking-[-0.02em] print:mt-4 print:break-after-avoid">
           Products being tracked
         </h2>
         {report.products.length === 0 ? (
@@ -106,10 +100,10 @@ export function ReportPage() {
               {report.products.map((product) => (
                 <li
                   key={`${product.name}-${product.startDate}`}
-                  className="border-b border-[#d7ccc3] py-2.5"
+                  className="border-b border-[#e1e2e6] py-2.5"
                 >
                   <p className="font-semibold">{product.name}</p>
-                  <p className="text-[12px] text-[#4a3b35]">
+                  <p className="text-[12px] text-[#4a4d55]">
                     {product.concern} · started {formatDate(product.startDate)}{" "}
                     (day {product.day})
                     {!product.active &&
@@ -117,12 +111,12 @@ export function ReportPage() {
                       ` · stopped ${formatDate(product.endDate)}`}
                   </p>
                   <p className="mt-1.5">
-                    <span className="inline-block rounded-[4px] border-[1.5px] border-[#1d1714] px-1.5 text-[11px] font-bold">
+                    <span className="inline-block rounded-[4px] border-[1.5px] border-[#111216] px-1.5 text-[11px] font-bold">
                       {product.verdictLabel}
                     </span>
                   </p>
                   {product.lines.map((line) => (
-                    <p key={line} className="mt-0.5 text-[12px] text-[#4a3b35]">
+                    <p key={line} className="mt-0.5 text-[12px] text-[#4a4d55]">
                       {line}
                     </p>
                   ))}
@@ -161,7 +155,7 @@ export function ReportPage() {
                       <td className={td}>
                         <strong>{product.name}</strong>
                         {!product.active && product.endDate !== null && (
-                          <span className="block text-[11px] text-[#4a3b35]">
+                          <span className="block text-[11px] text-[#4a4d55]">
                             Stopped {formatDate(product.endDate)}
                           </span>
                         )}
@@ -169,18 +163,18 @@ export function ReportPage() {
                       <td className={td}>{product.concern}</td>
                       <td className={td}>
                         {formatDate(product.startDate)}
-                        <span className="block text-[11px] text-[#4a3b35]">
+                        <span className="block text-[11px] text-[#4a4d55]">
                           day {product.day}
                         </span>
                       </td>
                       <td className={td}>
-                        <span className="inline-block rounded-[4px] border-[1.5px] border-[#1d1714] px-1.5 text-[11px] font-bold">
+                        <span className="inline-block rounded-[4px] border-[1.5px] border-[#111216] px-1.5 text-[11px] font-bold">
                           {product.verdictLabel}
                         </span>
                         {product.lines.map((line) => (
                           <span
                             key={line}
-                            className="block text-[11px] text-[#4a3b35]"
+                            className="block text-[11px] text-[#4a4d55]"
                           >
                             {line}
                           </span>
@@ -199,18 +193,18 @@ export function ReportPage() {
             </div>
           </>
         )}
-        <p className="mt-2 text-[11px] text-[#4a3b35]">
+        <p className="mt-2 text-[11px] text-[#4a4d55]">
           Scores run 1 to 100, higher is healthier.
         </p>
 
-        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#1d1714] pb-1 text-[15px] font-semibold print:mt-4 print:break-after-avoid">
+        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-[17px] font-extrabold tracking-[-0.02em] print:mt-4 print:break-after-avoid">
           Scores at each scan
         </h2>
         {report.scans.length === 0 ? (
           <p>No scans yet.</p>
         ) : (
           <div className="overflow-x-auto print:overflow-visible">
-            <p className="mb-1.5 text-[11px] text-[#4a3b35] sm:hidden print:hidden">
+            <p className="mb-1.5 text-[11px] text-[#4a4d55] sm:hidden print:hidden">
               Swipe sideways to see every concern.
             </p>
             <table className="w-full min-w-[640px] border-collapse text-[12px] print:min-w-0">
@@ -228,12 +222,12 @@ export function ReportPage() {
                 {report.scans.map((scan) => (
                   <tr
                     key={scan.createdAt}
-                    className={`print:break-inside-avoid ${scan.flagged ? "text-[#7c5a12]" : ""}`}
+                    className={`print:break-inside-avoid ${scan.flagged ? "text-canttell-ink" : ""}`}
                   >
                     <td className={td}>
                       {formatDate(scan.createdAt)}
                       {scan.startedProducts > 0 && (
-                        <span className="block text-[11px] text-[#4a3b35]">
+                        <span className="block text-[11px] text-[#4a4d55]">
                           {scan.startedProducts === 1
                             ? "a product started"
                             : `${scan.startedProducts} products started`}
@@ -258,7 +252,7 @@ export function ReportPage() {
           </div>
         )}
 
-        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#1d1714] pb-1 text-[15px] font-semibold print:mt-4 print:break-after-avoid">
+        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-[17px] font-extrabold tracking-[-0.02em] print:mt-4 print:break-after-avoid">
           How to read this
         </h2>
         <ul className="grid list-disc gap-x-8 pl-5 sm:grid-cols-2">
@@ -268,7 +262,7 @@ export function ReportPage() {
             </li>
           ))}
         </ul>
-        <p className="mt-3.5 border-t border-[#d7ccc3] pt-2 text-[11px] text-[#4a3b35]">
+        <p className="mt-3.5 border-t border-[#e1e2e6] pt-2 text-[11px] text-[#4a4d55]">
           Generated by Receipts from the person's own scans. Skin analysis by
           YouCam. Not a medical device, not a diagnosis.
         </p>

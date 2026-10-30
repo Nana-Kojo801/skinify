@@ -119,10 +119,10 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
   if (codeStep) {
     return (
       <form onSubmit={onVerify} className="flex flex-col gap-3">
-        <p className="text-[15px]">
-          We emailed a 6-digit code to <strong className="font-semibold">{codeStep.email}</strong>. Enter it to continue.
+        <p className="text-[15.5px] leading-snug text-ink-2">
+          We emailed a 6-digit code to <strong className="font-bold">{codeStep.email}</strong>. Enter it to continue.
         </p>
-        <label className="flex flex-col gap-1.5 text-[13.5px] font-semibold">
+        <label className="flex flex-col gap-1.5 text-sm font-bold">
           Code
           <input
             name="code"
@@ -133,17 +133,17 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
             required
             autoFocus
             placeholder="123456"
-            className="field tracking-[0.3em]"
+            className="field h-16 text-center text-[28px] font-extrabold tracking-[0.5em]"
           />
         </label>
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? 'Please wait…' : 'Verify and continue'}
         </Button>
-        <div className="flex justify-between text-sm">
-          <button type="button" onClick={() => void onResend()} disabled={pending} className="cursor-pointer font-semibold text-cocoa underline disabled:opacity-45">
+        <div className="flex justify-between gap-3 text-sm">
+          <button type="button" onClick={() => void onResend()} disabled={pending} className="min-h-11 cursor-pointer font-bold text-ink underline decoration-[1.5px] underline-offset-[3px] disabled:opacity-45">
             Send a new code
           </button>
-          <button type="button" onClick={backToForm} disabled={pending} className="cursor-pointer text-muted underline disabled:opacity-45">
+          <button type="button" onClick={backToForm} disabled={pending} className="min-h-11 cursor-pointer font-bold text-ink-2 underline decoration-[1.5px] underline-offset-[3px] disabled:opacity-45">
             Use a different email
           </button>
         </div>
@@ -153,11 +153,11 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3">
-      <div className="relative grid grid-cols-2 rounded-full bg-sand p-1 shadow-(--shadow-inset)" role="group" aria-label="Sign in or create an account">
+      <div className="relative grid grid-cols-2 rounded-full bg-well p-1 shadow-[inset_0_1px_2px_rgb(35_24_29/0.07)]" role="group" aria-label="Sign in or create an account">
         <span
           aria-hidden
           className={cn(
-            'absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-card shadow-[0_4px_12px_-4px_rgb(46_36_32/0.2)] transition-transform duration-300 ease-(--ease-out-soft)',
+            'absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-tile shadow-[inset_0_1px_0_#fff,0_1px_1px_rgb(35_24_29/0.05),0_6px_14px_-6px_rgb(35_24_29/0.28)] transition-transform duration-500 ease-(--ease-spring)',
             mode === 'signUp' && 'translate-x-full',
           )}
         />
@@ -168,17 +168,17 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
             aria-pressed={mode === value}
             aria-label={value === 'signIn' ? 'Switch to sign in' : 'Switch to create account'}
             onClick={() => switchMode(value)}
-            className={cn('relative min-h-11 cursor-pointer text-[14.5px] font-semibold transition-colors', mode === value ? 'text-cocoa' : 'text-muted')}
+            className={cn('relative min-h-11 cursor-pointer text-[14.5px] font-bold transition-colors duration-300', mode === value ? 'text-ink' : 'text-ink-2')}
           >
             {value === 'signIn' ? 'Sign in' : 'Create account'}
           </button>
         ))}
       </div>
-      <label className="flex flex-col gap-1.5 text-[13.5px] font-semibold">
+      <label className="flex flex-col gap-1.5 text-sm font-bold">
         Email
         <input name="email" type="email" autoComplete="email" required placeholder="you@example.com" className="field" />
       </label>
-      <label className="flex flex-col gap-1.5 text-[13.5px] font-semibold">
+      <label className="flex flex-col gap-1.5 text-sm font-bold">
         {mode === 'signUp' ? 'Password, at least 8 characters' : 'Password'}
         <input
           name="password"

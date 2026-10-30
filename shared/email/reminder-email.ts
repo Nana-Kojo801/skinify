@@ -24,15 +24,19 @@ export function buildReminderEmail({ dueLabel, appUrl, unsubscribeUrl }: Reminde
     why,
     `Stop these emails: ${unsubscribeUrl}`,
   ].join('\n')
+  // Table layout and inline styles only: that is what email clients render reliably. Brand colours of the app (Blush).
   const html = `<!doctype html>
-<html><body style="margin:0;padding:24px;background:#fcf8f4;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#2e2420">
-<div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:20px;padding:28px">
-<p style="margin:0 0 4px;font-size:14px;color:#7a6a62">Receipts</p>
-<h1 style="margin:0 0 12px;font-size:24px;line-height:1.2">Time for your weekly scan</h1>
-<p style="margin:0 0 20px;font-size:16px;line-height:1.5">Your next scan is due <strong>${escapeHtml(dueLabel)}</strong>. Two quick photos keep your verdicts honest.</p>
-<p style="margin:0 0 24px"><a href="${escapeHtml(scanUrl)}" style="display:inline-block;background:#2e2420;color:#fcf8f4;text-decoration:none;font-weight:600;padding:14px 24px;border-radius:999px">Scan now</a></p>
-<p style="margin:0;font-size:12px;line-height:1.5;color:#7a6a62">${escapeHtml(why)}<br><a href="${escapeHtml(unsubscribeUrl)}" style="color:#7a6a62">Unsubscribe</a></p>
-</div></body></html>`
+<html><body style="margin:0;padding:24px 12px;background:#f4efef;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#23181d">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:24px;overflow:hidden">
+<tr><td style="background:#f5c5cf;padding:16px 24px;font-size:18px;font-weight:800;letter-spacing:-0.02em">
+<span style="display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;background:#23181d;color:#f5c5cf;font-size:15px;vertical-align:-6px;margin-right:8px">&#10003;</span>Receipts</td></tr>
+<tr><td style="padding:26px 24px 8px">
+<h1 style="margin:0 0 12px;font-size:28px;line-height:1.1;font-weight:800;letter-spacing:-0.025em">Time for your weekly scan</h1>
+<p style="margin:0 0 22px;font-size:16px;line-height:1.5;color:#5e5257">Your next scan is due <strong style="color:#23181d">${escapeHtml(dueLabel)}</strong>. Two quick photos keep your verdicts honest.</p>
+<p style="margin:0 0 26px"><a href="${escapeHtml(scanUrl)}" style="display:inline-block;background:#23181d;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:15px 28px;border-radius:999px">Scan now</a></p>
+</td></tr>
+<tr><td style="padding:16px 24px 20px;border-top:1px solid #eee7e8;font-size:12px;line-height:1.5;color:#74686d">${escapeHtml(why)}<br><a href="${escapeHtml(unsubscribeUrl)}" style="color:#5e5257">Unsubscribe</a></td></tr>
+</table></body></html>`
   return { subject, html, text }
 }
 

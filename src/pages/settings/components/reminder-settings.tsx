@@ -1,8 +1,9 @@
-import { BellRinging } from '@phosphor-icons/react'
+import { BellRinging, CaretDown, EnvelopeSimple } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { REMINDER_CONFIG } from '@shared/reminders/reminder-config'
+import { SettingsGroup, SettingsRowContent, rowClass } from '@/components/settings-row'
 import { cn } from '@/lib/utils'
 import { api } from '../../../../convex/_generated/api'
 
@@ -33,65 +34,69 @@ export function ReminderSettings() {
     }
   }
 
-  return (
-    <section className="card rise p-5 md:p-6" style={{ '--i': 3 } as React.CSSProperties}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <h2 className="flex items-center gap-2 text-lg font-semibold">
-            <BellRinging size={20} />
-            Email me a reminder
-          </h2>
-          <p className="mt-2 max-w-xl text-[15px] text-muted">
-            {status.canRemind
-              ? `We email ${status.email} at ${REMINDER_CONFIG.hourLocal}:00 the day before your weekly scan is due, and again if you miss it, up to ${REMINDER_CONFIG.maxRemindersPerScan} times. Scan early and the reminder moves with you. Every email has an unsubscribe link.`
-              : 'Reminders cannot be sent to this email address.'}
-          </p>
-        </div>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={status.optedIn}
-          aria-label="Email me a reminder"
-          disabled={pending || (!status.canRemind && !status.optedIn)}
-          onClick={() => void toggle()}
-          className={cn(
-            'relative mt-1 h-8 w-14 shrink-0 cursor-pointer rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-45',
-            status.optedIn ? 'bg-cocoa' : 'bg-nude',
-          )}
-        >
-          <span
-            aria-hidden
-            className={cn('absolute top-1 left-1 size-6 rounded-full bg-card shadow transition-transform', status.optedIn && 'translate-x-6')}
-          />
-        </button>
-      </div>
-
+  const caption = (
+    <>
+      <p>
+        {status.canRemind
+          ? `We email ${status.email} at ${REMINDER_CONFIG.hourLocal}:00 the day before your weekly scan is due, and again if you miss it, up to ${REMINDER_CONFIG.maxRemindersPerScan} times. Scan early and the reminder moves with you. Every email has an unsubscribe link.`
+          : 'Reminders cannot be sent to this email address.'}
+      </p>
       {error && (
-        <p role="alert" className="mt-3 rounded-2xl bg-irritation-bg px-4 py-3 text-sm text-irritation-ink">
+        <p role="alert" className="mt-2 rounded-2xl bg-irritation-bg px-4 py-3 text-sm font-semibold text-irritation-ink">
           {error}
         </p>
       )}
       {status.optedIn && status.paused && (
-        <p className="mt-3 rounded-2xl bg-sand px-4 py-3 text-sm text-cocoa-soft">
+        <p className="mt-2 rounded-2xl bg-well px-4 py-3 text-sm text-ink-2">
           We stopped after {REMINDER_CONFIG.maxRemindersPerScan} reminders with no scan. Switch the reminder off and on again to restart.
         </p>
       )}
       {status.optedIn && status.delivery === 'preview' && (
-        <p className="mt-3 rounded-2xl bg-sand px-4 py-3 text-sm text-cocoa-soft">
+        <p className="mt-2 rounded-2xl bg-well px-4 py-3 text-sm text-ink-2">
           Real email is limited to a few addresses while Receipts is a hackathon project, so yours won't be sent. This is what it would look like.
         </p>
       )}
+    </>
+  )
 
+  return (
+    <SettingsGroup title="Reminders" caption={caption} className="rise" >
+      <div className="flex min-h-[62px] items-center gap-3.5 px-4 py-3">
+        <SettingsRowContent
+          icon={<BellRinging size={18} weight="bold" />}
+          tint="bg-accent-2"
+          label="Email me a reminder"
+          sub="The day before your weekly scan"
+          right={
+            <button
+              type="button"
+              role="switch"
+              aria-checked={status.optedIn}
+              aria-label="Email me a reminder"
+              disabled={pending || (!status.canRemind && !status.optedIn)}
+              onClick={() => void toggle()}
+              className="switch"
+            />
+          }
+        />
+      </div>
       {status.canRemind && (
         <>
-          <button type="button" onClick={() => setShowPreview((open) => !open)} className="mt-4 cursor-pointer text-sm font-semibold underline">
-            {showPreview ? 'Hide the email' : 'Preview the email'}
+          <button type="button" onClick={() => setShowPreview((open) => !open)} className={rowClass} aria-expanded={showPreview}>
+            <SettingsRowContent
+              icon={<EnvelopeSimple size={18} weight="bold" />}
+              tint="bg-well"
+              label={showPreview ? 'Hide the email' : 'Preview the email'}
+              right={<CaretDown size={18} weight="bold" className={cn('shrink-0 text-ink-3 transition-transform duration-500 ease-(--ease-spring)', showPreview && 'rotate-180')} aria-hidden />}
+            />
           </button>
           {showPreview && preview && (
-            <iframe title="Reminder email preview" srcDoc={preview.html} sandbox="" className="mt-3 h-[22rem] w-full rounded-2xl bg-white md:h-[26rem]" />
+            <div className="px-3.5 pb-3.5">
+              <iframe title="Reminder email preview" srcDoc={preview.html} sandbox="" className="pop-in h-[24rem] w-full rounded-[18px] bg-white shadow-[inset_0_0_0_1px_var(--color-hair)] md:h-[28rem]" />
+            </div>
           )}
         </>
       )}
-    </section>
+    </SettingsGroup>
   )
 }

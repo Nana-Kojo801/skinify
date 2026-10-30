@@ -14,12 +14,14 @@ type Props = {
   products: { targetConcern: string; endDate?: number | null }[] | undefined
   /** false for the read-only demo account: the "Test this" buttons are turned off. */
   canCreate: boolean
+  /** 'wide': the concerns sit side by side on desktop (full-width tile). 'stack': always one under another. */
+  layout?: 'wide' | 'stack'
 }
 
 // "Ideas to test": the lowest-scoring concerns of a scan with ingredient families people commonly try (a small
 // hand-written list, shared/ideas). Each idea opens the new-product form with the concern and a name pre-filled.
 // Wording matters here: these are ideas to try, never advice, and a low score is not a diagnosis.
-export function IdeasToTest({ scores, qualityFlag, products, canCreate }: Props) {
+export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout = 'wide' }: Props) {
   const [now] = useState(() => Date.now())
   if (!products) return null
   const activeConcerns = products.filter((p) => p.endDate == null || p.endDate > now).map((p) => p.targetConcern)
@@ -27,40 +29,40 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate }: Props)
   if (blocks.length === 0) return null
 
   return (
-    <section className="card p-5 md:p-6" aria-labelledby="ideas-title">
-      <h2 id="ideas-title" className="flex items-center gap-2 text-xl font-semibold tracking-[-0.02em]">
-        <Lightbulb size={22} />
+    <section className="tile-soft p-5 md:p-6" aria-labelledby="ideas-title">
+      <h2 id="ideas-title" className="eyebrow">
+        <Lightbulb size={18} weight="bold" />
         Ideas to test
       </h2>
-      <p className="mt-1.5 text-[15px] text-muted">
+      <p className="mt-2 text-[14.5px] leading-snug text-ink-2">
         Your lowest scores this scan, and what people commonly try for them. Try one, and Receipts will tell you honestly whether it worked.
       </p>
 
-      <div className="mt-4 flex flex-col gap-3">
+      <div className={cn('mt-4 flex flex-col gap-4', layout === 'wide' && 'md:grid md:grid-cols-3 md:gap-5')}>
         {blocks.map((block) => (
-          <div key={block.concern} className="tile p-3.5">
+          <div key={block.concern}>
             <div className="flex items-center gap-3">
-              <ScoreRing value={block.score} size={46} numberClassName="text-[14px]" />
+              <ScoreRing value={block.score} size={48} stroke="var(--color-canttell)" numberClassName="text-[15px]" />
               <div>
-                <p className="font-semibold">{CONCERNS[block.concern].label}</p>
-                <p className="text-[12.5px] text-muted">{rankLabel(block)}</p>
+                <p className="text-[19px] leading-tight font-extrabold tracking-[-0.02em]">{CONCERNS[block.concern].label}</p>
+                <p className="text-[12.5px] font-semibold text-ink-2">{rankLabel(block)}</p>
               </div>
             </div>
-            <ul className="mt-1.5">
+            <ul className="mt-3 flex flex-col gap-2">
               {block.ideas.map((idea) => {
                 const to = `/products/new?${new URLSearchParams({ concern: block.concern, name: idea.name.replace(/\s*\(.*\)$/, '') })}`
                 return (
-                  <li key={idea.name} className="flex items-center justify-between gap-3 border-t border-nude py-2.5 first:border-t-0">
+                  <li key={idea.name} className="flex items-center justify-between gap-3 rounded-[18px] bg-white/60 py-2.5 pr-2.5 pl-4 shadow-[inset_0_0_0_1px_rgb(35_24_29/0.05)]">
                     <span className="min-w-0">
-                      <span className="block text-[15px] font-semibold">{idea.name}</span>
-                      <span className="block text-[12.5px] text-muted">{idea.for}</span>
+                      <span className="block text-[15px] font-bold">{idea.name}</span>
+                      <span className="block text-[13px] leading-snug text-ink-2">{idea.for}</span>
                     </span>
                     {canCreate ? (
-                      <Link to={to} className={buttonVariants({ size: 'sm' })}>
+                      <Link to={to} className={buttonVariants({ variant: 'soft', size: 'sm' })}>
                         Test this
                       </Link>
                     ) : (
-                      <span aria-disabled className={cn(buttonVariants({ size: 'sm' }), 'pointer-events-none opacity-45')}>
+                      <span aria-disabled className={cn(buttonVariants({ variant: 'soft', size: 'sm' }), 'pointer-events-none opacity-45')}>
                         Test this
                       </span>
                     )}
@@ -68,12 +70,12 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate }: Props)
                 )
               })}
             </ul>
-            {block.note && <p className="mt-1.5 text-[12.5px] text-cocoa-soft">{block.note}</p>}
+            {block.note && <p className="mt-2 text-[12.5px] leading-snug text-ink-2">{block.note}</p>}
           </div>
         ))}
       </div>
 
-      <p className="mt-4 px-0.5 text-[12.5px] leading-relaxed text-muted">
+      <p className="mt-4 text-[12.5px] leading-relaxed text-ink-2">
         These are ideas to try, not advice. A low score doesn't mean you need a product, and scores are estimates from photos. Not sure what suits your
         skin? A pharmacist or dermatologist is the right person to ask.
       </p>

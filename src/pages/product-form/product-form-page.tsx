@@ -1,8 +1,9 @@
-import { CaretLeft, Warning } from '@phosphor-icons/react'
+import { CalendarBlank, Check, Drop, Warning } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
+import { BackLink } from '@/components/back-link'
 import { OverlapWarning } from '@/components/overlap-warning'
 import { PageSkeleton } from '@/components/page-skeleton'
 import { ScoreRing } from '@/components/score-ring'
@@ -26,9 +27,13 @@ export function ProductFormPage() {
   if (id && product === undefined) return <PageSkeleton />
   if (id && product === null) {
     return (
-      <main className="mx-auto max-w-md px-5 pt-16 text-center">
-        <h1 className="text-2xl font-semibold">Product not found</h1>
-        <Link to="/" className={buttonVariants({ variant: 'soft', className: 'mt-5' })}>
+      <main className="mx-auto flex max-w-md flex-col items-center gap-4 px-6 pt-32 text-center md:pt-40">
+        <span className="tile grid size-[92px] place-items-center rounded-[32px]" aria-hidden>
+          <Drop size={40} />
+        </span>
+        <h1 className="display text-[32px] leading-[1.05] md:text-[48px]">Product not found</h1>
+        <p className="text-[15.5px] text-ink-2">It may have been deleted, or the link is wrong.</p>
+        <Link to="/" className={buttonVariants({ variant: 'soft', size: 'lg' })}>
           Back home
         </Link>
       </main>
@@ -99,105 +104,114 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
   )
 
   return (
-    <main className="mx-auto max-w-6xl md:grid md:grid-cols-[0.8fr_1.2fr] md:items-start md:gap-12 md:px-8 md:pt-8">
-      <aside className="photo relative hidden overflow-hidden rounded-[32px] md:sticky md:top-28 md:block md:aspect-[4/5]">
-        <img src="/images/product-pour.webp" alt="" className="settle size-full object-cover" />
-      </aside>
+    <main className="mx-auto max-w-[1180px] px-3 pt-[max(12px,env(safe-area-inset-top))] md:px-10 md:pt-8">
+      <header className="flex h-14 items-center px-1">
+        <BackLink to={back} label={productId ? initial.name : 'Products'} ariaLabel="Back" />
+      </header>
 
-      <div className="px-4 md:px-0">
-        <header className="flex h-16 items-center md:h-auto">
-          <Link to={back} aria-label="Back" className="press -ml-1 flex min-h-11 items-center gap-2 font-semibold">
-            <span className="grid size-10 place-items-center rounded-full bg-sand">
-              <CaretLeft size={18} weight="bold" />
-            </span>
-            {productId ? initial.name : 'Products'}
-          </Link>
-        </header>
+      <div className="mt-2 md:mt-4 md:grid md:grid-cols-12 md:items-stretch md:gap-3.5">
+        <aside className="photo-tile hidden md:col-span-5 md:flex md:min-h-[640px] md:flex-col md:justify-end">
+          <img src="/images/product-pour.webp" alt="" className="settle absolute inset-0 size-full object-cover" />
+          <span aria-hidden className="absolute inset-0 bg-linear-to-b from-black/0 via-black/0 via-40% to-black/70" />
+          <div className="relative p-7">
+            <p className="display text-[40px] leading-[1.02]">
+              One product,
+              <br />
+              one concern.
+            </p>
+            <p className="mt-3 text-[15px] text-white/85">That keeps the verdict honest: a single score to follow, from the start date on.</p>
+          </div>
+        </aside>
 
-        <section className="rise mt-2 px-1 md:mt-6">
-          <h1 className="text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] md:text-5xl">{productId ? 'Edit product' : 'New product'}</h1>
-          <p className="mt-2 max-w-md text-muted md:text-[17px]">Pick the one skin concern it promises to improve. That is the score the verdict will follow.</p>
-        </section>
+        <div className="md:col-span-7">
+          <section className="rise px-2 md:px-1">
+            <h1 className="display text-[38px] leading-[1.02] md:text-[52px]">{productId ? 'Edit product' : 'New product'}</h1>
+            <p className="mt-2 max-w-md text-[15.5px] text-ink-2 md:text-[17px]">Pick the one skin concern it promises to improve. That is the score the verdict will follow.</p>
+          </section>
 
-        <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-6">
-          <label className="rise flex flex-col gap-1.5 text-[13.5px] font-semibold" style={{ '--i': 1 } as React.CSSProperties}>
-            Product name
-            <input
-              value={values.name}
-              onChange={(e) => setValues({ ...values, name: e.target.value })}
-              maxLength={80}
-              required
-              placeholder="e.g. Niacinamide 10% serum"
-              className="field"
-            />
-          </label>
+          <form onSubmit={onSubmit} className="mt-5 flex flex-col gap-5 md:rounded-(--radius-tile) md:bg-tile md:bg-[image:var(--sheen)] md:shadow-(--shadow-depth) md:mt-6 md:p-6">
+            <label className="rise flex flex-col gap-1.5 text-sm font-bold" style={{ '--i': 1 } as React.CSSProperties}>
+              Product name
+              <input
+                value={values.name}
+                onChange={(e) => setValues({ ...values, name: e.target.value })}
+                maxLength={80}
+                required
+                placeholder="e.g. Niacinamide 10% serum"
+                className="field"
+              />
+            </label>
 
-          <fieldset className="rise" style={{ '--i': 2 } as React.CSSProperties}>
-            <legend className="mb-2 text-[13.5px] font-semibold">Target concern</legend>
-            <div className="grid grid-cols-2 gap-2">
-              {CONCERN_KEYS.map((key) => {
-                const checked = values.targetConcern === key
-                return (
-                  <label
-                    key={key}
-                    className={cn(
-                      'press relative flex min-h-16 cursor-pointer items-center gap-3 rounded-[18px] border-[1.5px] px-3.5 py-2.5 transition-[background-color,border-color,box-shadow] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-cocoa',
-                      checked ? 'border-cocoa bg-card shadow-(--shadow-raised)' : 'border-transparent bg-sand shadow-(--shadow-inset) hover:bg-nude/60',
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name="targetConcern"
-                      value={key}
-                      checked={checked}
-                      onChange={() => setValues({ ...values, targetConcern: key })}
-                      className="sr-only"
-                    />
-                    <span className={cn('grid size-[22px] shrink-0 place-items-center rounded-full border-[1.5px] transition-colors', checked ? 'border-cocoa bg-cocoa' : 'border-nude')}>
-                      {checked && <span className="size-2 animate-[pop_.3s_var(--ease-pop)_both] rounded-full bg-cream" />}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-[15px] leading-tight font-semibold">{CONCERNS[key].label}</span>
-                      <span className="block text-[12.5px] leading-snug text-muted">{CONCERNS[key].hint}</span>
-                    </span>
-                  </label>
-                )
-              })}
+            <fieldset className="rise" style={{ '--i': 2 } as React.CSSProperties}>
+              <legend className="mb-2 text-sm font-bold">Target concern</legend>
+              <div className="grid grid-cols-2 gap-2">
+                {CONCERN_KEYS.map((key) => {
+                  const checked = values.targetConcern === key
+                  return (
+                    <label
+                      key={key}
+                      className={cn(
+                        'press relative flex min-h-[66px] cursor-pointer flex-col justify-center rounded-[18px] px-3.5 py-2.5 pr-9 transition-[background-color,box-shadow] duration-500 ease-(--ease-liquid) has-focus-visible:outline-[2.5px] has-focus-visible:outline-offset-2 has-focus-visible:outline-ink',
+                        checked ? 'bg-tile shadow-[inset_0_0_0_2px_var(--color-ink),0_12px_22px_-14px_rgb(35_24_29/0.45)]' : 'bg-well shadow-[inset_0_1px_2px_rgb(35_24_29/0.06)] hover:bg-ink/8',
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="targetConcern"
+                        value={key}
+                        checked={checked}
+                        onChange={() => setValues({ ...values, targetConcern: key })}
+                        className="sr-only"
+                      />
+                      <span className="block text-[15px] leading-tight font-bold">{CONCERNS[key].label}</span>
+                      <span className="mt-0.5 block text-[12.5px] leading-snug text-ink-2">{CONCERNS[key].hint}</span>
+                      {checked && (
+                        <span className="absolute top-2.5 right-2.5 grid size-[22px] animate-[pop_.4s_var(--ease-spring)_both] place-items-center rounded-full bg-ink text-accent">
+                          <Check size={12} weight="bold" />
+                        </span>
+                      )}
+                    </label>
+                  )
+                })}
+              </div>
+            </fieldset>
+
+            {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concernLabel.toLowerCase()} variant="form" className="rise" />}
+
+            <div className="rise flex items-center gap-4 rounded-[20px] bg-well px-4 py-3.5" style={{ '--i': 3 } as React.CSSProperties}>
+              {latestScore !== undefined && <ScoreRing key={values.targetConcern} value={latestScore} size={56} numberClassName="text-[17px]" />}
+              <p className="text-[14.5px] leading-snug text-ink-2">
+                The verdict will follow your <strong className="font-bold text-ink">{concernLabel.toLowerCase()}</strong> score
+                {latestScore !== undefined ? `. Latest scan: ${Math.round(latestScore)} of 100.` : '.'}
+              </p>
             </div>
-          </fieldset>
 
-          {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concernLabel.toLowerCase()} variant="form" className="rise" />}
+            <label className="rise flex flex-col gap-1.5 text-sm font-bold" style={{ '--i': 4 } as React.CSSProperties}>
+              <span className="flex items-center gap-1.5">
+                <CalendarBlank size={16} weight="bold" />
+                Start date
+              </span>
+              <input type="date" value={values.startDate} onChange={(e) => setValues({ ...values, startDate: e.target.value })} required className="field" />
+              <span className="text-[13px] font-medium text-ink-2">Scans before this date are your baseline.</span>
+            </label>
 
-          <div className="tile rise flex items-center gap-4 rounded-3xl px-4 py-3.5" style={{ '--i': 3 } as React.CSSProperties}>
-            {latestScore !== undefined && <ScoreRing key={values.targetConcern} value={latestScore} size={56} />}
-            <p className="text-[15px] text-cocoa-soft">
-              The verdict will follow your <strong className="font-semibold text-cocoa">{concernLabel.toLowerCase()}</strong> score
-              {latestScore !== undefined ? `. Latest scan: ${Math.round(latestScore)} of 100.` : '.'}
-            </p>
-          </div>
+            {error && (
+              <p role="alert" className="pop-in flex items-start gap-2.5 rounded-[20px] bg-irritation-bg px-4 py-3 text-sm font-semibold text-irritation-ink">
+                <Warning size={18} weight="bold" className="mt-px shrink-0" />
+                {error}
+              </p>
+            )}
 
-          <label className="rise flex flex-col gap-1.5 text-[13.5px] font-semibold" style={{ '--i': 4 } as React.CSSProperties}>
-            Start date
-            <input type="date" value={values.startDate} onChange={(e) => setValues({ ...values, startDate: e.target.value })} required className="field" />
-            <span className="text-[13px] font-normal text-muted">Scans before this date are your baseline.</span>
-          </label>
-
-          {error && (
-            <p role="alert" className="flex items-start gap-2.5 rounded-2xl bg-irritation-bg px-4 py-3 text-sm text-irritation-ink">
-              <Warning size={18} className="mt-px shrink-0" />
-              {error}
-            </p>
-          )}
-
-          <div className="sticky bottom-3 z-20 -mx-1 grid grid-cols-[auto_1fr] gap-2 rounded-full bg-card p-2 shadow-(--shadow-float) md:static md:mx-0 md:flex md:justify-end md:bg-transparent md:p-0 md:shadow-none">
-            <Link to={back} className={buttonVariants({ variant: 'ghost', size: 'lg' })}>
-              Cancel
-            </Link>
-            <Button type="submit" size="lg" disabled={pending} className="md:px-10">
-              {pending ? 'Saving…' : 'Save product'}
-            </Button>
-          </div>
-        </form>
+            <div className="glass sticky bottom-3 z-20 -mx-1 grid grid-cols-[1fr_2fr] gap-2 rounded-full p-2 md:static md:mx-0 md:flex md:justify-end md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
+              <Link to={back} className={buttonVariants({ variant: 'soft', size: 'lg' })}>
+                Cancel
+              </Link>
+              <Button type="submit" size="lg" disabled={pending} className="md:px-10">
+                {pending ? 'Saving…' : 'Save product'}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
   )

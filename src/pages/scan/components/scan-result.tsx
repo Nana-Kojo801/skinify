@@ -1,10 +1,11 @@
-import { Check } from '@phosphor-icons/react'
 import { Link } from 'react-router'
+import { Burst } from '@/components/burst'
 import { ScoreRing } from '@/components/score-ring'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS } from '@shared/concerns'
 import { describeAgreement, type AgreementLevel } from '@shared/scan/photo-agreement'
+import { SCAN_CONFIG } from '@shared/scan/scan-config'
 
 export type ScanResultData = {
   scores: Record<string, number>
@@ -20,55 +21,100 @@ const AGREEMENT_CHIP: Record<AgreementLevel, string> = {
   poor: 'bg-irritation-bg text-irritation-ink',
 }
 
-const BURST = ['#e8876b', '#4f9a72', '#c99634', '#6f8bb0', '#e8876b', '#4f9a72', '#c99634', '#6f8bb0', '#e8876b', '#4f9a72']
-
-// The reward after a scan: a tick that draws itself inside a small burst, then the scores ring in one by one.
-export function ScanResult({ result }: { result: ScanResultData }) {
-  const agreement = describeAgreement(result.gap)
+/**
+ * Where this scan's photo gap sits on the same bands describeAgreement uses (fractions of the poor-quality threshold),
+ * so the chip's word and the scale always agree. The labels come from describeAgreement itself.
+ */
+function GapScale({ gap }: { gap: number }) {
+  const poor = SCAN_CONFIG.poorQualityMeanDiff
+  const max = poor * 1.2
+  const bands = [
+    { from: 0, to: poor * 0.25, color: 'bg-working' },
+    { from: poor * 0.25, to: poor * 0.5, color: 'bg-[#7fd3a2]' },
+    { from: poor * 0.5, to: poor, color: 'bg-[#f2c14e]' },
+    { from: poor, to: max, color: 'bg-irritation' },
+  ]
+  const columns = bands.map((band) => `${band.to - band.from}fr`).join(' ')
+  const left = (Math.min(gap, max) / max) * 100
   return (
-    <div className="flex flex-col items-center text-center">
-      <div className="relative mt-6 grid size-24 place-items-center" aria-hidden>
-        {BURST.map((color, i) => (
-          <span
-            key={i}
-            className="absolute size-2 animate-[burst_0.9s_var(--ease-out-soft)_0.35s_both] rounded-full"
-            style={{ background: color, '--a': `${i * 36}deg` } as React.CSSProperties}
-          />
+    <div className="relative mt-4 pt-7" aria-hidden>
+      <span className="absolute top-0 flex -translate-x-1/2 flex-col items-center" style={{ left: `${left}%` }}>
+        <b className="pop-in rounded-full bg-ink px-2 py-0.5 text-xs font-extrabold text-white tabular-nums">{gap.toFixed(1)}</b>
+        <i className="mt-0.5 h-[22px] w-[3px] rounded-full bg-ink" />
+      </span>
+      <div className="grid h-3 gap-[3px]" style={{ gridTemplateColumns: columns }}>
+        {bands.map((band) => (
+          <i key={band.from} className={cn('rounded-[4px]', band.color)} />
         ))}
-        <span className="absolute inset-0 animate-[pop_.6s_var(--ease-pop)_both] rounded-full bg-working-bg" />
-        <span className="relative grid size-16 animate-[pop_.6s_var(--ease-pop)_.1s_both] place-items-center rounded-full bg-working-ink text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_12px_24px_-10px_rgb(47_107_74/0.8)]">
-          <Check size={32} weight="bold" />
-        </span>
       </div>
-      <h1 className="rise mt-5 text-[36px] leading-tight font-semibold tracking-[-0.035em] md:text-5xl" style={{ '--i': 2 } as React.CSSProperties}>
-        Scan saved
-      </h1>
-      <p className="rise mt-1.5 max-w-sm text-muted" style={{ '--i': 3 } as React.CSSProperties}>
-        Scores run 1 to 100, higher is healthier. Your photos were not saved.
-      </p>
-      <section className="card rise mt-6 w-full px-2.5 pt-6 pb-5 md:px-6" style={{ '--i': 4 } as React.CSSProperties}>
-        <ul className="grid grid-cols-4 gap-y-5">
+      <div className="mt-1.5 grid gap-[3px] text-[11.5px] leading-tight font-bold text-ink-3" style={{ gridTemplateColumns: columns }}>
+        {bands.map((band) => (
+          <span key={band.from}>{describeAgreement((band.from + band.to) / 2, poor).label}</span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// The reward after a scan: a badge that pops with confetti, then the scores ring in one by one,
+// then how steady the scan was and Ideas to test (rendered by the page).
+export function ScanResult({ result, ideas }: { result: ScanResultData; ideas?: React.ReactNode }) {
+  const agreement = describeAgreement(result.gap)
+  const back = (className?: string) => (
+    <Link to="/" className={buttonVariants({ size: 'lg', className })}>
+      Back to products
+    </Link>
+  )
+  return (
+    <div className="flex flex-col">
+      <header className="flex flex-col items-center gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left">
+        <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
+          <Burst />
+          <div>
+            <h1 className="display rise text-[36px] leading-none md:text-[56px]" style={{ '--i': 2 } as React.CSSProperties}>
+              Scan saved
+            </h1>
+            <p className="rise mt-2 max-w-sm text-ink-2 md:max-w-none md:text-[17px]" style={{ '--i': 3 } as React.CSSProperties}>
+              Scores run 1 to 100, higher is healthier. Your photos were not saved.
+            </p>
+          </div>
+        </div>
+        {back('hidden md:inline-flex')}
+      </header>
+
+      <div className="flex items-baseline justify-between px-1.5 pt-8 pb-3">
+        <h2 className="display text-[25px] leading-none md:text-[28px]">Your scores</h2>
+        {result.qualityFlag && <span className="text-[13.5px] font-bold text-canttell-ink">Lower quality scan</span>}
+      </div>
+      <section className="tile rise px-2 pt-6 pb-5 md:px-5 md:pt-7" style={{ '--i': 4 } as React.CSSProperties}>
+        <ul className="grid grid-cols-4 gap-y-5 md:grid-cols-8">
           {CONCERN_KEYS.filter((key) => result.scores[key] !== undefined).map((key, index) => (
             <li key={key}>
-              <ScoreRing value={result.scores[key]} label={CONCERNS[key].label} index={index + 4} />
+              <ScoreRing value={result.scores[key]} label={CONCERNS[key].label} size={72} index={index + 4} numberClassName="text-[22px]" />
             </li>
           ))}
         </ul>
       </section>
-      <section className="tile rise mt-4 w-full p-5 text-left" style={{ '--i': 5 } as React.CSSProperties}>
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="text-[15px] font-semibold">How steady was this scan?</h2>
-          <span className={cn('rounded-full px-3 py-1 text-[13px] font-semibold whitespace-nowrap', AGREEMENT_CHIP[agreement.level])}>{agreement.label}</span>
-        </div>
-        <p className="mt-2 text-[14px] leading-snug text-muted">{agreement.sentence}</p>
-        <p className="mt-2 text-[13px] text-muted">
-          Average gap between your two photos: <strong className="font-semibold text-cocoa">{result.gap.toFixed(1)} points</strong> (smaller is better). That gap is how
-          we tell a real change from normal noise.
-        </p>
-      </section>
-      <Link to="/" className={buttonVariants({ size: 'lg', className: 'rise mt-6 w-full md:w-auto md:px-10' })} style={{ '--i': 6 } as React.CSSProperties}>
-        Back to products
-      </Link>
+
+      <h2 className="display px-1.5 pt-9 pb-3 text-[25px] leading-none md:text-[28px]">What to do with them</h2>
+      <div className="flex flex-col gap-2.5 md:gap-3.5">
+        <section className="tile rise p-5 md:p-6" style={{ '--i': 5 } as React.CSSProperties}>
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-[19px] leading-tight font-extrabold tracking-[-0.02em]">How steady was this scan?</h3>
+            <span className={cn('rounded-full px-3 py-1 text-[13px] font-extrabold whitespace-nowrap', AGREEMENT_CHIP[agreement.level])}>{agreement.label}</span>
+          </div>
+          <p className="mt-2 text-[14.5px] leading-snug text-ink-2">{agreement.sentence}</p>
+          <div className="md:max-w-[640px]">
+            <GapScale gap={result.gap} />
+          </div>
+          <p className="mt-3 text-[13.5px] leading-snug text-ink-2">
+            Average gap between your two photos: <strong className="font-extrabold text-ink">{result.gap.toFixed(1)} points</strong> (smaller is better). That gap is
+            how we tell a real change from normal noise.
+          </p>
+        </section>
+        {ideas}
+      </div>
+      {back('mt-6 w-full md:hidden')}
     </div>
   )
 }

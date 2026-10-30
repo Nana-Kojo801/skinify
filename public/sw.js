@@ -1,6 +1,6 @@
 // Minimal service worker so the app is installable. It only caches the static app shell and hashed build assets;
 // all data goes through Convex (websocket), which is never cached, and the app needs a connection to be useful.
-const CACHE = 'receipts-shell-v2'
+const CACHE = 'receipts-shell-v3'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(['/', '/favicon.svg', '/icon-192.png'])))
