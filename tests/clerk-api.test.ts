@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createClerkUser, createSignInTicket, deleteClerkUser, findClerkUserIdByEmail } from '../shared/clerk/clerk-api'
+import { createClerkUser, createSignInTicket, deleteClerkUser, findClerkUserIdByEmail, getClerkProfile } from '../shared/clerk/clerk-api'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -32,6 +32,26 @@ describe('clerk-api', () => {
     const deleteMock = stub(new Response('{}', { status: 200 }))
     await deleteClerkUser('sk', 'user_3')
     expect((deleteMock.mock.calls[0] as unknown as [string, RequestInit])[1].method).toBe('DELETE')
+  })
+
+  it('reads the name and the verified primary email, and ignores an unverified one', async () => {
+    const user = (status: string) =>
+      new Response(
+        JSON.stringify({
+          first_name: 'Ada',
+          last_name: null,
+          primary_email_address_id: 'idn_2',
+          email_addresses: [
+            { id: 'idn_1', email_address: 'old@example.com', verification: { status: 'verified' } },
+            { id: 'idn_2', email_address: 'ada@example.com', verification: { status } },
+          ],
+        }),
+        { status: 200 },
+      )
+    stub(user('verified'))
+    expect(await getClerkProfile('sk', 'user_5')).toEqual({ email: 'ada@example.com', name: 'Ada' })
+    stub(user('unverified'))
+    expect(await getClerkProfile('sk', 'user_5')).toEqual({ email: null, name: 'Ada' })
   })
 
   it('throws with the status but never the secret key', async () => {

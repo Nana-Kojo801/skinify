@@ -1,4 +1,4 @@
-import { useConvexAuth, useMutation } from 'convex/react'
+import { useAction, useConvexAuth } from 'convex/react'
 import { useEffect, useState } from 'react'
 import { api } from '../../convex/_generated/api'
 
@@ -9,7 +9,7 @@ import { api } from '../../convex/_generated/api'
  */
 export function useStoreUser() {
   const { isLoading, isAuthenticated } = useConvexAuth()
-  const store = useMutation(api.users.store)
+  const store = useAction(api.users.store)
   const [stored, setStored] = useState(false)
   const [failed, setFailed] = useState(false)
 

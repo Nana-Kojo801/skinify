@@ -18,35 +18,74 @@ afterEach(() => {
   vi.unstubAllEnvs()
 })
 
+const clerkUser = (overrides: { status?: string; first?: string | null; last?: string | null } = {}) =>
+  json({
+    first_name: overrides.first === undefined ? 'New' : overrides.first,
+    last_name: overrides.last === undefined ? 'Person' : overrides.last,
+    primary_email_address_id: 'idn_1',
+    email_addresses: [
+      { id: 'idn_0', email_address: 'other@example.com', verification: { status: 'verified' } },
+      { id: 'idn_1', email_address: 'new@example.com', verification: { status: overrides.status ?? 'verified' } },
+    ],
+  })
+
 describe('users.store', () => {
-  it('creates the users row on the first visit and reuses it afterwards', async () => {
+  it('creates the users row on the first visit with the verified email from Clerk, and reuses it afterwards', async () => {
+    const fetchMock = vi.fn(async () => clerkUser())
+    vi.stubGlobal('fetch', fetchMock)
     const t = convexTest(schema, modules)
-    const me = t.withIdentity({ subject: 'user_abc', email: 'new@example.com', name: 'New Person' })
+    const me = t.withIdentity({ subject: 'user_abc' })
     // Before storing there is no row, so queries behave as signed-out instead of failing.
     expect(await me.query(api.products.list, {})).toEqual([])
     expect(await me.query(api.account.me, {})).toBeNull()
 
-    const first = await me.mutation(api.users.store, {})
-    const second = await me.mutation(api.users.store, {})
+    const first = await me.action(api.users.store, {})
+    const second = await me.action(api.users.store, {})
     expect(second).toBe(first)
+    expect(fetchMock).toHaveBeenCalledTimes(1) // the second visit already has an email
+    expect((fetchMock.mock.calls[0] as unknown as [string])[0]).toBe('https://api.clerk.com/v1/users/user_abc')
     const users = await t.run((ctx) => ctx.db.query('users').collect())
     expect(users).toHaveLength(1)
     expect(users[0]).toMatchObject({ clerkId: 'user_abc', email: 'new@example.com', name: 'New Person' })
     expect(await me.query(api.account.me, {})).toEqual({ email: 'new@example.com', isDemoAccount: false })
   })
 
-  it('keeps the email current and keeps people separate', async () => {
+  it('never stores an unverified email', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => clerkUser({ status: 'unverified', first: null, last: null })))
     const t = convexTest(schema, modules)
-    const a = await t.withIdentity({ subject: 'user_a', email: 'a@example.com' }).mutation(api.users.store, {})
-    await t.withIdentity({ subject: 'user_a', email: 'a2@example.com' }).mutation(api.users.store, {})
-    const b = await t.withIdentity({ subject: 'user_b', email: 'a2@example.com' }).mutation(api.users.store, {})
+    await t.withIdentity({ subject: 'user_abc' }).action(api.users.store, {})
+    const [user] = await t.run((ctx) => ctx.db.query('users').collect())
+    expect(user.email).toBeUndefined()
+    expect(user.name).toBeUndefined()
+  })
+
+  it('still signs people in when Clerk is unreachable, and fills the email in on the next visit', async () => {
+    const fetchMock = vi.fn(async () => new Response('{}', { status: 500 }))
+    vi.stubGlobal('fetch', fetchMock)
+    const t = convexTest(schema, modules)
+    const me = t.withIdentity({ subject: 'user_abc' })
+    const id = await me.action(api.users.store, {})
+    expect((await t.run((ctx) => ctx.db.get(id)))?.email).toBeUndefined()
+
+    fetchMock.mockImplementation(async () => clerkUser())
+    expect(await me.action(api.users.store, {})).toBe(id)
+    expect((await t.run((ctx) => ctx.db.get(id)))?.email).toBe('new@example.com')
+  })
+
+  it('works without the Clerk secret key (no email yet) and keeps people separate', async () => {
+    vi.stubEnv('CLERK_SECRET_KEY', '')
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const t = convexTest(schema, modules)
+    const a = await t.withIdentity({ subject: 'user_a' }).action(api.users.store, {})
+    const b = await t.withIdentity({ subject: 'user_b' }).action(api.users.store, {})
     expect(b).not.toBe(a)
-    expect((await t.run((ctx) => ctx.db.get(a)))?.email).toBe('a2@example.com')
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
   it('requires sign-in', async () => {
     const t = convexTest(schema, modules)
-    await expect(t.mutation(api.users.store, {})).rejects.toMatchObject({ data: { code: 'NOT_AUTHENTICATED' } })
+    await expect(t.action(api.users.store, {})).rejects.toMatchObject({ data: { code: 'NOT_AUTHENTICATED' } })
   })
 })
 
