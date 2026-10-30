@@ -1,4 +1,4 @@
-import { ArrowsOutLineHorizontal, CaretLeft, Check, Clock, Drop, Info, Sun, UserFocus, Warning } from '@phosphor-icons/react'
+import { ArrowsOutLineHorizontal, CaretLeft, Check, Clock, Drop, Info, Lightbulb, Sun, UserFocus, Warning } from '@phosphor-icons/react'
 import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useEffect, useRef, useState } from 'react'
@@ -10,6 +10,7 @@ import { formatDateTime } from '@/lib/format'
 import { preparePhoto, type PreparedPhoto } from '@/lib/prepare-photo'
 import { cn } from '@/lib/utils'
 import { meanGap } from '@shared/scan/photo-agreement'
+import { coachHints, scanBrightness } from '@shared/scan/lighting'
 import { isScanErrorData } from '@shared/scan/scan-errors'
 import { api } from '../../../convex/_generated/api'
 import { PhotoSlot } from './components/photo-slot'
@@ -32,6 +33,7 @@ const STEP_MS = 2400
 export function ScanPage() {
   const usage = useQuery(api.scans.usage)
   const products = useQuery(api.products.list)
+  const lastScan = useQuery(api.scans.latest)
   const submit = useAction(api.scans.submit)
   const [photos, setPhotos] = useState<[Slot, Slot]>([null, null])
   const [problems, setProblems] = useState<[string?, string?]>([])
@@ -80,7 +82,8 @@ export function ScanPage() {
       const payload = await Promise.all(
         [photos[0], photos[1]].map(async (photo) => ({ data: await photo.blob.arrayBuffer(), contentType: photo.blob.type })),
       )
-      const scan = await submit({ photos: payload })
+      const brightness = scanBrightness([photos[0].brightness, photos[1].brightness])
+      const scan = await submit({ photos: payload, ...(brightness !== null && { brightness }) })
       photos.forEach((photo) => photo && URL.revokeObjectURL(photo.previewUrl))
       setPhotos([null, null])
       setResult({ scores: scan.scores, qualityFlag: scan.qualityFlag, gap: meanGap(scan.noise) })
@@ -114,6 +117,9 @@ export function ScanPage() {
       </main>
     )
   }
+
+  // Scan quality coach: hints about the light, never blocking.
+  const hints = coachHints([photos[0]?.brightness ?? null, photos[1]?.brightness ?? null], lastScan?.brightness)
 
   const blocked =
     usage !== undefined && !usage.canScan
@@ -226,9 +232,19 @@ export function ScanPage() {
                 </p>
               )}
               <div className="rise grid grid-cols-2 gap-3 md:gap-5" style={{ '--i': 2 } as React.CSSProperties}>
-                <PhotoSlot label="Photo 1 of 2" hint="Look straight at the camera." previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
-                <PhotoSlot label="Photo 2 of 2" hint="Right after photo 1: same spot, same light." previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
+                <PhotoSlot label="Photo 1 of 2" hint="Look straight at the camera." lighting={hints.perPhoto[0]} previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
+                <PhotoSlot label="Photo 2 of 2" hint="Right after photo 1: same spot, same light." lighting={hints.perPhoto[1]} previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
               </div>
+              {!pending &&
+                hints.notes.map((note) => (
+                  <p key={note.id} className="flex animate-[pop_.35s_var(--ease-out-soft)_both] items-start gap-2.5 rounded-2xl bg-canttell-bg px-4 py-3 text-sm leading-snug text-canttell-ink">
+                    <Lightbulb size={18} className="mt-px shrink-0" />
+                    <span>
+                      <strong className="block font-semibold">{note.title}</strong>
+                      {note.text}
+                    </span>
+                  </p>
+                ))}
               {!pending && (
                 <div className="rise flex flex-col gap-2.5" style={{ '--i': 3 } as React.CSSProperties}>
                   <Button size="lg" disabled={!photos[0] || !photos[1]} onClick={() => void onSubmit()}>

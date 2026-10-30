@@ -1,4 +1,4 @@
-import { Camera, Check, Images, Warning } from '@phosphor-icons/react'
+import { Camera, Check, Images, Moon, Sun, Warning } from '@phosphor-icons/react'
 import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -12,13 +12,15 @@ type PhotoSlotProps = {
   problem?: string
   /** Shows the scanning sweep over the photo while the scan is analysed. */
   analysing?: boolean
+  /** The lighting hint for this photo (scan quality coach); hints never block a scan. */
+  lighting?: { level: 'ok' | 'dark' | 'bright'; text: string } | null
   onFile: (file: File) => void
 }
 
 const corner = 'absolute size-6 border-cocoa/45'
 
 // Two hidden file inputs: one opens the front camera (capture="user"), the other the gallery.
-export function PhotoSlot({ label, hint, previewUrl, disabled, problem, analysing = false, onFile }: PhotoSlotProps) {
+export function PhotoSlot({ label, hint, previewUrl, disabled, problem, analysing = false, lighting = null, onFile }: PhotoSlotProps) {
   const cameraRef = useRef<HTMLInputElement>(null)
   const galleryRef = useRef<HTMLInputElement>(null)
 
@@ -74,6 +76,17 @@ export function PhotoSlot({ label, hint, previewUrl, disabled, problem, analysin
             Tap to take a photo
           </span>
         </button>
+      )}
+      {lighting && previewUrl && !analysing && !problem && (
+        <p
+          className={cn(
+            'inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[12.5px] font-semibold',
+            lighting.level === 'ok' ? 'bg-working-bg text-working-ink' : 'bg-canttell-bg text-canttell-ink',
+          )}
+        >
+          {lighting.level === 'dark' ? <Moon size={14} weight="bold" /> : <Sun size={14} weight="bold" />}
+          {lighting.text}
+        </p>
       )}
       {problem && (
         <p role="alert" className="px-1 text-[13px] leading-snug text-irritation-ink">

@@ -96,6 +96,10 @@ Never emailed: the demo account, addresses on test domains (`example.com`, `exam
 
 After a scan (and on Home), a card lists the 1 to 3 concerns with the lowest scores, with a few ingredient families people commonly try for each. **Test this** opens the new-product form with the concern and a name pre-filled, and Receipts then judges the product like any other. The list is hand-written in [`shared/ideas/ideas-config.ts`](shared/ideas/ideas-config.ts): no brands, nothing written by an AI model, no prescription or drug-like ingredients (a test enforces this). Concerns that already have an active product are skipped, nothing is suggested after a scan flagged as poor quality, and the card always says these are ideas to try, not advice. It makes no YouCam calls.
 
+## Scan quality coach
+
+On the Scan page, each photo gets a small lighting hint as soon as it is chosen ("Lighting looks good", "Looks quite dark", "Looks very bright"), plus notes when the two photos have different light or when the light differs from the last scan. It is measured in the browser from the middle of the photo (average brightness, 0 to 255), sends nothing new to YouCam and **never blocks a scan**. To compare with the last scan, one number per scan is stored (`scans.brightness`, the mean of the two photos): never a photo. The thresholds are first guesses in [`shared/scan/lighting.ts`](shared/scan/lighting.ts) and need tuning on real photos.
+
 ## How verdicts are calculated
 
 The engine is a pure TypeScript function in [`shared/verdict/compute-verdict.ts`](shared/verdict/compute-verdict.ts), and every threshold lives in one file, [`shared/verdict/verdict-config.ts`](shared/verdict/verdict-config.ts).
