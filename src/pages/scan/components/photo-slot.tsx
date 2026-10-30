@@ -1,112 +1,231 @@
 import { Camera, Check, Images, Moon, Sun, Warning } from '@phosphor-icons/react'
-import { useRef } from 'react'
-import { Button } from '@/components/ui/button'
+import { useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 
-type PhotoSlotProps = {
-  label: string
-  /** One line telling the person what to do for this photo. */
-  hint?: string
-  previewUrl: string | null
-  disabled: boolean
-  problem?: string
-  /** Shows the scanning sweep over the photo while the scan is analysed. */
-  analysing?: boolean
-  /** The lighting hint for this photo (scan quality coach); hints never block a scan. */
-  lighting?: { level: 'ok' | 'dark' | 'bright'; text: string } | null
-  onFile: (file: File) => void
+type Lighting = { level: 'ok' | 'dark' | 'bright'; text: string } | null
+
+type PhotoSlotsProps = {
+  /** In-memory previews of the two photos (never uploaded until "Analyse my skin", never stored). */
+  previews: [string | null, string | null]
+  /** What the server said was wrong with a photo, if anything. */
+  problems: [string?, string?]
+  /** The lighting hint for each photo (scan quality coach); hints never block a scan. */
+  lighting: Lighting[]
+  /** Shows the scanning sweep over both photos while the scan is analysed. */
+  analysing: boolean
+  onFile: (index: 0 | 1, file: File) => void
 }
 
-const corner = 'absolute size-6 border-cocoa/45'
+const HINTS = ['Look straight at the camera.', 'Right after photo 1: same spot, same light.'] as const
 
-// Two hidden file inputs: one opens the front camera (capture="user"), the other the gallery.
-export function PhotoSlot({ label, hint, previewUrl, disabled, problem, analysing = false, lighting = null, onFile }: PhotoSlotProps) {
-  const cameraRef = useRef<HTMLInputElement>(null)
-  const galleryRef = useRef<HTMLInputElement>(null)
+// The camera panel: a dark, camera-like tile. While a photo is missing it shows a framing guide for that photo with a
+// shutter (opens the phone's own camera, capture="user") and a gallery button; once both are in it shows them side by
+// side to compare. Four hidden file inputs do the actual picking, as before.
+export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: PhotoSlotsProps) {
+  const cameraRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)]
+  const galleryRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)]
+  const firstEmpty = previews[0] === null ? 0 : previews[1] === null ? 1 : null
+  const [chosen, setChosen] = useState<0 | 1 | null>(null)
+  // The photo being taken: the one the person picked in the switch, else the first missing one.
+  const active = chosen !== null && previews[chosen] === null ? chosen : firstEmpty
+  const showPair = active === null || analysing
+  const current: 0 | 1 = active ?? 0
 
-  function handle(event: React.ChangeEvent<HTMLInputElement>) {
+  function handle(index: 0 | 1, event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     event.target.value = ''
-    if (file) onFile(file)
+    if (file) {
+      setChosen(null)
+      onFile(index, file)
+    }
   }
+  const camera = (index: 0 | 1) => cameraRefs[index].current?.click()
+  const gallery = (index: 0 | 1) => galleryRefs[index].current?.click()
+
+  const status = (index: 0 | 1) => (problems[index] ? 'bad' : previews[index] ? 'done' : active === index ? 'now' : 'next')
+  const STATUS_WORD = { bad: 'Retake', done: 'Ready', now: 'Now', next: 'Next' } as const
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between px-1">
-        <p className="text-[15px] font-semibold">{label}</p>
-        <p className={cn('text-[13px] font-medium', problem ? 'text-irritation-ink' : 'text-muted')}>{problem ? 'Retake' : previewUrl ? 'Ready' : 'Empty'}</p>
-      </div>
-      {hint && !analysing && <p className="-mt-1 min-h-[2.5em] px-1 text-[12.5px] leading-snug text-muted">{hint}</p>}
-      {previewUrl ? (
-        <div className={cn('photo relative aspect-[3/4] overflow-hidden rounded-3xl bg-sand', problem && 'ring-[3px] ring-irritation')}>
-          <img src={previewUrl} alt={label} className={cn('settle size-full object-cover', problem && 'opacity-60')} />
-          {analysing && (
-            <>
-              <div className="absolute inset-0 bg-cocoa/15" />
-              <div className="absolute inset-x-0 top-0 h-1/3 animate-[sweep_2.2s_ease-in-out_infinite_alternate] bg-linear-to-b from-transparent via-white/25 to-white/70">
-                <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white shadow-[0_0_18px_4px_rgb(255_255_255/0.8)]" />
+    <section
+      className="relative overflow-hidden rounded-[34px] bg-[radial-gradient(120%_70%_at_50%_0%,#3a3036_0%,#1a1417_55%,#0f0b0d_100%)] p-3 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),inset_0_0_0_1px_rgb(255_255_255/0.05),0_2px_4px_rgb(35_24_29/0.1),0_34px_60px_-30px_rgb(35_24_29/0.7)] md:p-3.5"
+      aria-label="Your two photos"
+    >
+      {analysing ? (
+        <p className="flex h-11 items-center justify-center gap-2.5 rounded-full bg-white/8 text-[14.5px] font-bold" aria-live="polite">
+          <span className="spin size-5 rounded-full border-[2.5px] border-white/20 border-t-accent" aria-hidden />
+          Reading your skin
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 gap-1 rounded-full bg-white/7 p-1 shadow-[inset_0_1px_2px_rgb(0_0_0/0.4)]" role="group" aria-label="Photos">
+          {([0, 1] as const).map((index) => {
+            const st = status(index)
+            const on = st === 'now' || st === 'bad'
+            return (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setChosen(index)}
+                disabled={previews[index] !== null}
+                aria-pressed={on}
+                className={cn(
+                  'flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full text-sm font-bold transition-[background-color,color,box-shadow] duration-500 ease-(--ease-liquid) disabled:cursor-default',
+                  on ? 'bg-linear-to-b from-white/22 to-white/10 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.22)]' : 'text-white/60',
+                )}
+              >
+                <i
+                  className={cn(
+                    'grid size-[22px] place-items-center rounded-full border-[1.5px] border-white/35 text-xs font-extrabold not-italic',
+                    st === 'now' && 'border-accent bg-accent text-ink',
+                    st === 'done' && 'border-working bg-working',
+                    st === 'bad' && 'border-irritation bg-irritation',
+                  )}
+                >
+                  {st === 'done' ? <Check size={12} weight="bold" /> : st === 'bad' ? '!' : index + 1}
+                </i>
+                Photo {index + 1}
+                <em className="text-xs font-semibold not-italic opacity-65">{STATUS_WORD[st]}</em>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {showPair ? (
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {([0, 1] as const).map((index) => {
+            const problem = problems[index]
+            const light = lighting[index]
+            return (
+              <div key={index} className="flex flex-col items-center gap-2">
+                <div className="relative aspect-[3/4.4] w-full overflow-hidden rounded-[22px] bg-[#1b1518] md:aspect-auto md:h-[440px]">
+                  {previews[index] && (
+                    <img src={previews[index]!} alt={`Photo ${index + 1} of 2`} className={cn('settle size-full object-cover', problem && 'brightness-50 grayscale-[.6]')} />
+                  )}
+                  <span className="absolute top-2.5 left-2.5 inline-flex h-7 items-center rounded-full bg-black/35 px-2.5 text-[12.5px] font-extrabold backdrop-blur-md">
+                    Photo {index + 1}
+                  </span>
+                  {analysing ? (
+                    <>
+                      <span aria-hidden className="absolute inset-[12%_16%_18%] rounded-[50%/44%] border-2 border-dashed border-white/75" />
+                      <span aria-hidden className="absolute inset-x-0 top-0 h-[42%] animate-[sweep_1.7s_cubic-bezier(.45,0,.55,1)_infinite_alternate] bg-linear-to-b from-transparent via-accent/45 to-white/90" />
+                    </>
+                  ) : problem ? (
+                    <p role="alert" className="pop-in absolute inset-x-2 bottom-2 flex flex-col gap-1 rounded-[18px] bg-irritation/92 p-3 text-[12.5px] leading-snug shadow-[0_10px_20px_-10px_rgb(0_0_0/0.6)]">
+                      <Warning size={20} weight="bold" />
+                      <strong className="text-[15px] font-extrabold">Retake</strong>
+                      {problem}
+                    </p>
+                  ) : (
+                    <>
+                      <span className="pop-in absolute top-2.5 right-2.5 grid size-7 place-items-center rounded-full bg-working shadow-[0_4px_10px_-4px_rgb(0_0_0/0.5)]">
+                        <Check size={15} weight="bold" />
+                      </span>
+                      {light && (
+                        <span
+                          className={cn(
+                            'pop-in absolute bottom-2 left-2 inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-bold shadow-[0_6px_14px_-6px_rgb(0_0_0/0.5)]',
+                            light.level === 'ok' ? 'bg-working-bg text-working-ink' : 'bg-canttell-bg text-canttell-ink',
+                          )}
+                          style={{ '--i': 2 } as React.CSSProperties}
+                        >
+                          {light.level === 'dark' ? <Moon size={14} weight="bold" /> : <Sun size={14} weight="bold" />}
+                          {light.text}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+                {!analysing && (
+                  <div className="flex gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => camera(index)}
+                      className={cn('press inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 text-[13.5px] font-bold', problem ? 'bg-white text-ink' : 'glass-clear')}
+                    >
+                      <Camera size={17} weight="bold" />
+                      Retake
+                    </button>
+                    <button type="button" onClick={() => gallery(index)} aria-label={`Gallery, photo ${index + 1}`} className="glass-clear press grid size-11 cursor-pointer place-items-center rounded-full">
+                      <Images size={17} weight="bold" />
+                    </button>
+                  </div>
+                )}
               </div>
-            </>
-          )}
-          {!analysing && (
-            <span
-              className={cn(
-                'absolute top-2.5 right-2.5 grid size-8 animate-[pop_.5s_var(--ease-pop)_both] place-items-center rounded-full text-white',
-                problem ? 'bg-irritation-ink' : 'bg-working-ink',
-              )}
-            >
-              {problem ? <Warning size={17} weight="bold" /> : <Check size={17} weight="bold" />}
-            </span>
-          )}
+            )
+          })}
         </div>
       ) : (
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => cameraRef.current?.click()}
-          className="press relative grid aspect-[3/4] w-full cursor-pointer place-items-center overflow-hidden rounded-3xl border-[1.5px] border-dashed border-nude bg-sand text-cocoa-soft shadow-(--shadow-inset) transition-colors hover:bg-nude/60"
-        >
-          <span aria-hidden className="absolute top-[44%] left-1/2 h-[58%] w-[62%] -translate-x-1/2 -translate-y-1/2 animate-[breathe_3s_ease-in-out_infinite] rounded-[50%] border-2 border-dashed border-cocoa/25" />
-          <span aria-hidden className={cn(corner, 'top-3 left-3 rounded-tl-xl border-t-2 border-l-2')} />
-          <span aria-hidden className={cn(corner, 'top-3 right-3 rounded-tr-xl border-t-2 border-r-2')} />
-          <span aria-hidden className={cn(corner, 'bottom-3 left-3 rounded-bl-xl border-b-2 border-l-2')} />
-          <span aria-hidden className={cn(corner, 'right-3 bottom-3 rounded-br-xl border-r-2 border-b-2')} />
-          <span className="absolute inset-x-0 bottom-5 flex flex-col items-center gap-1 text-[13px] font-semibold">
-            <Camera size={24} />
-            Tap to take a photo
-          </span>
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() => camera(current)}
+            className="relative mt-3 block aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[26px] bg-[radial-gradient(60%_50%_at_50%_42%,#2e262b,#151013)] md:aspect-auto md:h-[440px]"
+            aria-label={`Take photo ${current + 1}`}
+          >
+            <span aria-hidden className="breathe absolute top-[44%] left-1/2 aspect-[3/4] h-auto w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-[2.5px] border-dashed border-accent/90 shadow-[0_0_40px_rgb(245_197_207/0.2)] md:h-[74%] md:w-auto" />
+            {['top-4 left-4 rounded-tl-xl border-t-[3px] border-l-[3px]', 'top-4 right-4 rounded-tr-xl border-t-[3px] border-r-[3px]', 'bottom-4 left-4 rounded-bl-xl border-b-[3px] border-l-[3px]', 'right-4 bottom-4 rounded-br-xl border-r-[3px] border-b-[3px]'].map(
+              (pos) => (
+                <span key={pos} aria-hidden className={cn('absolute size-[30px] border-white/85', pos)} />
+              ),
+            )}
+            <span className="glass-clear absolute bottom-5 left-1/2 w-max max-w-[82%] -translate-x-1/2 rounded-[18px] px-4 py-2.5 text-center text-[13px] leading-snug text-white/85">
+              <strong className="block text-[14.5px] text-white">Photo {current + 1} of 2</strong>
+              {HINTS[current]}
+            </span>
+          </button>
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2 pt-4 pb-1.5">
+            <button type="button" onClick={() => gallery(current)} className="press flex cursor-pointer flex-col items-center gap-1.5 text-xs font-bold text-white/70">
+              <span className="grid size-[52px] place-items-center rounded-full bg-white/12 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]">
+                <Images size={22} weight="bold" />
+              </span>
+              Gallery
+            </button>
+            <button
+              type="button"
+              onClick={() => camera(current)}
+              aria-label="Camera"
+              className="press grid size-[82px] cursor-pointer place-items-center rounded-full bg-[conic-gradient(from_200deg,var(--color-accent),var(--color-accent-hi),var(--color-accent))] p-[5px] shadow-[0_10px_26px_-8px_rgb(245_197_207/0.6)]"
+            >
+              <span className="grid size-full place-items-center rounded-full bg-[radial-gradient(circle_at_50%_30%,#fff,#ece6e8)] text-ink shadow-[inset_0_-2px_4px_rgb(0_0_0/0.12),0_0_0_4px_#1a1417]">
+                <Camera size={28} weight="bold" />
+              </span>
+            </button>
+            {(() => {
+              const other = current === 0 ? 1 : 0
+              const preview = previews[other]
+              return (
+                <button
+                  type="button"
+                  onClick={() => (preview ? camera(other) : setChosen(other))}
+                  aria-label={preview ? `Retake photo ${other + 1}` : `Switch to photo ${other + 1}`}
+                  className="press flex cursor-pointer flex-col items-center gap-1.5 text-xs font-bold text-white/70"
+                >
+                  <span className={cn('relative grid size-[52px] place-items-center overflow-hidden rounded-2xl text-base font-extrabold', preview ? 'border-2 border-white/90' : 'border-2 border-dashed border-white/25 text-white/55')}>
+                    {preview ? (
+                      <>
+                        <img src={preview} alt="" className="absolute inset-0 size-full object-cover" />
+                        <i className="absolute right-[3px] bottom-[3px] grid size-[18px] place-items-center rounded-full bg-working text-white">
+                          <Check size={11} weight="bold" />
+                        </i>
+                      </>
+                    ) : (
+                      other + 1
+                    )}
+                  </span>
+                  Photo {other + 1}
+                </button>
+              )
+            })()}
+          </div>
+        </>
       )}
-      {lighting && previewUrl && !analysing && !problem && (
-        <p
-          className={cn(
-            'inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[12.5px] font-semibold',
-            lighting.level === 'ok' ? 'bg-working-bg text-working-ink' : 'bg-canttell-bg text-canttell-ink',
-          )}
-        >
-          {lighting.level === 'dark' ? <Moon size={14} weight="bold" /> : <Sun size={14} weight="bold" />}
-          {lighting.text}
-        </p>
-      )}
-      {problem && (
-        <p role="alert" className="px-1 text-[13px] leading-snug text-irritation-ink">
-          {problem}
-        </p>
-      )}
-      {!analysing && (
-        <div className="grid grid-cols-2 gap-1.5">
-          <Button variant="soft" size="sm" className="px-2" disabled={disabled} onClick={() => cameraRef.current?.click()}>
-            <Camera size={17} />
-            {previewUrl ? 'Retake' : 'Camera'}
-          </Button>
-          <Button variant="soft" size="sm" className="px-2" disabled={disabled} onClick={() => galleryRef.current?.click()}>
-            <Images size={17} />
-            Gallery
-          </Button>
-        </div>
-      )}
-      <input ref={cameraRef} type="file" accept="image/*" capture="user" className="hidden" onChange={handle} />
-      <input ref={galleryRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={handle} />
-    </div>
+
+      {([0, 1] as const).map((index) => (
+        <span key={index} className="hidden">
+          <input ref={cameraRefs[index]} type="file" accept="image/*" capture="user" onChange={(e) => handle(index, e)} />
+          <input ref={galleryRefs[index]} type="file" accept="image/jpeg,image/png" onChange={(e) => handle(index, e)} />
+        </span>
+      ))}
+    </section>
   )
 }

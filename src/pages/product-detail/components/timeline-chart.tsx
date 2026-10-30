@@ -42,7 +42,7 @@ export function TimelineChart({ points, startDate, color }: { points: TimelinePo
   const [viewRef, inView] = useInView<HTMLDivElement>()
 
   if (points.length === 0) {
-    return <p className="text-sm text-muted">No scans yet. The chart appears after your first scan.</p>
+    return <p className="text-sm text-ink-2">No scans yet. The chart appears after your first scan.</p>
   }
 
   const scores = points.map((p) => p.score)
@@ -65,21 +65,22 @@ export function TimelineChart({ points, startDate, color }: { points: TimelinePo
       <div ref={boxRef} className="w-full" style={{ height: HEIGHT }}>
         {width > 0 && inView && (
           <svg width={w} height={HEIGHT} viewBox={`0 0 ${w} ${HEIGHT}`} role="img" aria-label={`Score for each scan, from ${Math.round(scores[0])} to ${Math.round(scores[scores.length - 1])}`} className="block overflow-visible">
+            <rect x={PAD.left} y={PAD.top - 4} width={Math.max(0, sx - PAD.left)} height={HEIGHT - PAD.top - PAD.bottom + 4} rx={8} fill="rgb(35 24 29 / 0.035)" />
             {[hi, mid, lo].map((v) => (
               <g key={v}>
-                <line x1={PAD.left} x2={w} y1={y(v)} y2={y(v)} stroke="var(--color-line)" />
-                <text x={0} y={y(v) + 4} fontSize="11" fill="var(--color-muted)">
+                <line x1={PAD.left} x2={w} y1={y(v)} y2={y(v)} stroke="rgb(35 24 29 / 0.07)" />
+                <text x={0} y={y(v) + 4} fontSize="11" fontWeight="600" fill="var(--color-ink-3)">
                   {v}
                 </text>
               </g>
             ))}
-            <line x1={sx} x2={sx} y1={PAD.top - 2} y2={HEIGHT - 2} stroke="#b3a397" strokeDasharray="3 4" />
-            <rect x={labelX - 29} y={2} width={58} height={20} rx={10} fill="var(--color-sand)" />
-            <text x={labelX} y={16} fontSize="11" fontWeight="600" textAnchor="middle" fill="var(--color-cocoa)">
+            <line x1={sx} x2={sx} y1={PAD.top - 2} y2={HEIGHT - 2} stroke="var(--color-ink)" strokeWidth="1.5" strokeDasharray="4 4" />
+            <rect x={labelX - 29} y={2} width={58} height={20} rx={10} fill="var(--color-accent)" />
+            <text x={labelX} y={16} fontSize="11" fontWeight="800" textAnchor="middle" fill="var(--color-ink)">
               Started
             </text>
             <path d={area} fill={color} opacity={0.12} className="fade-in" style={{ '--d': '.7s' } as React.CSSProperties} />
-            <path className="draw-in" pathLength={1} d={line} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+            <path className="draw-in" pathLength={1} d={line} fill="none" stroke={color} strokeWidth="2.8" strokeLinecap="round" />
             {points.map((p, i) => (
               <circle
                 key={p.createdAt}
@@ -87,7 +88,7 @@ export function TimelineChart({ points, startDate, color }: { points: TimelinePo
                 cy={xy[i][1]}
                 r={4.5}
                 fill="#fff"
-                stroke={p.flagged ? 'var(--color-canttell)' : p.createdAt < startDate + 86_400_000 ? '#b3a397' : color}
+                stroke={p.flagged ? 'var(--color-canttell)' : p.createdAt < startDate + 86_400_000 ? 'var(--color-ink-3)' : color}
                 strokeWidth={2.5}
                 className="fade-in"
                 style={{ '--d': `${0.5 + i * 0.08}s` } as React.CSSProperties}
@@ -98,12 +99,12 @@ export function TimelineChart({ points, startDate, color }: { points: TimelinePo
           </svg>
         )}
       </div>
-      <div className="mt-1 flex justify-between pl-[30px] text-xs text-muted">
+      <div className="mt-1 flex justify-between pl-[30px] text-xs font-semibold text-ink-3">
         <span>{formatShortDate(t0)}</span>
         <span>{formatShortDate(t1)}</span>
       </div>
       {points.some((p) => p.flagged) && (
-        <p className="mt-2.5 flex items-center gap-1.5 text-[12.5px] text-muted">
+        <p className="mt-2.5 flex items-center gap-1.5 text-[12.5px] text-ink-2">
           <span className="inline-block size-2.5 rounded-full border-[2.5px] border-canttell" />
           Lower quality scan: the two photos disagreed
         </p>

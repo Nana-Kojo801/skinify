@@ -16,18 +16,21 @@ export function OverlapWarning({ overlaps, concern, variant = 'page', className 
   if (overlaps.length === 0) return null
   const names = joinNames(overlaps.map((o) => o.name))
   return (
-    <p role="note" className={cn('flex items-start gap-3 rounded-3xl bg-canttell-bg px-4 py-3.5 text-[14.5px] leading-snug text-canttell-ink', className)}>
+    <p
+      role="note"
+      className={cn('flex items-start gap-3 rounded-[22px] bg-[image:var(--sheen)] bg-canttell-bg px-4 py-3.5 text-[14.5px] leading-snug text-canttell-ink shadow-(--shadow-depth-color)', className)}
+    >
       <WarningCircle size={20} weight="fill" className="mt-0.5 shrink-0" />
       {variant === 'form' ? (
         <span>
-          <strong className="block font-semibold">
+          <strong className="block font-bold">
             You already have {names} active for {concern}
           </strong>
           Started {startedPhrase(overlaps)}. Testing more than one now makes it hard to tell which one works. You can still add it.
         </span>
       ) : (
         <span>
-          <strong className="block font-semibold">
+          <strong className="block font-bold">
             You're also testing {names} for {concern}
           </strong>
           Started {startedPhrase(overlaps)}. If {concern} changes, {overlaps.length === 1 ? 'either product' : 'any of them'} could be the cause, so this verdict

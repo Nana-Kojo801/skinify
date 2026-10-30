@@ -1,19 +1,22 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-// Pill buttons. Every interactive size is at least 44 px tall (tap targets).
+// Pill buttons. Every interactive size is at least 44 px tall (tap targets). Pressing squishes the button and it
+// springs back (transform only).
 const buttonVariants = cva(
-  'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap outline-none select-none transition-[color,background-color,box-shadow,scale] duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 [&_svg]:shrink-0',
+  'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full font-bold whitespace-nowrap outline-none select-none transition-[transform,box-shadow,background-color,color] duration-500 ease-(--ease-spring) active:scale-[0.96] active:duration-100 disabled:pointer-events-none disabled:opacity-45 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        primary: 'bg-cocoa text-cream shadow-(--shadow-button) hover:bg-cocoa-soft active:shadow-[inset_0_1px_0_rgb(255_255_255/0.1),0_1px_2px_rgb(46_36_32/0.3)]',
-        soft: 'bg-sand text-cocoa shadow-(--shadow-button-soft) hover:bg-nude',
-        white: 'bg-card text-cocoa shadow-(--shadow-float) hover:bg-cream',
-        outline: 'border-[1.5px] border-nude bg-card text-cocoa hover:border-cocoa/40',
-        ghost: 'text-cocoa hover:bg-sand',
-        danger: 'bg-irritation-bg text-irritation-ink shadow-(--shadow-button-soft) hover:bg-[#f2cbc5]',
-        dangerSolid: 'bg-irritation-ink text-white shadow-(--shadow-button) hover:bg-[#862626]',
+        primary: 'bg-[radial-gradient(120%_120%_at_50%_0%,#4a3c43_0%,var(--color-ink)_60%)] text-white shadow-(--shadow-button)',
+        accent: 'bg-[image:var(--sheen)] bg-accent text-ink shadow-(--shadow-depth-color)',
+        soft: 'bg-[image:var(--sheen)] bg-tile text-ink shadow-(--shadow-depth)',
+        white: 'bg-[image:var(--sheen)] bg-tile text-ink shadow-(--shadow-depth)',
+        outline: 'bg-tile text-ink shadow-[inset_0_0_0_1.5px_rgb(35_24_29/0.14)]',
+        ghost: 'text-ink hover:bg-well',
+        glass: 'glass-clear text-white',
+        danger: 'bg-transparent text-irritation-ink shadow-[inset_0_0_0_1.5px_rgb(158_34_22/0.25)] hover:bg-irritation-bg/50',
+        dangerSolid: 'bg-[linear-gradient(180deg,#dc3a2c,#b52a1f)] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_8px_18px_-8px_rgb(181_42_31/0.65)]',
       },
       size: {
         sm: 'h-11 px-4 text-sm',

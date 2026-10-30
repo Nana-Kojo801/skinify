@@ -1,18 +1,20 @@
-import { RadarChart } from '@/components/radar-chart'
+import { useInView } from '@/lib/motion'
 import { formatShortDate } from '@/lib/format'
+import { cn } from '@/lib/utils'
 import { buildOverview, OVERVIEW_CONFIG, signed, type OverviewScan } from '@shared/overview/overview'
 
-// "Your skin overview": a radar of the 8 concerns, first scan vs latest, a short list of what moved, and YouCam's own
-// overall score when the scans have one. Honest about what a radar can and can't say.
+// "Your skin overview": every concern as a bar (your latest scan) with a marker where it stood at your first scan,
+// and YouCam's own overall score when the scans have one. Honest about what it can and can't say.
 export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undefined }) {
+  const [ref, inView] = useInView<HTMLDivElement>()
   if (!scans || scans.length === 0) return null
   const overview = buildOverview(scans)
 
   if (!overview) {
     return (
-      <section className="card p-5 md:p-6">
-        <h2 className="text-xl font-semibold tracking-[-0.02em]">Your skin overview</h2>
-        <p className="mt-1.5 text-[15px] text-muted">
+      <section className="tile p-5 md:p-6">
+        <h3 className="text-[19px] font-extrabold tracking-[-0.02em]">Not enough scans yet</h3>
+        <p className="mt-1.5 text-[14.5px] leading-snug text-ink-2">
           Once you have two scans without a quality warning, this shows how each concern moved between your first scan and your latest.
         </p>
       </section>
@@ -20,61 +22,71 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
   }
 
   return (
-    <section className="card p-5 md:p-6" aria-labelledby="overview-title">
+    <section className="tile p-5 md:p-6" aria-labelledby="overview-title">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h2 id="overview-title" className="text-xl font-semibold tracking-[-0.02em]">
-            Your skin overview
-          </h2>
-          <p className="mt-1 text-[14px] text-muted">
-            First scan vs your latest, {formatShortDate(overview.firstAt)} to {formatShortDate(overview.latestAt)}.
+          <h3 id="overview-title" className="eyebrow">
+            First scan and now
+          </h3>
+          <p className="mt-1.5 text-[13.5px] text-ink-2">
+            {formatShortDate(overview.firstAt)} to {formatShortDate(overview.latestAt)}. Out of 100, higher is healthier.
           </p>
         </div>
         {overview.overall && (
-          <div className="tile shrink-0 px-3.5 py-2.5 text-center">
-            <p className="text-[32px] leading-none font-light tracking-[-0.04em] tabular-nums">{overview.overall.now}</p>
-            <p className="mt-1 text-[11.5px] leading-tight text-muted">Overall, YouCam's estimate</p>
+          <div className="shrink-0 text-right">
+            <p className="text-[44px] leading-[0.85] font-extrabold tracking-[-0.04em] tabular-nums">{overview.overall.now}</p>
+            <p className="mt-1 text-[11.5px] leading-tight font-semibold text-ink-2">Overall, YouCam's estimate</p>
             {overview.overall.delta !== null && overview.overall.delta !== 0 && (
-              <p className={`mt-0.5 text-[12.5px] font-bold ${overview.overall.delta > 0 ? 'text-working-ink' : 'text-cocoa-soft'}`}>
-                {signed(overview.overall.delta)} since first scan
-              </p>
+              <p className={cn('text-[12.5px] font-bold', overview.overall.delta > 0 ? 'text-working-ink' : 'text-ink-2')}>{signed(overview.overall.delta)} since first scan</p>
             )}
           </div>
         )}
       </div>
 
-      <RadarChart axes={overview.rows.map((row) => ({ label: row.label, before: row.before, now: row.now }))} className="mx-auto mt-3 w-full max-w-[380px]" />
-      <p className="mt-1 flex justify-center gap-5 text-[13px] font-semibold" aria-hidden>
-        <span>
-          <i className="mr-1.5 inline-block size-3 rounded bg-[#cdbdb1] align-[-1px]" />
-          Before
+      <div ref={ref} data-shown={inView} className="mt-5 grid gap-x-9 gap-y-3.5 md:grid-cols-2">
+        {overview.rows.map((row, index) => {
+          const moved = Math.abs(row.delta) >= OVERVIEW_CONFIG.movedAtLeast
+          return (
+            <div key={row.key} className="grid grid-cols-[92px_1fr_auto] items-center gap-3 text-[14px] font-semibold">
+              <span className="truncate">{row.label}</span>
+              <span className="relative h-3 rounded-full bg-ink/7 shadow-[inset_0_1px_2px_rgb(35_24_29/0.08)]">
+                <span
+                  className="grow-x absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-[#4a3c43] to-ink"
+                  style={{ width: `${Math.max(2, Math.min(100, row.now))}%`, '--i': index } as React.CSSProperties}
+                />
+                <span
+                  className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent-strong shadow-[0_1px_3px_rgb(0_0_0/0.25)]"
+                  style={{ left: `${Math.max(0, Math.min(100, row.before))}%` }}
+                  title={`First scan: ${Math.round(row.before)}`}
+                />
+              </span>
+              <span className="w-[74px] text-right tabular-nums">
+                <b className="font-extrabold">{Math.round(row.now)}</b>
+                <span className={cn('ml-1.5 text-[12.5px] font-bold', !moved ? 'text-ink-3' : row.delta > 0 ? 'text-working-ink' : 'text-ink-2')}>
+                  {moved ? signed(row.delta) : '·'}
+                </span>
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      <p className="mt-4 flex items-center gap-4 text-[12.5px] font-bold text-ink-2" aria-hidden>
+        <span className="inline-flex items-center gap-1.5">
+          <i className="size-3 rounded-full border-2 border-white bg-accent-strong shadow-[0_1px_3px_rgb(0_0_0/0.25)]" />
+          First scan
         </span>
-        <span>
-          <i className="mr-1.5 inline-block size-3 rounded bg-coral align-[-1px]" />
-          Now
+        <span className="inline-flex items-center gap-1.5">
+          <i className="h-2.5 w-5 rounded-full bg-ink" />
+          Latest scan
         </span>
       </p>
-
-      <ul className="mt-3.5 text-[14.5px]">
-        {overview.moved.map((row) => (
-          <li key={row.key} className="flex items-center justify-between gap-3 border-t border-nude py-2">
-            <span className="font-medium">{row.label}</span>
-            <span className={`font-bold tabular-nums ${row.delta > 0 ? 'text-working-ink' : 'text-cocoa-soft'}`}>
-              {Math.round(row.before)} → {Math.round(row.now)} ({signed(row.delta)})
-            </span>
-          </li>
-        ))}
-        {overview.stillCount > 0 && (
-          <li className="flex items-center justify-between gap-3 border-t border-nude py-2 text-muted">
-            <span>{overview.moved.length === 0 ? 'Every concern' : 'Every other concern'}</span>
-            <span className="font-bold">under {OVERVIEW_CONFIG.movedAtLeast} {OVERVIEW_CONFIG.movedAtLeast === 1 ? 'point' : 'points'}</span>
-          </li>
-        )}
-      </ul>
-
-      <p className="mt-3 text-[12.5px] leading-relaxed text-muted">
-        Each spoke is one concern, scored 1 to 100 (higher is healthier). Scores for different concerns are not on one common scale, so compare each spoke with
-        its own "before", not one concern with another. Scores are estimates from photos, not a medical assessment.
+      <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
+        {overview.stillCount > 0
+          ? `${overview.moved.length === 0 ? 'Every concern' : 'Every other concern'} moved under ${OVERVIEW_CONFIG.movedAtLeast} ${OVERVIEW_CONFIG.movedAtLeast === 1 ? 'point' : 'points'}. `
+          : ''}
+        Scores for different concerns are not on one common scale, so compare each bar with its own first scan, not one concern with another. Scores are
+        estimates from photos, not a medical assessment.
       </p>
     </section>
   )

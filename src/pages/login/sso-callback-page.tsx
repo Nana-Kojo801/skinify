@@ -6,7 +6,13 @@ import { useNavigate } from 'react-router'
 export function SsoCallbackPage() {
   const navigate = useNavigate()
   return (
-    <HandleSSOCallback
+    <main className="grid min-h-dvh place-items-center px-6 text-center" aria-busy="true">
+      <div className="flex flex-col items-center gap-4">
+        <span className="spin size-14 rounded-full border-[5px] border-ink/10 border-t-ink" aria-hidden />
+        <h1 className="display text-[32px] leading-none md:text-[48px]">Signing you in…</h1>
+        <p className="text-[15.5px] text-ink-2">Finishing Google sign-in. This takes a moment.</p>
+      </div>
+      <HandleSSOCallback
       navigateToApp={({ decorateUrl }) => {
         const url = decorateUrl('/')
         if (url.startsWith('http')) window.location.href = url
@@ -14,6 +20,7 @@ export function SsoCallbackPage() {
       }}
       navigateToSignIn={() => void navigate('/login')}
       navigateToSignUp={() => void navigate('/login')}
-    />
+      />
+    </main>
   )
 }

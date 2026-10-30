@@ -18,7 +18,7 @@ export function RequireAuth() {
   if (failed) {
     return (
       <main className="grid min-h-dvh place-items-center px-6 text-center">
-        <p className="max-w-sm text-muted">We could not set up your account. Please reload the page and try again.</p>
+        <p className="max-w-sm text-ink-2">We could not set up your account. Please reload the page and try again.</p>
       </main>
     )
   }

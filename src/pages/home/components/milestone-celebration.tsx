@@ -1,11 +1,10 @@
-import { Confetti, X } from '@phosphor-icons/react'
+import { Sparkle, X } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
+import { Burst } from '@/components/burst'
 import { markMilestonesSeen, readSeenMilestones } from '@/lib/seen-milestones'
 import { celebrationText, newMilestones, type Milestone } from '@shared/rhythm/milestones'
 
-const BURST = ['#e8876b', '#4f9a72', '#c99634', '#6f8bb0', '#e8876b', '#4f9a72', '#c99634', '#6f8bb0']
-
-// A friendly card when a milestone is newly reached: shown once (the browser remembers), dismissible.
+// A celebration card when a milestone is newly reached: shown once (the browser remembers), dismissible.
 export function MilestoneCelebration({ milestones, currentStreak, now }: { milestones: readonly Milestone[]; currentStreak: number; now: number }) {
   // Decided once, when the card first appears (Home renders it only after the data has arrived), so dismissing or
   // re-rendering never re-triggers it.
@@ -19,23 +18,21 @@ export function MilestoneCelebration({ milestones, currentStreak, now }: { miles
   const { title, text } = celebrationText(shown[0])
 
   return (
-    <section role="status" className="relative mt-4 flex animate-[pop_.5s_var(--ease-pop)_both] items-start gap-3.5 overflow-hidden rounded-3xl bg-working-bg py-4 pr-12 pl-4 text-[#234f37]">
-      <span className="relative grid size-11 shrink-0 place-items-center rounded-full bg-white/70" aria-hidden>
-        {BURST.map((color, i) => (
-          <i
-            key={i}
-            className="absolute size-1.5 animate-[burst_0.9s_var(--ease-out-soft)_0.2s_both] rounded-full"
-            style={{ background: color, '--a': `${i * 45}deg` } as React.CSSProperties}
-          />
-        ))}
-        <Confetti size={24} weight="fill" />
-      </span>
-      <div>
-        <h2 className="text-[17px] leading-snug font-semibold">{title}</h2>
-        <p className="mt-1 text-[14.5px] leading-snug">{text}</p>
-        {shown.length > 1 && <p className="mt-1.5 text-[12.5px] font-semibold opacity-80">And {shown.length - 1} more in Your rhythm below.</p>}
+    <section role="status" className="tile-accent pop-in relative flex items-start gap-4 p-4 pr-14 md:p-5 md:pr-16">
+      <Burst className="size-14" coreClassName="bg-ink bg-none text-accent" radius={40}>
+        <Sparkle size={26} weight="fill" />
+      </Burst>
+      <div className="min-w-0">
+        <h2 className="text-[20px] leading-tight font-extrabold tracking-[-0.02em]">{title}</h2>
+        <p className="mt-1.5 text-[14.5px] leading-snug">{text}</p>
+        {shown.length > 1 && <p className="mt-1.5 text-[12.5px] font-bold opacity-80">And {shown.length - 1} more in Your rhythm below.</p>}
       </div>
-      <button type="button" aria-label="Dismiss" onClick={() => setDismissed(true)} className="absolute top-2.5 right-2.5 grid size-9 cursor-pointer place-items-center rounded-full hover:bg-white/50">
+      <button
+        type="button"
+        aria-label="Dismiss"
+        onClick={() => setDismissed(true)}
+        className="press absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-white/55 hover:bg-white/80"
+      >
         <X size={18} weight="bold" />
       </button>
     </section>

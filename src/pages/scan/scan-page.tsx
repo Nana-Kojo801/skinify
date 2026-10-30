@@ -1,8 +1,8 @@
-import { ArrowsOutLineHorizontal, CaretLeft, Check, Clock, Drop, Info, Lightbulb, Sun, UserFocus, Warning } from '@phosphor-icons/react'
+import { ArrowsOutLineHorizontal, Check, Clock, Drop, Info, Lightbulb, ScanSmiley, Sun, UserFocus, Warning } from '@phosphor-icons/react'
 import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router'
+import { BackLink } from '@/components/back-link'
 import { IdeasToTest } from '@/components/ideas-to-test'
 import { NextScanDue } from '@/components/next-scan-due'
 import { Button } from '@/components/ui/button'
@@ -13,17 +13,17 @@ import { meanGap } from '@shared/scan/photo-agreement'
 import { coachHints, scanBrightness } from '@shared/scan/lighting'
 import { isScanErrorData } from '@shared/scan/scan-errors'
 import { api } from '../../../convex/_generated/api'
-import { PhotoSlot } from './components/photo-slot'
+import { PhotoSlots } from './components/photo-slot'
 import { ScanResult, type ScanResultData } from './components/scan-result'
 import { WhyTwoPhotos } from './components/why-two-photos'
 
 type Slot = PreparedPhoto | null
 
 const TIPS = [
-  { icon: Sun, term: 'Light', text: 'Face a window. Even daylight, no lamps behind you.' },
-  { icon: Drop, term: 'Bare skin', text: 'No filters, no makeup, hair off your face.' },
-  { icon: ArrowsOutLineHorizontal, term: 'Distance', text: "Hold the phone at arm's length, the same way every time." },
-  { icon: UserFocus, term: 'Framing', text: 'Your whole face fills most of the frame.' },
+  { icon: Sun, term: 'Light', text: 'Face a window. Even daylight, no lamps behind you.', tint: 'bg-accent' },
+  { icon: Drop, term: 'Bare skin', text: 'No filters, no makeup, hair off your face.', tint: 'bg-accent-2' },
+  { icon: ArrowsOutLineHorizontal, term: 'Distance', text: "Hold the phone at arm's length, the same way every time.", tint: 'bg-early-bg' },
+  { icon: UserFocus, term: 'Framing', text: 'Your whole face fills most of the frame.', tint: 'bg-working-bg' },
 ]
 
 // Progress shown while the scan runs (about 10 seconds). Purely a timer: the server does not report steps.
@@ -109,11 +109,11 @@ export function ScanPage() {
 
   if (result) {
     return (
-      <main className="mx-auto max-w-2xl px-4 pt-4 md:px-8 md:pt-10">
-        <ScanResult result={result} />
-        <div className="mt-8 pb-10">
-          <IdeasToTest scores={result.scores} qualityFlag={result.qualityFlag} products={products} canCreate={!usage?.isDemoAccount} />
-        </div>
+      <main className="mx-auto max-w-[1180px] px-3 pt-[max(20px,env(safe-area-inset-top))] md:px-10 md:pt-10">
+        <ScanResult
+          result={result}
+          ideas={<IdeasToTest scores={result.scores} qualityFlag={result.qualityFlag} products={products} canCreate={!usage?.isDemoAccount} />}
+        />
       </main>
     )
   }
@@ -132,133 +132,152 @@ export function ScanPage() {
             : 'Scanning is not available right now.'
       : null
 
-  return (
-    <main className="mx-auto max-w-6xl px-4 md:px-8 md:pt-8">
-      <header className="flex h-16 items-center justify-between md:hidden">
-        <Link to="/" aria-label="Back to products" className="press grid size-11 place-items-center rounded-full bg-sand">
-          <CaretLeft size={20} weight="bold" />
-        </Link>
-        {usage && !blocked && (
-          <span className="flex items-center gap-1.5 rounded-full bg-sand px-3.5 py-2 text-[13px] font-semibold">
-            <Clock size={16} />
-            {usage.remaining} of {usage.dailyLimit} left today
+  const tips = (
+    <ul className="rise -mx-3 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0" style={{ '--i': 1 } as React.CSSProperties}>
+      {TIPS.map(({ icon: Icon, term, text, tint }) => (
+        <li key={term} className="tile w-[168px] shrink-0 snap-start p-4 md:w-auto">
+          <span className={cn('grid size-[42px] place-items-center rounded-[14px] shadow-[inset_0_1px_0_rgb(255_255_255/0.7)]', tint)}>
+            <Icon size={21} weight="bold" />
           </span>
-        )}
+          <p className="mt-2.5 font-bold">{term}</p>
+          <p className="mt-0.5 text-[13px] leading-snug text-ink-2">{text}</p>
+        </li>
+      ))}
+    </ul>
+  )
+
+  const steps = (
+    <ol className="flex flex-col gap-1.5" aria-label="Progress">
+      {STEPS.map((label, index) => {
+        const done = index < step
+        const active = index === step
+        return (
+          <li
+            key={label}
+            className={cn(
+              'flex min-h-[54px] items-center gap-3.5 rounded-[18px] px-3.5 text-[15px] font-semibold transition-[background-color,color,box-shadow] duration-500 ease-(--ease-liquid)',
+              active ? 'tile text-ink' : done ? 'text-ink' : 'text-ink-3',
+            )}
+            aria-current={active ? 'step' : undefined}
+          >
+            <span
+              className={cn(
+                'grid size-[26px] shrink-0 place-items-center rounded-full border-[2.5px] text-white',
+                done && 'border-working bg-working',
+                active && 'spin border-ink/15 border-t-ink',
+                !done && !active && 'border-ink/15',
+              )}
+            >
+              {done && <Check size={13} weight="bold" className="animate-[pop_.45s_var(--ease-spring)_both]" />}
+            </span>
+            {label}
+          </li>
+        )
+      })}
+    </ol>
+  )
+
+  const remaining = usage && !blocked && (
+    <span className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[image:var(--sheen)] bg-tile px-3.5 text-[13px] font-bold shadow-(--shadow-depth)">
+      <Clock size={16} weight="bold" />
+      {usage.remaining} of {usage.dailyLimit} left today
+    </span>
+  )
+
+  return (
+    <main className="mx-auto max-w-[1180px] px-3 pt-[max(12px,env(safe-area-inset-top))] md:px-10 md:pt-8">
+      <header className="flex h-14 items-center justify-between px-1 md:mb-2">
+        <BackLink to="/" ariaLabel="Back to products" className="md:hidden" />
+        <BackLink to="/" label="Home" className="hidden md:inline-flex" />
+        {!pending && remaining}
       </header>
 
-      <div className="md:grid md:grid-cols-[0.9fr_1.1fr] md:items-start md:gap-12">
-        <section className="flex flex-col gap-5 md:sticky md:top-28">
+      <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:items-start md:gap-3.5">
+        <section className="flex flex-col gap-4 md:sticky md:top-28 md:col-span-5">
           {pending ? (
-            <div className="rise px-1" aria-live="polite">
-              <p className="text-sm font-medium text-muted">About 10 seconds</p>
-              <h1 className="mt-1 text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] md:text-5xl">Reading your skin</h1>
+            <div className="rise px-2" aria-live="polite">
+              <p className="text-[15px] font-bold text-ink-2">About 10 seconds</p>
+              <h1 className="display mt-1 text-[38px] leading-[1.02] md:text-[52px]">Reading your skin</h1>
             </div>
           ) : (
-            <div className="rise px-1">
-              <h1 className="text-[36px] leading-[1.05] font-semibold tracking-[-0.035em] md:text-5xl">New scan</h1>
-              <p className="mt-2 text-muted md:text-[17px]">Take two photos, one right after the other. Your scan needs both.</p>
+            <div className="rise px-2">
+              <h1 className="display text-[38px] leading-[1.02] md:text-[52px]">New scan</h1>
+              <p className="mt-2 text-[15.5px] text-ink-2 md:text-[17px]">Take two photos, one right after the other. Your scan needs both.</p>
               <NextScanDue className="mt-3" />
             </div>
           )}
-
-          {pending ? (
-            <ol className="card flex flex-col gap-1 p-2" aria-label="Progress">
-              {STEPS.map((label, index) => {
-                const done = index < step
-                const active = index === step
-                return (
-                  <li
-                    key={label}
-                    className={cn(
-                      'flex min-h-[52px] items-center gap-3.5 rounded-2xl px-3.5 text-[15px] font-medium transition-colors duration-300',
-                      active ? 'bg-sand text-cocoa' : done ? 'text-cocoa' : 'text-muted',
-                    )}
-                    aria-current={active ? 'step' : undefined}
-                  >
-                    <span
-                      className={cn(
-                        'grid size-7 shrink-0 place-items-center rounded-full border-2',
-                        done && 'border-working-ink bg-working-ink text-white',
-                        active && 'animate-[spin_0.9s_linear_infinite] border-nude border-t-cocoa',
-                        !done && !active && 'border-nude',
-                      )}
-                    >
-                      {done && <Check size={14} weight="bold" className="animate-[pop_.4s_var(--ease-pop)_both]" />}
-                    </span>
-                    {label}
-                  </li>
-                )
-              })}
-            </ol>
-          ) : (
-            <ul className="rise grid grid-cols-2 gap-2.5" style={{ '--i': 1 } as React.CSSProperties}>
-              {TIPS.map(({ icon: Icon, term, text }) => (
-                <li key={term} className="tile p-4">
-                  <Icon size={22} className="text-coral-ink" />
-                  <p className="mt-2 font-semibold">{term}</p>
-                  <p className="mt-0.5 text-[13px] leading-snug text-muted">{text}</p>
-                </li>
-              ))}
-            </ul>
+          {pending ? <div className="hidden md:block">{steps}</div> : tips}
+          {!pending && !blocked && (
+            <div className="hidden md:block">
+              <WhyTwoPhotos />
+            </div>
           )}
           {usage && !blocked && !pending && (
-            <p className="hidden items-center gap-2 text-sm text-muted md:flex">
-              <Clock size={17} />
+            <p className="hidden items-center gap-2 px-2 text-sm text-ink-2 md:flex">
+              <Clock size={17} weight="bold" />
               {usage.remaining} of {usage.dailyLimit} scans left today. Photos are never stored.
             </p>
           )}
         </section>
 
-        <section className="mt-6 flex flex-col gap-4 md:mt-0">
+        <section className="flex flex-col gap-3 md:col-span-7">
           {blocked ? (
-            <div className="rise relative overflow-hidden rounded-(--radius-card) bg-sand" style={{ '--i': 2 } as React.CSSProperties}>
-              <img src="/images/scan-portrait.webp" alt="" className="h-56 w-full object-cover object-[50%_35%] shadow-(--shadow-photo) md:h-80" />
-              <p className="flex items-start gap-2.5 p-5 text-[15px] text-cocoa-soft">
-                <Info size={20} className="mt-px shrink-0" />
+            <div className="photo-tile rise flex h-[300px] items-end md:h-[560px]" style={{ '--i': 2 } as React.CSSProperties}>
+              <img src="/images/scan-portrait.webp" alt="" className="absolute inset-0 size-full object-cover object-[50%_28%]" />
+              <span aria-hidden className="absolute inset-0 bg-linear-to-b from-transparent from-30% to-black/80" />
+              <p className="relative flex items-start gap-2.5 p-5 text-[15px] leading-snug font-semibold">
+                <Info size={20} weight="bold" className="mt-px shrink-0" />
                 {blocked}
               </p>
             </div>
           ) : (
             <>
-              {!pending && (
-                <div className="rise" style={{ '--i': 2 } as React.CSSProperties}>
-                  <WhyTwoPhotos />
-                </div>
-              )}
               {error && (
-                <p role="alert" className="flex animate-[pop_.35s_var(--ease-out-soft)_both] items-start gap-2.5 rounded-2xl bg-irritation-bg px-4 py-3 text-sm text-irritation-ink">
-                  <Warning size={18} className="mt-px shrink-0" />
+                <p role="alert" className="pop-in flex items-start gap-2.5 rounded-[20px] bg-irritation-bg px-4 py-3 text-sm font-semibold text-irritation-ink">
+                  <Warning size={18} weight="bold" className="mt-px shrink-0" />
                   {error}
                 </p>
               )}
-              <div className="rise grid grid-cols-2 gap-3 md:gap-5" style={{ '--i': 2 } as React.CSSProperties}>
-                <PhotoSlot label="Photo 1 of 2" hint="Look straight at the camera." lighting={hints.perPhoto[0]} previewUrl={photos[0]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[0]} onFile={(f) => void onFile(0, f)} />
-                <PhotoSlot label="Photo 2 of 2" hint="Right after photo 1: same spot, same light." lighting={hints.perPhoto[1]} previewUrl={photos[1]?.previewUrl ?? null} disabled={pending} analysing={pending} problem={problems[1]} onFile={(f) => void onFile(1, f)} />
+              <div className="rise" style={{ '--i': 2 } as React.CSSProperties}>
+                <PhotoSlots
+                  previews={[photos[0]?.previewUrl ?? null, photos[1]?.previewUrl ?? null]}
+                  problems={problems}
+                  lighting={hints.perPhoto}
+                  analysing={pending}
+                  onFile={(index, file) => void onFile(index, file)}
+                />
               </div>
+              {pending && <div className="md:hidden">{steps}</div>}
               {!pending &&
                 hints.notes.map((note) => (
-                  <p key={note.id} className="flex animate-[pop_.35s_var(--ease-out-soft)_both] items-start gap-2.5 rounded-2xl bg-canttell-bg px-4 py-3 text-sm leading-snug text-canttell-ink">
-                    <Lightbulb size={18} className="mt-px shrink-0" />
+                  <p key={note.id} className="tile-soft pop-in flex items-start gap-2.5 p-4 text-sm leading-snug text-ink-2">
+                    <Lightbulb size={18} weight="bold" className="mt-px shrink-0 text-ink" />
                     <span>
-                      <strong className="block font-semibold">{note.title}</strong>
+                      <strong className="block font-bold text-ink">{note.title}</strong>
                       {note.text}
                     </span>
                   </p>
                 ))}
               {!pending && (
                 <div className="rise flex flex-col gap-2.5" style={{ '--i': 3 } as React.CSSProperties}>
-                  <Button size="lg" disabled={!photos[0] || !photos[1]} onClick={() => void onSubmit()}>
+                  <Button variant="accent" size="lg" className="h-[58px]" disabled={!photos[0] || !photos[1]} onClick={() => void onSubmit()}>
+                    <ScanSmiley size={20} weight="bold" />
                     Analyse my skin
                   </Button>
                   {!photos[0] || !photos[1] ? (
-                    <p className="text-center text-[13px] leading-snug text-muted" aria-live="polite">
+                    <p className="text-center text-[13px] leading-snug text-ink-2" aria-live="polite">
                       {!photos[0] && !photos[1]
                         ? 'Take both photos to continue.'
                         : 'One more photo to go. The second one lets us measure how steady your scan is.'}
                     </p>
                   ) : (
-                    usage && <p className="text-center text-[13px] text-muted md:hidden">Photos are never stored.</p>
+                    usage && <p className="text-center text-[13px] text-ink-2">Photos are never stored.</p>
                   )}
+                </div>
+              )}
+              {!pending && (
+                <div className="md:hidden">
+                  <WhyTwoPhotos />
                 </div>
               )}
             </>

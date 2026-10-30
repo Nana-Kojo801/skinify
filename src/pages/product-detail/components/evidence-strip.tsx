@@ -5,11 +5,11 @@ import type { Evidence } from '@shared/verdict/evidence'
 // measurement, not the product, and never promises what more scans will show.
 export function EvidenceStrip({ evidence, color }: { evidence: Evidence; color: string }) {
   return (
-    <div className="mt-4 rounded-3xl bg-white/75 px-4 py-3.5 text-cocoa">
+    <div className="rounded-[22px] bg-white/60 p-4 shadow-[inset_0_1px_0_#fff,inset_0_0_0_1px_rgb(255_255_255/0.5)]">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-[15px] font-bold">Evidence</h3>
+        <h3 className="text-[12.5px] font-extrabold tracking-[0.06em] uppercase">Evidence</h3>
         <span
-          className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[13px] font-bold text-white"
+          className="inline-flex h-[30px] items-center gap-2 rounded-full px-3 text-[13px] font-extrabold text-white"
           style={{ background: color }}
           aria-label={`${evidence.label} evidence`}
         >
@@ -21,15 +21,15 @@ export function EvidenceStrip({ evidence, color }: { evidence: Evidence; color: 
           </span>
         </span>
       </div>
-      <ul className="mt-2.5 flex flex-col gap-1 text-[14px] leading-snug">
+      <ul className="mt-2.5 flex flex-col gap-1.5 text-[13.5px] leading-snug font-semibold">
         {evidence.facts.map((fact) => (
-          <li key={fact} className="relative pl-4 before:absolute before:top-[0.55em] before:left-0.5 before:size-1.5 before:rounded-full before:bg-current before:opacity-60">
+          <li key={fact} className="relative pl-4 before:absolute before:top-[0.5em] before:left-0.5 before:size-1.5 before:rounded-full before:bg-current before:opacity-50">
             {fact}
           </li>
         ))}
       </ul>
-      <p className="mt-2.5 border-t border-cocoa/10 pt-2.5 text-[13.5px] leading-snug">{evidence.next}</p>
-      <p className="mt-1.5 text-[12px] text-cocoa/70">{evidence.note}</p>
+      <p className="mt-2.5 text-[13.5px] leading-snug">{evidence.next}</p>
+      <p className="mt-1.5 text-[12px] opacity-75">{evidence.note}</p>
     </div>
   )
 }

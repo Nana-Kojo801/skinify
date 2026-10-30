@@ -1,4 +1,4 @@
-import { CaretRight, WarningCircle } from '@phosphor-icons/react'
+import { WarningCircle } from '@phosphor-icons/react'
 import { Link } from 'react-router'
 import { Sparkline } from '@/components/sparkline'
 import { VerdictPill } from '@/components/verdict-pill'
@@ -14,40 +14,42 @@ type ProductCardProps = {
   verdict: Verdict | null
   /** The one number that explains the verdict (e.g. "+13.1"), if there is one. */
   stat: string | null
+  /** What the stat measures ("points since start", "noise between photos"). */
+  statLabel: string | null
   trend: number[]
-  index: number
   /** Names of other active products on the same concern that started close by (feature: same-concern warning). */
   overlapsWith?: string
 }
 
-// A row with the product photo on phones; a tall card with the photo on top on desktop.
-export function ProductCard({ id, image, name, meta, verdict, stat, trend, index, overlapsWith }: ProductCardProps) {
+// A full-width row with the photo on the left on phones; a tall card with the photo on top on desktop.
+export function ProductCard({ id, image, name, meta, verdict, stat, statLabel, trend, overlapsWith }: ProductCardProps) {
   const style = verdict ? VERDICT_STYLE[verdict] : null
   return (
-    <Link
-      to={`/products/${id}`}
-      className="card lift group flex items-center gap-3.5 rounded-[26px] py-3 pr-3.5 pl-3 md:flex-col md:items-stretch md:gap-0 md:p-0"
-      style={{ '--i': index } as React.CSSProperties}
-    >
-      <div className="h-[92px] w-[78px] shrink-0 overflow-hidden rounded-[18px] shadow-[0_8px_16px_-8px_rgb(46_36_32/0.45)] md:h-48 md:w-auto md:rounded-b-none md:rounded-t-[26px] md:shadow-none">
-        <img src={image} alt="" loading="lazy" className="size-full object-cover transition-transform duration-700 ease-(--ease-out-soft) group-hover:scale-105" />
+    <Link to={`/products/${id}`} className="tile lift press group grid h-full grid-cols-[108px_1fr] overflow-hidden md:flex md:flex-col">
+      <div className="relative min-h-[156px] overflow-hidden md:h-[190px] md:min-h-0">
+        <img src={image} alt="" loading="lazy" className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-(--ease-liquid) group-hover:scale-105" />
+        <VerdictPill verdict={verdict} className="absolute top-3 left-3 hidden shadow-[0_6px_14px_-6px_rgb(0_0_0/0.35)] md:inline-flex" />
       </div>
-      <div className="flex min-w-0 flex-1 items-center gap-3 md:p-5">
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <h3 className="text-base leading-tight font-semibold md:text-lg">{name}</h3>
-          <p className="text-[13px] text-muted">{meta}</p>
-          <VerdictPill verdict={verdict} className="mt-1 self-start" />
-          {overlapsWith && (
-            <span className="mt-0.5 flex max-w-full items-start gap-1.5 self-start rounded-2xl bg-canttell-bg px-2.5 py-1 text-[12px] leading-snug font-semibold text-canttell-ink">
-              <WarningCircle size={13} weight="fill" className="mt-0.5 shrink-0" />
-              <span className="min-w-0">Overlaps with {overlapsWith}</span>
-            </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1 p-4 md:px-5 md:pt-4 md:pb-5">
+        <VerdictPill verdict={verdict} className="self-start md:hidden" />
+        <h3 className="mt-1 text-base leading-tight font-bold md:mt-0 md:text-lg">{name}</h3>
+        <p className="text-[13px] text-ink-2">{meta}</p>
+        {overlapsWith && (
+          <span className="mt-1 flex max-w-full items-start gap-1.5 self-start rounded-2xl bg-canttell-bg px-2.5 py-1 text-[12px] leading-snug font-bold text-canttell-ink">
+            <WarningCircle size={13} weight="fill" className="mt-0.5 shrink-0" />
+            <span className="min-w-0">Overlaps with {overlapsWith}</span>
+          </span>
+        )}
+        <div className="mt-auto flex items-end justify-between gap-2 pt-2">
+          {stat ? (
+            <p className={cn('text-[30px] leading-[0.9] font-extrabold tracking-[-0.04em] tabular-nums', verdict === 'WORKING' && style?.text)}>
+              {stat}
+              {statLabel && <span className="mt-1 block text-[12px] font-semibold tracking-normal text-ink-3">{statLabel}</span>}
+            </p>
+          ) : (
+            <span />
           )}
-        </div>
-        <div className="flex shrink-0 flex-col items-end gap-0.5">
-          {stat && <span className={cn('text-xl font-semibold tracking-[-0.02em]', style?.text)}>{stat}</span>}
           {trend.length >= 2 && style && <Sparkline values={trend} color={style.line} />}
-          {!stat && <CaretRight size={20} className="text-muted" />}
         </div>
       </div>
     </Link>
