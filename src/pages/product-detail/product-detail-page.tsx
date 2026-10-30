@@ -4,6 +4,7 @@ import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { OverlapWarning } from '@/components/overlap-warning'
 import { PageSkeleton } from '@/components/page-skeleton'
 import { Reveal } from '@/components/reveal'
 import { ScoreRing } from '@/components/score-ring'
@@ -12,6 +13,7 @@ import { daysBetween, formatDate, formatPoints } from '@/lib/format'
 import { productImage, productRank } from '@/lib/product-image'
 import { VERDICT_STYLE } from '@/lib/verdict-display'
 import { CONCERNS, isConcernKey } from '@shared/concerns'
+import { overlapsFor } from '@shared/products/overlap'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { TimelineChart } from './components/timeline-chart'
@@ -59,6 +61,7 @@ export function ProductDetailPage() {
     .filter((scan) => scan.scores[product.targetConcern] !== undefined)
     .map((scan) => ({ createdAt: scan.createdAt, score: scan.scores[product.targetConcern], flagged: scan.qualityFlag }))
   const day = daysBetween(product.startDate, now)
+  const overlaps = overlapsFor(product, products ?? [], now)
   const started = product.startDate <= now
   const isDemo = usage?.isDemoAccount ?? true
   const lineColor = verdict ? VERDICT_STYLE[verdict.verdict].line : 'var(--color-coral)'
@@ -105,6 +108,12 @@ export function ProductDetailPage() {
               {started ? ` · day ${day}` : ''}
             </p>
           </section>
+
+          {overlaps.length > 0 && (
+            <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
+              <OverlapWarning overlaps={overlaps} concern={concern.toLowerCase()} />
+            </div>
+          )}
 
           <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
             {verdict ? (
