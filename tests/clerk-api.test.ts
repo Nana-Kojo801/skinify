@@ -20,9 +20,9 @@ describe('clerk-api', () => {
 
   it('creates a passwordless user', async () => {
     const fetchMock = stub(new Response(JSON.stringify({ id: 'user_2' }), { status: 200 }))
-    expect(await createClerkUser('sk', 'demo@receipts.example')).toBe('user_2')
+    expect(await createClerkUser('sk', 'demo@example.com')).toBe('user_2')
     const init = (fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1]
-    expect(JSON.parse(init.body as string)).toEqual({ email_address: ['demo@receipts.example'], skip_password_requirement: true })
+    expect(JSON.parse(init.body as string)).toEqual({ email_address: ['demo@example.com'], skip_password_requirement: true })
   })
 
   it('creates a sign-in ticket and deletes users with the secret key as Bearer token', async () => {
