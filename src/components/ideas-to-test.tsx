@@ -57,11 +57,11 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
                       <span className="block text-xs leading-snug text-ink-2">{idea.for}</span>
                     </span>
                     {canCreate ? (
-                      <Link to={to} className={buttonVariants({ variant: 'soft', size: 'sm' })}>
+                      <Link to={to} className={buttonVariants({ variant: 'secondary', size: 'sm' })}>
                         Test this
                       </Link>
                     ) : (
-                      <span aria-disabled className={cn(buttonVariants({ variant: 'soft', size: 'sm' }), 'pointer-events-none opacity-45')}>
+                      <span aria-disabled className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'pointer-events-none opacity-45')}>
                         Test this
                       </span>
                     )}

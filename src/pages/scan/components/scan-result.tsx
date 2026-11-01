@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { buttonVariants } from '@/components/ui/button'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS } from '@shared/concerns'
 import { describeAgreement, type AgreementLevel } from '@shared/scan/photo-agreement'
@@ -62,6 +63,6 @@ export function ScanResult({ result, ideas }: { result: ScanResultData; ideas?: 
       <div className="result-consistency"><section className="agreement-panel"><header><h2>Photo consistency</h2><strong className={AGREEMENT_CHIP[agreement.level]}>{agreement.label}</strong></header><GapScale gap={result.gap} /><p>{result.gap.toFixed(1)} points between photos.</p><p>{agreement.sentence}</p>{result.qualityFlag && <p className="quality-note">Lower-quality scan: keep light and distance consistent next time.</p>}</section><p className="result-privacy">Saved to your scan history. You can find updated product verdicts in your routine.</p><Link to="/routine" className={buttonVariants({ variant: 'outline' })}>View your routine</Link></div>
     </div>
     <Link to="/" className={`${buttonVariants({ size: 'lg' })} result-mobile-back`}>Back to overview</Link>
-    <details className="secondary-section"><summary>Ideas to test<span>Based on this scan</span></summary>{ideas}</details>
+    <Collapsible className="secondary-section"><CollapsibleTrigger>Ideas to test<span>Based on this scan</span></CollapsibleTrigger><CollapsibleContent>{ideas}</CollapsibleContent></Collapsible>
   </div>
 }

@@ -3,10 +3,12 @@ import { FileText, SignOut, Trash, ShieldCheck } from '@phosphor-icons/react'
 import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
-import { ConfirmDialog } from '@/components/confirm-dialog'
 import { ReminderSettings } from './components/reminder-settings'
 import { Link } from 'react-router'
 import { SettingsGroup, SettingsRowContent, rowClass } from '@/components/settings-row'
+import { Alert } from '@/components/ui/alert'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogMedia, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { api } from '../../../convex/_generated/api'
 
 export function SettingsPage() {
@@ -36,7 +38,7 @@ export function SettingsPage() {
   return (
     <main className="screen settings-page">
       <header className="screen-heading"><h1>Your account</h1></header>
-      <div className="account-layout"><aside className="account-profile"><span className="profile-avatar">{initial}</span><div><h2>{me?.isDemoAccount ? 'Demo account' : 'Personal account'}</h2><p>{me?.email ?? 'Loading…'}</p></div><button type="button" onClick={() => void signOut()} className="profile-signout"><SignOut size={17} />Sign out</button></aside><div className="account-settings">
+      <div className="account-layout"><aside className="account-profile"><Avatar className="profile-avatar"><AvatarFallback className="text-inherit">{initial}</AvatarFallback></Avatar><div><h2>{me?.isDemoAccount ? 'Demo account' : 'Personal account'}</h2><p>{me?.email ?? 'Loading…'}</p></div><button type="button" onClick={() => void signOut()} className="profile-signout"><SignOut size={17} />Sign out</button></aside><div className="account-settings">
       <ReminderSettings />
 
       <SettingsGroup
@@ -71,18 +73,18 @@ export function SettingsPage() {
 
       <p className="privacy-strip"><ShieldCheck size={18} />Photos are never stored.</p>
       </div></div>
-      <ConfirmDialog
-        open={confirming}
-        onOpenChange={(open) => {
-          if (!pending) setConfirming(open)
-        }}
-        title="Are you sure?"
-        description="Deletes your account, products, scan scores and verdicts. Photos are never stored, so there is nothing else to remove. This cannot be undone."
-        confirmLabel="Yes, delete everything"
-        pending={pending}
-        error={error}
-        onConfirm={() => void onDelete()}
-      />
+      <AlertDialog open={confirming} onOpenChange={open => { if (!pending) setConfirming(open) }}>
+        <AlertDialogContent>
+          <AlertDialogMedia><Trash size={26} /></AlertDialogMedia>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>Deletes your account, products, scan scores and verdicts. Photos are never stored, so there is nothing else to remove. This cannot be undone.</AlertDialogDescription>
+          {error && <Alert role="alert" variant="destructive" className="mt-3 font-semibold">{error}</Alert>}
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => void onDelete()} disabled={pending}>{pending ? 'Deleting…' : 'Yes, delete everything'}</AlertDialogAction>
+            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   )
 }

@@ -4,6 +4,8 @@ import { CONCERNS, isConcernKey } from '@shared/concerns'
 import { describeEvidence } from '@shared/verdict/evidence'
 import { VERDICT_CONFIG } from '@shared/verdict/verdict-config'
 import type { Verdict, VerdictInputs } from '@shared/verdict/verdict-types'
+import { Progress, ProgressLabel } from '@/components/ui/progress'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 
 const TITLES: Record<Verdict, string> = {
   WORKING: 'It’s improving.', NO_VISIBLE_CHANGE: 'No clear change.', CANT_TELL: 'Not clear yet.',
@@ -29,10 +31,12 @@ export function VerdictPanel({ verdict, reasons, inputs, targetConcern, day }: P
   }
   return <section className={`verdict-panel ${verdict === 'POSSIBLE_IRRITATION' ? 'verdict-warning' : ''}`} aria-label={VERDICT_LABELS[verdict]}>
     <div className="verdict-top"><div><p className="verdict-eyebrow">The verdict</p><h2>{TITLES[verdict]}</h2></div>{!early && amount != null && <p className="verdict-number"><strong>{formatSigned(amount)}</strong><span>{verdict === 'POSSIBLE_IRRITATION' ? `${worseningConcern} points` : 'points'}</span></p>}</div>
-    {early ? <div className="verdict-progress">{[['Days since starting', Math.max(0, day), VERDICT_CONFIG.minDaysSinceStart], ['Scans after starting', inputs.postCount, VERDICT_CONFIG.minPostScans]].map(([label, value, total]) => <div key={label}><div><span>{label}</span><b>{value} / {total}</b></div><progress value={Number(value)} max={Number(total)} aria-label={String(label)} /></div>)}</div> : before != null && after != null && <div><p className="scale-concern">{concern} · baseline to recent</p><div className="comparison-scale"><div className="scale-line" aria-hidden><span style={{ left: `${Math.max(0, Math.min(100, before))}%` }}><b>{Math.round(before)}</b><i /></span><span className="current-marker" style={{ left: `${Math.max(0, Math.min(100, after))}%` }}><b>{Math.round(after)}</b><i /></span></div><div className="scale-ticks" aria-hidden>{[0,25,50,75,100].map(n => <span key={n}>{n}</span>)}</div><div className="scale-legend"><span><i />Before <b>{Math.round(before)}</b></span><span><i />Now <b>{Math.round(after)}</b></span></div></div></div>}
+    {early ? <div className="verdict-progress">{[['Days since starting', Math.max(0, day), VERDICT_CONFIG.minDaysSinceStart], ['Scans after starting', inputs.postCount, VERDICT_CONFIG.minPostScans]].map(([label, value, total]) => <Progress key={label} value={Math.min(Number(value), Number(total))} max={Number(total)} className="*:data-[slot=progress-track]:bg-[#c6c6c8] **:data-[slot=progress-indicator]:bg-[#5a5c60]">
+          <div className="flex w-full justify-between gap-2.5 text-xs"><ProgressLabel>{label}</ProgressLabel><b>{value} / {total}</b></div>
+        </Progress>)}</div> : before != null && after != null && <div><p className="scale-concern">{concern} · baseline to recent</p><div className="comparison-scale"><div className="scale-line" aria-hidden><span style={{ left: `${Math.max(0, Math.min(100, before))}%` }}><b>{Math.round(before)}</b><i /></span><span className="current-marker" style={{ left: `${Math.max(0, Math.min(100, after))}%` }}><b>{Math.round(after)}</b><i /></span></div><div className="scale-ticks" aria-hidden>{[0,25,50,75,100].map(n => <span key={n}>{n}</span>)}</div><div className="scale-legend"><span><i />Before <b>{Math.round(before)}</b></span><span><i />Now <b>{Math.round(after)}</b></span></div></div></div>}
     <p className="verdict-caption">{captions[verdict]}</p>
     {!early && <p className="verdict-noise">Normal variation <strong>±{formatPoints(noise)} points</strong></p>}
     {verdict === 'CANT_TELL' && reasons.length > 0 && <p className="verdict-reasons">{reasons.map(r => r === 'FEW_BASELINE_SCANS' ? `${inputs.baselineCount} baseline scans` : r === 'NOISY_SCANS' ? 'Photos disagree' : r === 'POOR_QUALITY' ? 'Latest scan has a quality warning' : r.replaceAll('_', ' ').toLowerCase()).join(' · ')}</p>}
-    {evidence && <details className="verdict-evidence"><summary>Evidence <span>{evidence.label}</span></summary><ul>{evidence.facts.map(f => <li key={f}>{f}</li>)}</ul><p>{evidence.next}</p><small>{evidence.note}</small></details>}
+    {evidence && <Collapsible className="verdict-evidence"><CollapsibleTrigger>Evidence <span>{evidence.label}</span></CollapsibleTrigger><CollapsibleContent><ul>{evidence.facts.map(f => <li key={f}>{f}</li>)}</ul><p>{evidence.next}</p><small>{evidence.note}</small></CollapsibleContent></Collapsible>}
   </section>
 }

@@ -2,6 +2,7 @@ import { CalendarBlank, DownloadSimple } from '@phosphor-icons/react'
 import { useQuery } from 'convex/react'
 import { useState } from 'react'
 import { buttonVariants } from '@/components/ui/button'
+import { showToast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { buildWeeklyScanIcs } from '@shared/calendar/ics'
 import { api } from '../../convex/_generated/api'
@@ -34,7 +35,6 @@ const SAVED = "Saved a weekly event for that day. It repeats every week and won'
 export function NextScanDue({ className, variant = 'inline' }: { className?: string; variant?: 'tile' | 'inline' }) {
   const status = useQuery(api.reminders.status)
   const [now] = useState(() => Date.now())
-  const [downloaded, setDownloaded] = useState(false)
   if (!status || status.isDemoAccount || status.nextDueAt === null) return null
 
   const dueAt = status.nextDueAt
@@ -46,7 +46,7 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
       type="button"
       onClick={() => {
         downloadCalendarFile(dueAt)
-        setDownloaded(true)
+        void showToast(SAVED)
       }}
       className={cn(buttonVariants({ size: 'sm' }), extra)}
     >
@@ -60,7 +60,7 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
       <section className={cn('tile-accent-2 flex flex-wrap items-center gap-x-4 gap-y-3 p-4', className)} aria-label="Next scan">
         <div className="contents">
           <span className="grid h-[68px] w-16 shrink-0 grid-rows-[22px_1fr] overflow-hidden rounded-[18px] bg-tile text-center shadow-[0_6px_14px_-8px_rgb(150_64_28/0.6)]" aria-hidden>
-            <span className="bg-accent-2-ink text-eyebrow leading-[22px] font-semibold tracking-eyebrow text-fog uppercase">
+            <span className="bg-accent-2-ink text-2xs leading-[22px] font-semibold tracking-wider text-fog uppercase">
               {date.toLocaleDateString(undefined, { weekday: 'short' })}
             </span>
             <span className="text-4xl leading-[46px] font-bold tracking-tighter tabular-nums">{date.getDate()}</span>
@@ -81,11 +81,6 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
           </div>
         </div>
         {addButton()}
-        {downloaded && (
-          <p className="basis-full text-xs leading-snug font-medium text-ink-2" role="status">
-            {SAVED}
-          </p>
-        )}
       </section>
     )
   }
@@ -101,18 +96,13 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
         type="button"
         onClick={() => {
           downloadCalendarFile(dueAt)
-          setDownloaded(true)
+          void showToast(SAVED)
         }}
         className="press inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-3 text-xs font-semibold underline decoration-ink/30 underline-offset-4"
       >
         <DownloadSimple size={15} weight="bold" />
         Add to calendar
       </button>
-      {downloaded && (
-        <p className="basis-full text-xs leading-snug text-ink-2" role="status">
-          {SAVED}
-        </p>
-      )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { CountUp } from '@/components/count-up'
+import { Skeleton } from '@/components/ui/skeleton'
 import { CONCERN_KEYS, CONCERNS, type ConcernKey } from '@shared/concerns'
 import { describeAgreement, meanGap } from '@shared/scan/photo-agreement'
 import { cn } from '@/lib/utils'
@@ -15,7 +16,7 @@ const PINS: { key: ConcernKey; className: string; dot: string }[] = [
 // The newest scan: a skin-texture photo (never the user's own photo: those are not stored) with a drawn face map,
 // three scores pinned to face zones, YouCam's overall estimate when the scan has one, and all eight scores on glass.
 export function LatestScanCard({ scan }: { scan: Exclude<LatestScan, null> }) {
-  if (scan === undefined) return <div className="skeleton h-[440px] md:h-full md:min-h-[400px]" aria-hidden />
+  if (scan === undefined) return <Skeleton className="h-[440px] md:h-full md:min-h-[400px]" aria-hidden />
 
   const agreement = describeAgreement(meanGap(scan.noise))
   const keys = CONCERN_KEYS.filter((key) => scan.scores[key] !== undefined)
@@ -60,7 +61,7 @@ export function LatestScanCard({ scan }: { scan: Exclude<LatestScan, null> }) {
             <p className="text-9xl leading-[0.8] font-bold tracking-tighter tabular-nums md:text-9xl">
               <CountUp value={Math.round(scan.overall as number)} />
             </p>
-            <p className="mt-2 text-xs font-semibold tracking-eyebrow uppercase opacity-90">Overall, YouCam's estimate</p>
+            <p className="mt-2 text-xs font-semibold tracking-wider uppercase opacity-90">Overall, YouCam's estimate</p>
           </div>
         )}
         <ul className="glass-dark grid grid-cols-4 gap-x-1 gap-y-2.5 rounded-[22px] px-2 py-3" aria-label="Scores from your latest scan, 1 to 100, higher is healthier">

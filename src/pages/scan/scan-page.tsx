@@ -6,6 +6,7 @@ import { BackLink } from '@/components/back-link'
 import { IdeasToTest } from '@/components/ideas-to-test'
 import { NextScanDue } from '@/components/next-scan-due'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { formatDateTime } from '@/lib/format'
 import { preparePhoto, type PreparedPhoto } from '@/lib/prepare-photo'
 import { cn } from '@/lib/utils'
@@ -231,10 +232,10 @@ export function ScanPage() {
           ) : (
             <>
               {error && (
-                <p role="alert" className="pop-in flex items-start gap-2.5 rounded-[20px] bg-irritation-bg px-4 py-3 text-sm font-semibold text-irritation-ink">
-                  <Warning size={18} weight="bold" className="mt-px shrink-0" />
+                <Alert role="alert" variant="destructive" className="pop-in font-semibold">
+                  <Warning size={18} weight="bold" />
                   {error}
-                </p>
+                </Alert>
               )}
               <div className="rise" style={{ '--i': 2 } as React.CSSProperties}>
                 <PhotoSlots
@@ -248,17 +249,17 @@ export function ScanPage() {
               {pending && <div className="md:hidden">{steps}</div>}
               {!pending &&
                 hints.notes.map((note) => (
-                  <p key={note.id} className="tile-soft pop-in flex items-start gap-2.5 p-4 text-sm leading-snug text-ink-2">
-                    <Lightbulb size={18} weight="bold" className="mt-px shrink-0 text-ink" />
-                    <span>
-                      <strong className="block font-semibold text-ink">{note.title}</strong>
+                  <Alert key={note.id} role="note" variant="tip" className="pop-in p-4">
+                    <Lightbulb size={18} weight="bold" className="text-ink" />
+                    <AlertDescription>
+                      <AlertTitle className="text-ink">{note.title}</AlertTitle>
                       {note.text}
-                    </span>
-                  </p>
+                    </AlertDescription>
+                  </Alert>
                 ))}
               {!pending && (
                 <div className="rise flex flex-col gap-2.5" style={{ '--i': 3 } as React.CSSProperties}>
-                  <Button variant="accent" size="lg" className="h-[58px]" disabled={!photos[0] || !photos[1] || !usage?.canScan} onClick={() => void onSubmit()}>
+                  <Button variant="default" size="lg" className="h-[58px]" disabled={!photos[0] || !photos[1] || !usage?.canScan} onClick={() => void onSubmit()}>
                     <ScanSmiley size={20} weight="bold" />
                     Analyse my skin
                   </Button>

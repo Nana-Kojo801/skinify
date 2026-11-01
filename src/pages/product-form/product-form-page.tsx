@@ -1,4 +1,4 @@
-import { CalendarBlank, Check, Drop, Warning } from '@phosphor-icons/react'
+import { CalendarBlank, Drop, Warning } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
@@ -7,6 +7,9 @@ import { BackLink } from '@/components/back-link'
 import { OverlapWarning } from '@/components/overlap-warning'
 import { PageSkeleton } from '@/components/page-skeleton'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Alert } from '@/components/ui/alert'
 import { fromDateInputValue, toDateInputValue } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS, isConcernKey } from '@shared/concerns'
@@ -32,7 +35,7 @@ export function ProductFormPage() {
         </span>
         <h1 className="display text-4xl leading-[1.05] md:text-6xl">Product not found</h1>
         <p className="text-base text-ink-2">It may have been deleted, or the link is wrong.</p>
-        <Link to="/" className={buttonVariants({ variant: 'soft', size: 'lg' })}>
+        <Link to="/" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>
           Back home
         </Link>
       </main>
@@ -107,11 +110,24 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
     <header className="screen-heading detail-heading"><h1>{productId ? 'Edit product' : 'Add a product'}</h1></header>
     <div className="product-form-layout"><aside className="form-guide"><ol><li><b>01</b><span>Product<small>Add product details.</small></span></li><li><b>02</b><span>Concern<small>Choose what you’re tracking.</small></span></li><li><b>03</b><span>Start date<small>Set when you started using it.</small></span></li></ol><p>Track one concern at a time.</p></aside>
       <form onSubmit={onSubmit} className="product-form">
-        <label className="form-label"><span><small>01 / </small>Product name</span><input value={values.name} onChange={e => setValues({ ...values, name: e.target.value })} maxLength={80} required placeholder="e.g. Niacinamide 10%" className="field" /></label>
-        <fieldset><legend className="form-label"><span><small>02 / </small>What are you tracking?</span></legend><div className="concern-options">{CONCERN_KEYS.map(key => <label key={key} className={cn('concern-option', values.targetConcern === key && 'selected')}><input type="radio" name="targetConcern" value={key} checked={values.targetConcern === key} onChange={() => setValues({ ...values, targetConcern: key })} className="sr-only" /><span className="radio-indicator" aria-hidden>{values.targetConcern === key && <Check size={10} weight="bold" />}</span><span>{CONCERNS[key].label}</span></label>)}</div><p className="form-hint">{concernLabel}{latestScore !== undefined ? ` · Latest score ${Math.round(latestScore)} of 100` : ' will be the score this product follows.'}</p></fieldset>
+        <label className="form-label"><span><small>01 / </small>Product name</span><Input value={values.name} onChange={e => setValues({ ...values, name: e.target.value })} maxLength={80} required placeholder="e.g. Niacinamide 10%" /></label>
+        <fieldset><legend id="concern-legend" className="form-label"><span><small>02 / </small>What are you tracking?</span></legend><RadioGroup
+            name="targetConcern"
+            aria-labelledby="concern-legend"
+            value={values.targetConcern}
+            onValueChange={(value) => setValues({ ...values, targetConcern: String(value) })}
+            className="concern-options"
+          >
+            {CONCERN_KEYS.map(key => (
+              <label key={key} className={cn('concern-option', values.targetConcern === key && 'selected')}>
+                <RadioGroupItem value={key} className="size-[13px] border-[#7d7e83] text-white data-checked:border-[#c95725] data-checked:bg-[#c95725] max-md:sr-only" />
+                <span>{CONCERNS[key].label}</span>
+              </label>
+            ))}
+          </RadioGroup><p className="form-hint">{concernLabel}{latestScore !== undefined ? ` · Latest score ${Math.round(latestScore)} of 100` : ' will be the score this product follows.'}</p></fieldset>
         {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concernLabel.toLowerCase()} variant="form" />}
-        <label className="form-label start-date-field"><span><small>03 / </small>Start date <CalendarBlank size={16} /></span><input type="date" value={values.startDate} onChange={e => setValues({ ...values, startDate: e.target.value })} required className="field" /><span className="form-hint">Scans on or before this date become your baseline.</span></label>
-        {error && <p role="alert" className="notice text-irritation-ink"><Warning size={18} />{error}</p>}
+        <label className="form-label start-date-field"><span><small>03 / </small>Start date <CalendarBlank size={16} /></span><Input type="date" value={values.startDate} onChange={e => setValues({ ...values, startDate: e.target.value })} required /><span className="form-hint">Scans on or before this date become your baseline.</span></label>
+        {error && <Alert role="alert" variant="destructive"><Warning size={18} />{error}</Alert>}
         <div className="form-actions"><Link to={back} className={buttonVariants({ variant: 'outline' })}>Cancel</Link><Button type="submit" disabled={pending}>{pending ? 'Saving…' : 'Save product'}</Button></div>
       </form>
     </div>

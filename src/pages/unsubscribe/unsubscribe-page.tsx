@@ -59,7 +59,7 @@ export function UnsubscribePage() {
             <p className="max-w-[34ch] text-base text-ink-2">It may be incomplete. Sign in and switch the reminder off in Settings instead.</p>
           </>
         )}
-        <Link to="/" className={buttonVariants({ variant: 'soft', size: 'lg', className: 'mt-2' })}>
+        <Link to="/" className={buttonVariants({ variant: 'secondary', size: 'lg', className: 'mt-2' })}>
           Open Receipts
         </Link>
       </div>

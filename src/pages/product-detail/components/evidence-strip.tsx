@@ -7,7 +7,7 @@ export function EvidenceStrip({ evidence, color }: { evidence: Evidence; color: 
   return (
     <div className="rounded-[22px] bg-white/60 p-4 shadow-[inset_0_1px_0_#fff,inset_0_0_0_1px_rgb(255_255_255/0.5)]">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-eyebrow font-semibold tracking-eyebrow uppercase">Evidence</h3>
+        <h3 className="text-2xs font-semibold tracking-wider uppercase">Evidence</h3>
         <span
           className="inline-flex h-[30px] items-center gap-2 rounded-full px-3 text-xs font-semibold text-fog"
           style={{ background: color }}

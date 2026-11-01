@@ -4,6 +4,7 @@ import { ConvexError } from 'convex/values'
 import { useState } from 'react'
 import { REMINDER_CONFIG } from '@shared/reminders/reminder-config'
 import { SettingsGroup, SettingsRowContent, rowClass } from '@/components/settings-row'
+import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
 import { api } from '../../../../convex/_generated/api'
 
@@ -68,14 +69,11 @@ export function ReminderSettings() {
           label="Email me a reminder"
           sub="The day before your weekly scan"
           right={
-            <button
-              type="button"
-              role="switch"
-              aria-checked={status.optedIn}
+            <Switch
+              checked={status.optedIn}
               aria-label="Email me a reminder"
               disabled={pending || (!status.canRemind && !status.optedIn)}
-              onClick={() => void toggle()}
-              className="switch"
+              onCheckedChange={() => void toggle()}
             />
           }
         />
