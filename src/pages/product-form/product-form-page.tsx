@@ -104,32 +104,20 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
   )
 
   return (
-    <main className="mx-auto max-w-[1180px] px-3 pt-[max(12px,env(safe-area-inset-top))] md:px-10 md:pt-8">
+    <main className="product-form-page">
       <header className="flex h-14 items-center px-1">
         <BackLink to={back} label={productId ? initial.name : 'Products'} ariaLabel="Back" />
       </header>
 
-      <div className="mt-2 md:mt-4 md:grid md:grid-cols-12 md:items-stretch md:gap-3.5">
-        <aside className="photo-tile hidden md:col-span-5 md:flex md:min-h-[640px] md:flex-col md:justify-end">
-          <img src="/images/product-pour.webp" alt="" className="settle absolute inset-0 size-full object-cover" />
-          <span aria-hidden className="absolute inset-0 bg-linear-to-b from-black/0 via-black/0 via-40% to-black/70" />
-          <div className="relative p-7">
-            <p className="display text-[40px] leading-[1.02]">
-              One product,
-              <br />
-              one concern.
-            </p>
-            <p className="mt-3 text-[15px] text-white/85">That keeps the verdict honest: a single score to follow, from the start date on.</p>
-          </div>
-        </aside>
-
-        <div className="md:col-span-7">
+      <div className="product-form-layout">
+        <aside className="form-editorial"><p className="kicker">THE ROUTINE / A NEW ENTRY</p><h2>One product.<br /><em>One question.</em></h2><p>What would you like this product to change? Follow one concern, and give the evidence time to build.</p><div className="form-rule"><span>01</span><p><strong>Name your product</strong>Use the label on the bottle.</p></div><div className="form-rule"><span>02</span><p><strong>Choose one concern</strong>A clear question makes a useful comparison.</p></div><div className="form-rule"><span>03</span><p><strong>Mark the beginning</strong>Earlier scans become your baseline.</p></div></aside>
+        <div className="form-content">
           <section className="rise px-2 md:px-1">
             <h1 className="display text-[38px] leading-[1.02] md:text-[52px]">{productId ? 'Edit product' : 'New product'}</h1>
             <p className="mt-2 max-w-md text-[15.5px] text-ink-2 md:text-[17px]">Pick the one skin concern it promises to improve. That is the score the verdict will follow.</p>
           </section>
 
-          <form onSubmit={onSubmit} className="mt-5 flex flex-col gap-5 md:rounded-(--radius-tile) md:bg-tile md:bg-[image:var(--sheen)] md:shadow-(--shadow-depth) md:mt-6 md:p-6">
+          <form onSubmit={onSubmit} className="product-form-fields">
             <label className="rise flex flex-col gap-1.5 text-sm font-bold" style={{ '--i': 1 } as React.CSSProperties}>
               Product name
               <input
@@ -144,15 +132,15 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
 
             <fieldset className="rise" style={{ '--i': 2 } as React.CSSProperties}>
               <legend className="mb-2 text-sm font-bold">Target concern</legend>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="concern-options">
                 {CONCERN_KEYS.map((key) => {
                   const checked = values.targetConcern === key
                   return (
                     <label
                       key={key}
                       className={cn(
-                        'press relative flex min-h-[66px] cursor-pointer flex-col justify-center rounded-[18px] px-3.5 py-2.5 pr-9 transition-[background-color,box-shadow] duration-500 ease-(--ease-liquid) has-focus-visible:outline-[2.5px] has-focus-visible:outline-offset-2 has-focus-visible:outline-ink',
-                        checked ? 'bg-tile shadow-[inset_0_0_0_2px_var(--color-ink),0_12px_22px_-14px_rgb(14_23_38/0.45)]' : 'bg-well shadow-[inset_0_1px_2px_rgb(14_23_38/0.06)] hover:bg-ink/8',
+                        'concern-option',
+                        checked ? 'is-selected' : '',
                       )}
                     >
                       <input
@@ -202,7 +190,7 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
               </p>
             )}
 
-            <div className="glass sticky bottom-3 z-20 -mx-1 grid grid-cols-[1fr_2fr] gap-2 rounded-full p-2 md:static md:mx-0 md:flex md:justify-end md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
+            <div className="form-actions">
               <Link to={back} className={buttonVariants({ variant: 'soft', size: 'lg' })}>
                 Cancel
               </Link>

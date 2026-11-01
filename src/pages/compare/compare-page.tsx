@@ -111,14 +111,14 @@ export function ComparePage() {
   )
 
   return (
-    <main className="mx-auto max-w-[1180px] px-3 pt-[max(12px,env(safe-area-inset-top))] md:px-10 md:pt-8">
+    <main className="compare-page">
       <header className="flex h-14 items-center px-1">
         <BackLink to={`/products/${productId}`} label={product.name} />
       </header>
 
       <section className="rise mt-2 flex flex-col gap-3 px-2 md:mt-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="display text-[38px] leading-[1.02] md:text-[56px]">Before and after</h1>
+          <p className="kicker mb-3">THE CHANGE / SIDE BY SIDE</p><h1 className="display text-[38px] leading-[1.02] md:text-[56px]">Before and after</h1>
           <p className="mt-2 text-[15.5px] text-ink-2 md:text-[17px]">
             {product.name}, started {formatDate(product.startDate)}. Scores run 1 to 100, higher is healthier.
           </p>
@@ -133,11 +133,11 @@ export function ComparePage() {
             : 'No scans after the start date yet. Scan again to see a comparison.'}
         </p>
       ) : (
-        <div className="mt-5 grid gap-2.5 md:mt-7 md:grid-cols-12 md:items-start md:gap-3.5">
+        <div className="comparison-layout">
           {target && target.before !== null && target.after !== null && (
             <section
               ref={targetRef}
-              className={cn('rise rounded-(--radius-tile) p-5 md:col-span-5 md:p-7', TONE[tone(target.diff)].panel)}
+              className={cn('comparison-highlight rise p-5 md:p-7', TONE[tone(target.diff)].panel)}
               style={{ '--i': 1 } as React.CSSProperties}
             >
               <div className="flex items-center justify-between">
@@ -161,7 +161,7 @@ export function ComparePage() {
             </section>
           )}
 
-          <Reveal as="section" className="tile px-5 py-2 md:col-span-7 md:px-7">
+          <Reveal as="section" className="comparison-table tile px-5 py-2 md:px-7">
             <table className="w-full">
               <caption className="sr-only">Average score before and after starting, per concern</caption>
               <thead className="sr-only">

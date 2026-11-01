@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowsLeftRight, CaretLeft, Drop, PencilSimple, Trash } from '@phosphor-icons/react'
+import { ArrowRight, ArrowsLeftRight, Drop, PencilSimple, Trash } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
@@ -54,7 +54,7 @@ export function ProductDetailPage() {
     .filter((scan) => scan.scores[product.targetConcern] !== undefined)
     .map((scan) => ({ createdAt: scan.createdAt, score: scan.scores[product.targetConcern], flagged: scan.qualityFlag }))
   const day = daysBetween(product.startDate, now)
-  const overlaps = overlapsFor(product, products ?? [], now)
+  const overlaps = overlapsFor({ ...product, id: product._id }, products ?? [], now)
   const started = product.startDate <= now
   const isDemo = usage?.isDemoAccount ?? true
   const lineColor = verdict ? VERDICT_STYLE[verdict.verdict].line : 'var(--color-ink)'
@@ -191,83 +191,11 @@ export function ProductDetailPage() {
     )
 
   return (
-    <main className="mx-auto max-w-[1180px] md:px-10 md:pt-8">
-      {/* Phone: the product photo runs edge to edge under the status bar, with glass controls and the title on it */}
-      <div className="relative h-[360px] overflow-hidden md:hidden">
-        <img src={image} alt="" className="settle absolute inset-0 size-full object-cover object-[50%_55%]" />
-        <span aria-hidden className="absolute inset-0 bg-linear-to-b from-black/35 via-black/0 via-35% to-black/75" />
-        <div className="absolute inset-x-4 top-[max(14px,env(safe-area-inset-top))] flex items-center justify-between">
-          <Link to="/" aria-label="Back to products" className="glass-clear press grid size-11 place-items-center rounded-full text-white">
-            <CaretLeft size={20} weight="bold" />
-          </Link>
-          {!isDemo && (
-            <Link to={`/products/${productId}/edit`} className={buttonVariants({ variant: 'glass', size: 'sm' })}>
-              <PencilSimple size={17} weight="bold" />
-              Edit
-            </Link>
-          )}
-        </div>
-        <div className="rise absolute inset-x-5 bottom-12 text-white">
-          <h1 className="display text-[32px] leading-[1.02]">{product.name}</h1>
-          <p className="mt-2 text-[14.5px] text-white/85">{meta}</p>
-        </div>
-      </div>
-
-      {/* Desktop: back link, then a title row with the actions */}
-      <div className="hidden md:block">
-        <BackLink to="/" label="Products" />
-        <div className="rise mt-5 flex items-center gap-5">
-          <img src={image} alt="" className="size-[108px] shrink-0 rounded-[30px] object-cover shadow-[0_14px_30px_-14px_rgb(20_40_80/0.55)]" />
-          <div className="min-w-0 flex-1">
-            <h1 className="display text-[46px] leading-[1.02]">{product.name}</h1>
-            <p className="mt-2 text-base text-ink-2">{meta}</p>
-          </div>
-          {editLink()}
-          {compareLink()}
-        </div>
-      </div>
-
-      <div className="relative z-10 -mt-8 flex flex-col gap-2.5 px-3 md:mt-6 md:gap-3.5 md:px-0">
-        {overlaps.length > 0 && (
-          <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
-            <OverlapWarning overlaps={overlaps} concern={concern.toLowerCase()} />
-          </div>
-        )}
-        <div className="rise" style={{ '--i': 1 } as React.CSSProperties}>
-          {verdictBlock}
-        </div>
-
-        {/* Phone: one column in reading order */}
-        <div className="flex flex-col gap-2.5 md:hidden">
-          {beforeNow}
-          {meaning}
-          {chart}
-          {history}
-          <div className="mt-1.5 flex flex-col gap-2.5">
-            {compareLink()}
-            {deleteButton()}
-          </div>
-        </div>
-
-        {/* Desktop: the story on the left, the reference numbers on the right */}
-        <div className="hidden md:block">
-          <div className="flex items-baseline justify-between px-1.5 pt-9 pb-3">
-            <h2 className="display text-[28px] leading-none">Behind the verdict</h2>
-            <span className="text-[15px] font-semibold text-ink-2">{concern} scores from your scans</span>
-          </div>
-          <div className="grid grid-cols-12 items-start gap-3.5">
-            <div className="col-span-8 flex flex-col gap-3.5">
-              {meaning}
-              {chart}
-            </div>
-            <div className="col-span-4 flex flex-col gap-3.5">
-              {beforeNow}
-              {history}
-              {deleteButton('w-full')}
-            </div>
-          </div>
-        </div>
-      </div>
+    <main className="detail-page">
+      <BackLink to="/" label="Product shelf" />
+      <header className="detail-heading rise"><div><p className="kicker">PRODUCT JOURNAL / {concern}</p><h1 className="editorial-title">{product.name}</h1><p className="page-description">{meta}</p></div><div className="detail-actions">{editLink()}{compareLink()}</div></header>
+      {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concern.toLowerCase()} />}
+      <div className="detail-grid"><div className="detail-evidence"><div className="detail-verdict">{verdictBlock}</div>{chart}{meaning}</div><aside className="detail-reference"><div className="product-journal-label"><img src={image} alt="" /><span>THE PRODUCT JOURNAL<br /><b>{concern}</b><small>Illustrative product image</small></span></div>{beforeNow}{history}{deleteButton('w-full')}</aside></div>
 
       <ConfirmDialog
         open={confirming}

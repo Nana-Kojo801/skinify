@@ -1,6 +1,5 @@
 import { Link } from 'react-router'
-import { Burst } from '@/components/burst'
-import { ScoreRing } from '@/components/score-ring'
+import { Check } from '@phosphor-icons/react'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS } from '@shared/concerns'
@@ -56,8 +55,7 @@ function GapScale({ gap }: { gap: number }) {
   )
 }
 
-// The reward after a scan: a badge that pops with confetti, then the scores ring in one by one,
-// then how steady the scan was and Ideas to test (rendered by the page).
+// A saved journal entry: the score ledger, photo agreement, and ideas for the next step.
 export function ScanResult({ result, ideas }: { result: ScanResultData; ideas?: React.ReactNode }) {
   const agreement = describeAgreement(result.gap)
   const back = (className?: string) => (
@@ -66,13 +64,14 @@ export function ScanResult({ result, ideas }: { result: ScanResultData; ideas?: 
     </Link>
   )
   return (
-    <div className="flex flex-col">
+    <div className="scan-result-content">
       <header className="flex flex-col items-center gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left">
         <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
-          <Burst />
+          <span className="saved-scan-stamp" aria-hidden><Check size={30} /><span>ON RECORD</span></span>
           <div>
+            <p className="kicker mb-3">THE WEEKLY CHECK-IN / COMPLETE</p>
             <h1 className="display rise text-[36px] leading-none md:text-[56px]" style={{ '--i': 2 } as React.CSSProperties}>
-              Scan saved
+              A new page in your journal.
             </h1>
             <p className="rise mt-2 max-w-sm text-ink-2 md:max-w-none md:text-[17px]" style={{ '--i': 3 } as React.CSSProperties}>
               Scores run 1 to 100, higher is healthier. Your photos were not saved.
@@ -87,17 +86,17 @@ export function ScanResult({ result, ideas }: { result: ScanResultData; ideas?: 
         {result.qualityFlag && <span className="text-[13.5px] font-bold text-canttell-ink">Lower quality scan</span>}
       </div>
       <section className="tile rise px-2 pt-6 pb-5 md:px-5 md:pt-7" style={{ '--i': 4 } as React.CSSProperties}>
-        <ul className="grid grid-cols-4 gap-y-5 md:grid-cols-8">
-          {CONCERN_KEYS.filter((key) => result.scores[key] !== undefined).map((key, index) => (
+        <ul className="result-score-ledger">
+          {CONCERN_KEYS.filter((key) => result.scores[key] !== undefined).map((key) => (
             <li key={key}>
-              <ScoreRing value={result.scores[key]} label={CONCERNS[key].label} size={72} index={index + 4} numberClassName="text-[22px]" />
+              <span>{CONCERNS[key].label}</span><strong>{Math.round(result.scores[key])}<small>/100</small></strong><span className="result-score-track" aria-hidden><i style={{ width: `${Math.max(0, Math.min(100, result.scores[key]))}%` }} /></span>
             </li>
           ))}
         </ul>
       </section>
 
       <h2 className="display px-1.5 pt-9 pb-3 text-[25px] leading-none md:text-[28px]">What to do with them</h2>
-      <div className="flex flex-col gap-2.5 md:gap-3.5">
+      <div className="scan-result-analysis">
         <section className="tile rise p-5 md:p-6" style={{ '--i': 5 } as React.CSSProperties}>
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-[19px] leading-tight font-extrabold tracking-[-0.02em]">How steady was this scan?</h3>

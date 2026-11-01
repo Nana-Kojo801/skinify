@@ -12,7 +12,7 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
 
   if (!overview) {
     return (
-      <section className="tile p-5 md:p-6">
+      <section className="skin-overview tile p-5 md:p-6">
         <h3 className="text-[19px] font-extrabold tracking-[-0.02em]">Not enough scans yet</h3>
         <p className="mt-1.5 text-[14.5px] leading-snug text-ink-2">
           Once you have two scans without a quality warning, this shows how each concern moved between your first scan and your latest.
@@ -22,7 +22,7 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
   }
 
   return (
-    <section className="tile p-5 md:p-6" aria-labelledby="overview-title">
+    <section className="skin-overview tile p-5 md:p-6" aria-labelledby="overview-title">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h3 id="overview-title" className="eyebrow">
@@ -47,7 +47,7 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
         {overview.rows.map((row, index) => {
           const moved = Math.abs(row.delta) >= OVERVIEW_CONFIG.movedAtLeast
           return (
-            <div key={row.key} className="grid grid-cols-[92px_1fr_auto] items-center gap-3 text-[14px] font-semibold">
+            <div key={row.key} className="overview-row">
               <span className="truncate">{row.label}</span>
               <span className="relative h-3 rounded-full bg-ink/7 shadow-[inset_0_1px_2px_rgb(14_23_38/0.08)]">
                 <span

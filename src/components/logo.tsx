@@ -1,25 +1,11 @@
-// Brand mark: a rounded iOS-blue tile with a white tick. Same drawing as public/favicon.svg and the PWA icons.
 export function LogoMark({ className = 'size-9', inverted = false }: { className?: string; inverted?: boolean }) {
   return (
-    <svg viewBox="0 0 36 36" className={className} aria-hidden>
-      <defs>
-        <linearGradient id="logo-sheen" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity={inverted ? 0.5 : 0.28} />
-          <stop offset="0.55" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <rect width="36" height="36" rx="12" fill={inverted ? '#ffffff' : 'var(--color-primary)'} />
-      <rect width="36" height="36" rx="12" fill="url(#logo-sheen)" />
-      <path d="M11.5 18.5l4.2 4 8.8-9" fill="none" stroke={inverted ? 'var(--color-primary)' : '#ffffff'} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 36 36" className={className} fill="none" aria-hidden>
+      <path d="M9 4h18v28l-4.5-3-4.5 3-4.5-3L9 32V4Z" stroke={inverted ? '#e1e8d5' : 'var(--color-primary)'} strokeWidth="1.6" />
+      <path d="m13 17 3.5 3.5 7-8M13 9h10M13 25h10" stroke={inverted ? '#e1e8d5' : 'var(--color-primary)'} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
-
 export function Logo({ inverted = false }: { inverted?: boolean }) {
-  return (
-    <span className={`inline-flex items-center gap-2.5 text-[22px] font-extrabold tracking-[-0.03em] ${inverted ? 'text-white' : 'text-ink'}`}>
-      <LogoMark inverted={inverted} />
-      Receipts
-    </span>
-  )
+  return <span className={`brand inline-flex items-center gap-2 ${inverted ? 'text-white' : 'text-ink'}`}><LogoMark inverted={inverted} />receipts<span className="brand-dot">.</span></span>
 }

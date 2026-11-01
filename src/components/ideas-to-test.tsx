@@ -29,7 +29,7 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
   if (blocks.length === 0) return null
 
   return (
-    <section className="tile-soft p-5 md:p-6" aria-labelledby="ideas-title">
+    <section className="ideas-panel tile-soft p-5 md:p-6" aria-labelledby="ideas-title">
       <h2 id="ideas-title" className="eyebrow">
         <Lightbulb size={18} weight="bold" />
         Ideas to test
@@ -52,7 +52,7 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
               {block.ideas.map((idea) => {
                 const to = `/products/new?${new URLSearchParams({ concern: block.concern, name: idea.name.replace(/\s*\(.*\)$/, '') })}`
                 return (
-                  <li key={idea.name} className="flex items-center justify-between gap-3 rounded-[18px] bg-white/60 py-2.5 pr-2.5 pl-4 shadow-[inset_0_0_0_1px_rgb(14_23_38/0.05)]">
+                  <li key={idea.name} className="idea-row">
                     <span className="min-w-0">
                       <span className="block text-[15px] font-bold">{idea.name}</span>
                       <span className="block text-[13px] leading-snug text-ink-2">{idea.for}</span>

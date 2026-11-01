@@ -30,11 +30,11 @@ export function UnsubscribePage() {
   }, [token, unsubscribe])
 
   return (
-    <main className="relative grid min-h-dvh place-items-center px-4 py-24">
+    <main className="message-page relative grid min-h-dvh place-items-center px-4 py-24">
       <div className="absolute top-[max(16px,env(safe-area-inset-top))] left-5 md:top-8 md:left-10">
         <Logo />
       </div>
-      <div className="flex w-full max-w-[520px] flex-col items-center gap-4 text-center md:rounded-(--radius-tile) md:bg-tile md:bg-[image:var(--sheen)] md:shadow-(--shadow-depth) md:px-10 md:py-11">
+      <div className="message-paper">
         {result === 'working' && (
           <>
             <span className="spin size-12 rounded-full border-[5px] border-ink/10 border-t-ink" aria-hidden />

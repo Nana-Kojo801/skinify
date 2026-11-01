@@ -20,8 +20,6 @@ const METER: Record<Exclude<Verdict, 'TOO_EARLY'>, string> = {
   POSSIBLE_IRRITATION: 'var(--color-irritation)',
 }
 
-const CONFETTI = ['var(--color-accent)', 'var(--color-accent-2)', 'var(--color-working)', 'var(--color-early-bg)', 'var(--color-canttell-bg)', 'var(--color-ink)', 'var(--color-irritation-bg)', 'var(--color-accent-strong)', 'var(--color-accent-2)', 'var(--color-working)']
-
 const REASON_CHIPS: Record<string, (i: VerdictInputs) => string> = {
   FEW_BASELINE_SCANS: (i) => `${i.baselineCount} of ${VERDICT_CONFIG.minBaselineScans} scans before starting`,
   NOISY_SCANS: (i) => `Photos disagree by about ${formatPoints(i.noise)} points`,
@@ -67,19 +65,8 @@ export function VerdictPanel({ verdict, reasons, inputs, targetConcern, day }: V
   return (
     <section
       ref={ref}
-      className={cn('relative overflow-hidden rounded-(--radius-tile) p-5 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.05fr)] md:items-start md:gap-8 md:p-7', style.tile)}
+      className={cn('verdict-sheet', style.tile)}
     >
-      {verdict === 'WORKING' && inView && (
-        <span aria-hidden className="pointer-events-none absolute top-[156px] right-14 size-0 md:top-32 md:right-auto md:left-[28%]">
-          {CONFETTI.map((color, i) => (
-            <i
-              key={i}
-              className="absolute -mt-1 -ml-1 size-2 animate-[burst_1.2s_var(--ease-liquid)_0.9s_both] rounded-[2px]"
-              style={{ background: color, '--a': `${i * 36}deg`, '--r': '-44px' } as React.CSSProperties}
-            />
-          ))}
-        </span>
-      )}
       <div>
         <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-white/65 pr-3 pl-2.5 text-[13px] font-extrabold">
           <i className={cn('size-2 rounded-full', style.dot)} />
@@ -88,13 +75,13 @@ export function VerdictPanel({ verdict, reasons, inputs, targetConcern, day }: V
         <h2 className="display mt-3.5 text-[28px] leading-[1.05] md:text-[32px]">{verdictHeadline(verdict, concern)}</h2>
         {!left && signal && (
           <p className="mt-3 flex flex-wrap items-end gap-x-2.5">
-            <CountUp value={signal.value} format={formatSigned} start={inView} className="text-[64px] leading-[0.85] font-extrabold tracking-[-0.05em] tabular-nums md:text-[76px]" />
+            <CountUp value={signal.value} format={formatSigned} start={inView} className="verdict-number" />
             <span className="mb-1 text-sm font-bold">{signal.concern} points since you started</span>
           </p>
         )}
       </div>
 
-      <div className="mt-4 md:mt-0 md:pt-14">
+      <div className="verdict-measure">
         {left ? (
           <div className="flex flex-col gap-4">
             <Progress label="Days since you started" value={day} total={VERDICT_CONFIG.minDaysSinceStart} start={inView} />
@@ -115,7 +102,7 @@ export function VerdictPanel({ verdict, reasons, inputs, targetConcern, day }: V
         )}
       </div>
 
-      <div className="mt-4 md:mt-0">
+      <div className="verdict-evidence">
         {evidence && !left && <EvidenceStrip evidence={evidence} color={METER[verdict as Exclude<Verdict, 'TOO_EARLY'>]} />}
         {left && (
           <div className="rounded-[22px] bg-white/60 p-4 shadow-[inset_0_1px_0_#fff,inset_0_0_0_1px_rgb(255_255_255/0.5)]">

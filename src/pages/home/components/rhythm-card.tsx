@@ -9,7 +9,7 @@ import type { Streak } from '@shared/rhythm/streak'
 export function RhythmCard({ streak, className }: { streak: Streak; className?: string }) {
   if (streak.lastScanAt === null) return null
   return (
-    <section className={cn('tile-accent flex flex-wrap items-end justify-between gap-x-5 gap-y-3 p-4 md:px-5', className)} aria-labelledby="rhythm-title">
+    <section className={cn('rhythm-note', className)} aria-labelledby="rhythm-title">
       <div>
         <h2 id="rhythm-title" className="eyebrow">
           <Flame size={16} weight="bold" />
@@ -17,7 +17,7 @@ export function RhythmCard({ streak, className }: { streak: Streak; className?: 
         </h2>
         {streak.alive ? (
           <p className="mt-2 flex items-end gap-2.5">
-            <span className="text-[68px] leading-[0.8] font-extrabold tracking-[-0.045em] tabular-nums">{streak.weeks}</span>
+            <span className="rhythm-number">{streak.weeks}</span>
             <span className="mb-0.5 text-[14px] leading-tight font-bold">
               {streak.weeks === 1 ? 'week' : 'weeks'}
               <br />

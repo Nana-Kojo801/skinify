@@ -7,7 +7,7 @@ export function SsoCallbackPage() {
   const navigate = useNavigate()
   return (
     <main className="grid min-h-dvh place-items-center px-6 text-center" aria-busy="true">
-      <div className="flex flex-col items-center gap-4">
+      <div className="message-paper">
         <span className="spin size-14 rounded-full border-[5px] border-ink/10 border-t-ink" aria-hidden />
         <h1 className="display text-[32px] leading-none md:text-[48px]">Signing you in…</h1>
         <p className="text-[15.5px] text-ink-2">Finishing Google sign-in. This takes a moment.</p>

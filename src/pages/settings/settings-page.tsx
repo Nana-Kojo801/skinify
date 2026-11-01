@@ -34,25 +34,9 @@ export function SettingsPage() {
   const initial = me?.email?.charAt(0).toUpperCase() ?? ' '
 
   return (
-    <main className="mx-auto flex max-w-[680px] flex-col gap-6 px-3 pt-[max(12px,env(safe-area-inset-top))] md:gap-7 md:px-6 md:pt-12">
-      <h1 className="display rise px-2 text-[40px] leading-none md:sr-only">Settings</h1>
-
-      {/* Account: a row on phones, centred on desktop */}
-      <section className="rise" style={{ '--i': 1 } as React.CSSProperties} aria-label="Account">
-        <div className="tile flex items-center gap-3.5 rounded-[22px] px-4 py-3.5 md:hidden">
-          <span className="grid size-14 shrink-0 place-items-center rounded-full bg-[image:var(--sheen)] bg-accent text-2xl font-extrabold shadow-(--shadow-depth-color)">{initial}</span>
-          <span className="min-w-0">
-            <span className="block text-[13px] text-ink-2">Signed in as</span>
-            <span className="block truncate text-[17px] font-bold">{me?.email ?? ' '}</span>
-          </span>
-        </div>
-        <div className="hidden flex-col items-center gap-2 text-center md:flex">
-          <span className="pop-in grid size-[92px] place-items-center rounded-full bg-[image:var(--sheen)] bg-accent text-[40px] font-extrabold shadow-(--shadow-depth-color)">{initial}</span>
-          <p className="mt-2 text-sm text-ink-2">Signed in as</p>
-          <p className="display text-[28px] leading-tight">{me?.email ?? ' '}</p>
-        </div>
-      </section>
-
+    <main className="settings-page">
+      <header className="settings-heading"><p className="kicker">THE DETAILS / YOUR SPACE</p><h1 className="editorial-title">Make it yours.</h1><p className="page-description">Your account, your rhythm, your data.</p></header>
+      <div className="settings-layout"><aside className="settings-profile"><span className="profile-initial">{initial}</span><p className="kicker">SIGNED IN AS</p><p className="profile-email">{me?.email ?? 'Loading…'}</p><span className="profile-type">{me?.isDemoAccount ? 'Sample journal · Read only' : 'Your personal journal'}</span><div className="profile-note"><h2>A little space<br /><em>for your routine.</em></h2><p>Your scans keep the numbers. Your photos are never stored by Receipts.</p></div></aside><div className="settings-sections">
       <ReminderSettings />
 
       <SettingsGroup
@@ -91,6 +75,7 @@ export function SettingsPage() {
 
       <p className="rise px-2 pb-2 text-center text-[13px] text-ink-2">Scores are estimates from photos, not a medical assessment.</p>
 
+      </div></div>
       <ConfirmDialog
         open={confirming}
         onOpenChange={(open) => {

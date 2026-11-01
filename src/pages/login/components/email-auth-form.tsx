@@ -153,14 +153,7 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3">
-      <div className="relative grid grid-cols-2 rounded-full bg-well p-1 shadow-[inset_0_1px_2px_rgb(14_23_38/0.07)]" role="group" aria-label="Sign in or create an account">
-        <span
-          aria-hidden
-          className={cn(
-            'absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-tile shadow-[inset_0_1px_0_#fff,0_1px_1px_rgb(14_23_38/0.05),0_6px_14px_-6px_rgb(14_23_38/0.28)] transition-transform duration-500 ease-(--ease-spring)',
-            mode === 'signUp' && 'translate-x-full',
-          )}
-        />
+      <div className="auth-tabs" role="group" aria-label="Sign in or create an account">
         {(['signIn', 'signUp'] as const).map((value) => (
           <button
             key={value}

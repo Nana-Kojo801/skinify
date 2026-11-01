@@ -47,7 +47,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
 
   return (
     <section
-      className="relative overflow-hidden rounded-[34px] bg-[radial-gradient(120%_70%_at_50%_0%,#2c3646_0%,#121a26_55%,#0a0f17_100%)] p-3 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),inset_0_0_0_1px_rgb(255_255_255/0.05),0_2px_4px_rgb(14_23_38/0.1),0_34px_60px_-30px_rgb(14_23_38/0.7)] md:p-3.5"
+      className="camera-panel"
       aria-label="Your two photos"
     >
       {analysing ? (
@@ -159,7 +159,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
           <button
             type="button"
             onClick={() => camera(current)}
-            className="relative mt-3 block aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[26px] bg-[radial-gradient(60%_50%_at_50%_42%,#252e3c,#0e131c)] md:aspect-auto md:h-[440px]"
+            className="camera-viewfinder"
             aria-label={`Take photo ${current + 1}`}
           >
             <span aria-hidden className="breathe absolute top-[44%] left-1/2 aspect-[3/4] h-auto w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-[2.5px] border-dashed border-accent/90 shadow-[0_0_40px_rgb(125_187_255/0.25)] md:h-[74%] md:w-auto" />

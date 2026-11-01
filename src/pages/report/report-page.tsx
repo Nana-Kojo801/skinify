@@ -41,7 +41,8 @@ export function ReportPage() {
   const trimmedName = name.trim();
 
   return (
-    <main className="min-h-dvh pb-12 print:min-h-0 print:bg-white print:pb-0">
+    <main className="report-page min-h-dvh pb-12 print:min-h-0 print:bg-white print:pb-0">
+      <header className="report-editorial-heading print:hidden"><p className="kicker">THE RECORD / READY TO SHARE</p><h1 className="editorial-title">Your skin, on paper.</h1><p className="page-description">A clear record of your products, scans and progress.</p></header>
       <div className="mx-auto grid max-w-[860px] gap-3 px-3 pt-[max(14px,env(safe-area-inset-top))] sm:flex sm:flex-wrap sm:items-end md:px-4 md:pt-8 print:hidden">
         <BackLink to="/settings" label="Back" className="justify-self-start" />
         <label className="flex min-w-[200px] flex-1 flex-col gap-1.5 text-sm font-bold" htmlFor="report-name">
@@ -63,9 +64,9 @@ export function ReportPage() {
 
       <article className="rise mx-3 my-4 max-w-[860px] rounded-lg bg-white p-5 text-[13px] leading-[1.45] text-[#111216] shadow-[0_1px_2px_rgb(0_0_0/0.08),0_30px_60px_-30px_rgb(0_0_0/0.35)] sm:mx-auto sm:p-11 print:m-0 print:max-w-none print:p-0 print:text-[12px] print:leading-[1.35] print:shadow-none">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em]">
+          <h2 className="text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em]">
             Skin tracking report
-          </h1>
+          </h2>
           <span className="inline-flex shrink-0 items-center gap-2 text-[15px] font-extrabold tracking-[-0.02em]">
             <LogoMark className="size-7" />
             Receipts
