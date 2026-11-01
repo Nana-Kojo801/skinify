@@ -28,8 +28,8 @@ export function LatestScanCard({ scan }: { scan: Exclude<LatestScan, null> }) {
       <span aria-hidden className="absolute inset-0 bg-linear-to-b from-black/30 via-black/0 via-30% to-black/75" />
 
       <div className="relative z-10 flex items-start justify-between gap-2 p-3.5">
-        <span className="glass-clear inline-flex h-8 items-center rounded-full px-3.5 text-[13px] font-bold">Latest scan · {date}</span>
-        <span className="glass-dark inline-flex h-8 items-center rounded-full px-3.5 text-[13px] font-bold">
+        <span className="glass-clear inline-flex h-8 items-center rounded-full px-3.5 text-xs font-semibold">Latest scan · {date}</span>
+        <span className="glass-dark inline-flex h-8 items-center rounded-full px-3.5 text-xs font-semibold">
           {scan.qualityFlag ? 'Lower quality' : agreement.label}
         </span>
       </div>
@@ -44,7 +44,7 @@ export function LatestScanCard({ scan }: { scan: Exclude<LatestScan, null> }) {
       {PINS.filter((pin) => scan.scores[pin.key] !== undefined).map((pin, index) => (
         <span
           key={pin.key}
-          className={cn('glass pop-in absolute z-10 inline-flex h-8 items-center gap-1.5 rounded-full pr-3 pl-1.5 text-[13px] font-bold text-ink', pin.className)}
+          className={cn('glass pop-in absolute z-10 inline-flex h-8 items-center gap-1.5 rounded-full pr-3 pl-1.5 text-xs font-semibold text-ink', pin.className)}
           style={{ '--i': index + 5 } as React.CSSProperties}
           aria-hidden
         >
@@ -57,19 +57,19 @@ export function LatestScanCard({ scan }: { scan: Exclude<LatestScan, null> }) {
       <div className="relative z-10 mt-auto flex flex-col gap-3 p-3.5">
         {hasOverall && (
           <div className="px-1.5">
-            <p className="text-[96px] leading-[0.8] font-extrabold tracking-[-0.045em] tabular-nums md:text-[112px]">
+            <p className="text-9xl leading-[0.8] font-bold tracking-tighter tabular-nums md:text-9xl">
               <CountUp value={Math.round(scan.overall as number)} />
             </p>
-            <p className="mt-2 text-[13px] font-bold tracking-[0.05em] uppercase opacity-90">Overall, YouCam's estimate</p>
+            <p className="mt-2 text-xs font-semibold tracking-eyebrow uppercase opacity-90">Overall, YouCam's estimate</p>
           </div>
         )}
         <ul className="glass-dark grid grid-cols-4 gap-x-1 gap-y-2.5 rounded-[22px] px-2 py-3" aria-label="Scores from your latest scan, 1 to 100, higher is healthier">
           {keys.map((key) => (
             <li key={key} className="flex flex-col items-center text-center">
-              <span className="text-[22px] leading-none font-extrabold tracking-[-0.03em] tabular-nums">
+              <span className="text-2xl leading-none font-bold tracking-tighter tabular-nums">
                 <CountUp value={Math.round(scan.scores[key])} />
               </span>
-              <span className="mt-1 text-[11px] leading-tight font-semibold text-white/75">{CONCERNS[key].label}</span>
+              <span className="mt-1 text-xs leading-tight font-semibold text-white/75">{CONCERNS[key].label}</span>
             </li>
           ))}
         </ul>

@@ -13,8 +13,8 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
   if (!overview) {
     return (
       <section className="tile p-5 md:p-6">
-        <h3 className="text-[19px] font-extrabold tracking-[-0.02em]">Not enough scans yet</h3>
-        <p className="mt-1.5 text-[14.5px] leading-snug text-ink-2">
+        <h3 className="text-xl font-semibold tracking-tight">Not enough scans yet</h3>
+        <p className="mt-1.5 text-sm leading-snug text-ink-2">
           Once you have two scans without a quality warning, this shows how each concern moved between your first scan and your latest.
         </p>
       </section>
@@ -28,16 +28,16 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
           <h3 id="overview-title" className="eyebrow">
             First scan and now
           </h3>
-          <p className="mt-1.5 text-[13.5px] text-ink-2">
+          <p className="mt-1.5 text-sm text-ink-2">
             {formatShortDate(overview.firstAt)} to {formatShortDate(overview.latestAt)}. Out of 100, higher is healthier.
           </p>
         </div>
         {overview.overall && (
           <div className="shrink-0 text-right">
-            <p className="text-[44px] leading-[0.85] font-extrabold tracking-[-0.04em] tabular-nums">{overview.overall.now}</p>
-            <p className="mt-1 text-[11.5px] leading-tight font-semibold text-ink-2">Overall, YouCam's estimate</p>
+            <p className="text-5xl leading-[0.85] font-bold tracking-tighter tabular-nums">{overview.overall.now}</p>
+            <p className="mt-1 text-xs leading-tight font-semibold text-ink-2">Overall, YouCam's estimate</p>
             {overview.overall.delta !== null && overview.overall.delta !== 0 && (
-              <p className={cn('text-[12.5px] font-bold', overview.overall.delta > 0 ? 'text-working-ink' : 'text-ink-2')}>{signed(overview.overall.delta)} since first scan</p>
+              <p className={cn('text-xs font-semibold', overview.overall.delta > 0 ? 'text-working-ink' : 'text-ink-2')}>{signed(overview.overall.delta)} since first scan</p>
             )}
           </div>
         )}
@@ -47,7 +47,7 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
         {overview.rows.map((row, index) => {
           const moved = Math.abs(row.delta) >= OVERVIEW_CONFIG.movedAtLeast
           return (
-            <div key={row.key} className="grid grid-cols-[92px_1fr_auto] items-center gap-3 text-[14px] font-semibold">
+            <div key={row.key} className="grid grid-cols-[92px_1fr_auto] items-center gap-3 text-sm font-semibold">
               <span className="truncate">{row.label}</span>
               <span className="relative h-3 rounded-full bg-ink/7 shadow-[inset_0_1px_2px_rgb(14_23_38/0.08)]">
                 <span
@@ -61,8 +61,8 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
                 />
               </span>
               <span className="w-[74px] text-right tabular-nums">
-                <b className="font-extrabold">{Math.round(row.now)}</b>
-                <span className={cn('ml-1.5 text-[12.5px] font-bold', !moved ? 'text-ink-3' : row.delta > 0 ? 'text-working-ink' : 'text-ink-2')}>
+                <b className="font-semibold">{Math.round(row.now)}</b>
+                <span className={cn('ml-1.5 text-xs font-semibold', !moved ? 'text-ink-3' : row.delta > 0 ? 'text-working-ink' : 'text-ink-2')}>
                   {moved ? signed(row.delta) : '·'}
                 </span>
               </span>
@@ -71,7 +71,7 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
         })}
       </div>
 
-      <p className="mt-4 flex items-center gap-4 text-[12.5px] font-bold text-ink-2" aria-hidden>
+      <p className="mt-4 flex items-center gap-4 text-xs font-semibold text-ink-2" aria-hidden>
         <span className="inline-flex items-center gap-1.5">
           <i className="size-3 rounded-full border-2 border-white bg-ink shadow-[0_1px_3px_rgb(0_0_0/0.25)]" />
           First scan
@@ -81,7 +81,7 @@ export function SkinOverview({ scans }: { scans: readonly OverviewScan[] | undef
           Latest scan
         </span>
       </p>
-      <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
+      <p className="mt-2 text-xs leading-relaxed text-ink-2">
         {overview.stillCount > 0
           ? `${overview.moved.length === 0 ? 'Every concern' : 'Every other concern'} moved under ${OVERVIEW_CONFIG.movedAtLeast} ${OVERVIEW_CONFIG.movedAtLeast === 1 ? 'point' : 'points'}. `
           : ''}

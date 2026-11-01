@@ -50,7 +50,7 @@ export function SignalMeter({ value, threshold, color }: SignalMeterProps) {
           }}
         />
       </div>
-      <div className="mt-1 flex justify-between text-xs font-bold opacity-70">
+      <div className="mt-1 flex justify-between text-xs font-semibold opacity-70">
         <span>Worse</span>
         <span>No change</span>
         <span>Better</span>

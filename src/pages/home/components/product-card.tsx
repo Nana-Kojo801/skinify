@@ -32,19 +32,19 @@ export function ProductCard({ id, image, name, meta, verdict, stat, statLabel, t
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1 p-4 md:px-5 md:pt-4 md:pb-5">
         <VerdictPill verdict={verdict} className="self-start md:hidden" />
-        <h3 className="mt-1 text-base leading-tight font-bold md:mt-0 md:text-lg">{name}</h3>
-        <p className="text-[13px] text-ink-2">{meta}</p>
+        <h3 className="mt-1 text-base leading-tight font-semibold md:mt-0 md:text-lg">{name}</h3>
+        <p className="text-xs text-ink-2">{meta}</p>
         {overlapsWith && (
-          <span className="mt-1 flex max-w-full items-start gap-1.5 self-start rounded-2xl bg-canttell-bg px-2.5 py-1 text-[12px] leading-snug font-bold text-canttell-ink">
+          <span className="mt-1 flex max-w-full items-start gap-1.5 self-start rounded-2xl bg-canttell-bg px-2.5 py-1 text-xs leading-snug font-semibold text-canttell-ink">
             <WarningCircle size={13} weight="fill" className="mt-0.5 shrink-0" />
             <span className="min-w-0">Overlaps with {overlapsWith}</span>
           </span>
         )}
         <div className="mt-auto flex items-end justify-between gap-2 pt-2">
           {stat ? (
-            <p className={cn('text-[30px] leading-[0.9] font-extrabold tracking-[-0.04em] tabular-nums', verdict === 'WORKING' && style?.text)}>
+            <p className={cn('text-4xl leading-[0.9] font-bold tracking-tighter tabular-nums', verdict === 'WORKING' && style?.text)}>
               {stat}
-              {statLabel && <span className="mt-1 block text-[12px] font-semibold tracking-normal text-ink-3">{statLabel}</span>}
+              {statLabel && <span className="mt-1 block text-xs font-semibold tracking-normal text-ink-3">{statLabel}</span>}
             </p>
           ) : (
             <span />

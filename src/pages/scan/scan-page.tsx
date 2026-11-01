@@ -139,8 +139,8 @@ export function ScanPage() {
           <span className={cn('grid size-[42px] place-items-center rounded-[14px] shadow-[inset_0_1px_0_rgb(255_255_255/0.7)]', tint)}>
             <Icon size={21} weight="bold" />
           </span>
-          <p className="mt-2.5 font-bold">{term}</p>
-          <p className="mt-0.5 text-[13px] leading-snug text-ink-2">{text}</p>
+          <p className="mt-2.5 font-semibold">{term}</p>
+          <p className="mt-0.5 text-xs leading-snug text-ink-2">{text}</p>
         </li>
       ))}
     </ul>
@@ -155,7 +155,7 @@ export function ScanPage() {
           <li
             key={label}
             className={cn(
-              'flex min-h-[54px] items-center gap-3.5 rounded-[18px] px-3.5 text-[15px] font-semibold transition-[background-color,color,box-shadow] duration-500 ease-(--ease-liquid)',
+              'flex min-h-[54px] items-center gap-3.5 rounded-[18px] px-3.5 text-base font-semibold transition-[background-color,color,box-shadow] duration-500 ease-(--ease-liquid)',
               active ? 'tile text-ink' : done ? 'text-ink' : 'text-ink-3',
             )}
             aria-current={active ? 'step' : undefined}
@@ -178,7 +178,7 @@ export function ScanPage() {
   )
 
   const remaining = usage && !blocked && (
-    <span className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[image:var(--sheen)] bg-tile px-3.5 text-[13px] font-bold shadow-(--shadow-depth)">
+    <span className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[image:var(--sheen)] bg-tile px-3.5 text-xs font-semibold shadow-(--shadow-depth)">
       <Clock size={16} weight="bold" />
       {usage.remaining} of {usage.dailyLimit} left today
     </span>
@@ -196,13 +196,13 @@ export function ScanPage() {
         <section className="capture-guide">
           {pending ? (
             <div className="rise px-2" aria-live="polite">
-              <p className="text-[15px] font-bold text-ink-2">About 10 seconds</p>
-              <h1 className="display mt-1 text-[28px] leading-[1.1] md:text-[32px]">Reading your skin</h1>
+              <p className="text-base font-semibold text-ink-2">About 10 seconds</p>
+              <h1 className="display mt-1 text-3xl leading-[1.1] md:text-4xl">Reading your skin</h1>
             </div>
           ) : (
             <div className="rise px-2">
-              <h1 className="display text-[28px] leading-[1.1] md:text-[32px]">Weekly scan</h1>
-              <p className="mt-2 text-[15.5px] text-ink-2 md:text-[17px]">Two photos. Same spot, same light.</p>
+              <h1 className="display text-3xl leading-[1.1] md:text-4xl">Weekly scan</h1>
+              <p className="mt-2 text-base text-ink-2 md:text-lg">Two photos. Same spot, same light.</p>
               <NextScanDue className="mt-3 desktop-only" />
             </div>
           )}
@@ -223,7 +223,7 @@ export function ScanPage() {
         <section className="capture-workspace">
           {blocked ? (
             <div className="flex min-h-[260px] items-center rounded-[22px] border border-hair bg-tile md:min-h-[430px]" style={{ '--i': 2 } as React.CSSProperties}>
-              <p className="flex items-start gap-3 p-8 text-[15px] leading-relaxed text-ink-2">
+              <p className="flex items-start gap-3 p-8 text-base leading-relaxed text-ink-2">
                 <Info size={20} weight="bold" className="mt-px shrink-0" />
                 {blocked}
               </p>
@@ -251,7 +251,7 @@ export function ScanPage() {
                   <p key={note.id} className="tile-soft pop-in flex items-start gap-2.5 p-4 text-sm leading-snug text-ink-2">
                     <Lightbulb size={18} weight="bold" className="mt-px shrink-0 text-ink" />
                     <span>
-                      <strong className="block font-bold text-ink">{note.title}</strong>
+                      <strong className="block font-semibold text-ink">{note.title}</strong>
                       {note.text}
                     </span>
                   </p>
@@ -263,13 +263,13 @@ export function ScanPage() {
                     Analyse my skin
                   </Button>
                   {!photos[0] || !photos[1] ? (
-                    <p className="text-center text-[13px] leading-snug text-ink-2" aria-live="polite">
+                    <p className="text-center text-xs leading-snug text-ink-2" aria-live="polite">
                       {!photos[0] && !photos[1]
                         ? 'Take both photos to continue.'
                         : 'One more photo to go. The second one lets us measure how steady your scan is.'}
                     </p>
                   ) : (
-                    usage && <p className="text-center text-[13px] text-ink-2">Photos are never stored.</p>
+                    usage && <p className="text-center text-xs text-ink-2">Photos are never stored.</p>
                   )}
                 </div>
               )}

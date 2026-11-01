@@ -118,10 +118,10 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
   if (codeStep) {
     return (
       <form onSubmit={onVerify} className="flex flex-col gap-3">
-        <p className="text-[15.5px] leading-snug text-ink-2">
-          We emailed a 6-digit code to <strong className="font-bold">{codeStep.email}</strong>. Enter it to continue.
+        <p className="text-base leading-snug text-ink-2">
+          We emailed a 6-digit code to <strong className="font-semibold">{codeStep.email}</strong>. Enter it to continue.
         </p>
-        <label className="flex flex-col gap-1.5 text-sm font-bold">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold">
           Code
           <input
             name="code"
@@ -132,17 +132,17 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
             required
             autoFocus
             placeholder="123456"
-            className="field h-16 text-center text-[28px] font-extrabold tracking-[0.5em]"
+            className="field h-16 text-center text-3xl font-semibold tracking-[0.5em]"
           />
         </label>
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? 'Please wait…' : 'Verify and continue'}
         </Button>
         <div className="flex justify-between gap-3 text-sm">
-          <button type="button" onClick={() => void onResend()} disabled={pending} className="min-h-11 cursor-pointer font-bold text-ink underline decoration-[1.5px] underline-offset-[3px] disabled:opacity-45">
+          <button type="button" onClick={() => void onResend()} disabled={pending} className="min-h-11 cursor-pointer font-semibold text-ink underline decoration-[1.5px] underline-offset-[3px] disabled:opacity-45">
             Send a new code
           </button>
-          <button type="button" onClick={backToForm} disabled={pending} className="min-h-11 cursor-pointer font-bold text-ink-2 underline decoration-[1.5px] underline-offset-[3px] disabled:opacity-45">
+          <button type="button" onClick={backToForm} disabled={pending} className="min-h-11 cursor-pointer font-semibold text-ink-2 underline decoration-[1.5px] underline-offset-[3px] disabled:opacity-45">
             Use a different email
           </button>
         </div>
@@ -155,11 +155,11 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
       <div className="auth-tabs" role="group" aria-label="Sign in or create an account">
         {(['signIn', 'signUp'] as const).map(value => <button key={value} type="button" aria-pressed={mode === value} aria-label={value === 'signIn' ? 'Switch to sign in' : 'Switch to create account'} onClick={() => switchMode(value)}>{value === 'signIn' ? 'Sign in' : 'Create account'}</button>)}
       </div>
-      <label className="flex flex-col gap-1.5 text-sm font-bold">
+      <label className="flex flex-col gap-1.5 text-sm font-semibold">
         Email
         <input name="email" type="email" autoComplete="email" required placeholder="you@example.com" className="field" />
       </label>
-      <label className="flex flex-col gap-1.5 text-sm font-bold">
+      <label className="flex flex-col gap-1.5 text-sm font-semibold">
         {mode === 'signUp' ? 'Password, at least 8 characters' : 'Password'}
         <input
           name="password"

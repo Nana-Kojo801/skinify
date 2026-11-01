@@ -60,21 +60,21 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
       <section className={cn('tile-accent-2 flex flex-wrap items-center gap-x-4 gap-y-3 p-4', className)} aria-label="Next scan">
         <div className="contents">
           <span className="grid h-[68px] w-16 shrink-0 grid-rows-[22px_1fr] overflow-hidden rounded-[18px] bg-tile text-center shadow-[0_6px_14px_-8px_rgb(150_64_28/0.6)]" aria-hidden>
-            <span className="bg-accent-2-ink text-[11px] leading-[22px] font-extrabold tracking-[0.08em] text-white uppercase">
+            <span className="bg-accent-2-ink text-eyebrow leading-[22px] font-semibold tracking-eyebrow text-fog uppercase">
               {date.toLocaleDateString(undefined, { weekday: 'short' })}
             </span>
-            <span className="text-[32px] leading-[46px] font-extrabold tracking-[-0.03em] tabular-nums">{date.getDate()}</span>
+            <span className="text-4xl leading-[46px] font-bold tracking-tighter tabular-nums">{date.getDate()}</span>
           </span>
           <div className="min-w-[150px] flex-1">
             <p className="eyebrow text-accent-2-ink">
               <CalendarBlank size={16} weight="bold" />
               Next scan
             </p>
-            <p className="mt-1 text-[17px] leading-tight font-extrabold">
+            <p className="mt-1 text-lg leading-tight font-semibold">
               {overdue ? 'Your weekly scan is due' : date.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
             </p>
             {!overdue && (
-              <p className="text-[13.5px] font-semibold text-ink-2">
+              <p className="text-sm font-semibold text-ink-2">
                 {days <= 1 ? 'Tomorrow' : `In ${days} days`}
               </p>
             )}
@@ -82,7 +82,7 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
         </div>
         {addButton()}
         {downloaded && (
-          <p className="basis-full text-[12.5px] leading-snug font-medium text-ink-2" role="status">
+          <p className="basis-full text-xs leading-snug font-medium text-ink-2" role="status">
             {SAVED}
           </p>
         )}
@@ -93,7 +93,7 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
   const label = overdue ? 'Your weekly scan is due' : `Next scan due ${date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}`
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
-      <p className="inline-flex items-center gap-1.5 rounded-full bg-[image:var(--sheen)] bg-tile px-3 py-1.5 text-[13px] font-bold text-ink shadow-(--shadow-depth)">
+      <p className="inline-flex items-center gap-1.5 rounded-full bg-[image:var(--sheen)] bg-tile px-3 py-1.5 text-xs font-semibold text-ink shadow-(--shadow-depth)">
         <CalendarBlank size={15} weight="bold" />
         {label}
       </p>
@@ -103,13 +103,13 @@ export function NextScanDue({ className, variant = 'inline' }: { className?: str
           downloadCalendarFile(dueAt)
           setDownloaded(true)
         }}
-        className="press inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[13px] font-bold underline decoration-ink/30 underline-offset-4"
+        className="press inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-3 text-xs font-semibold underline decoration-ink/30 underline-offset-4"
       >
         <DownloadSimple size={15} weight="bold" />
         Add to calendar
       </button>
       {downloaded && (
-        <p className="basis-full text-[12.5px] leading-snug text-ink-2" role="status">
+        <p className="basis-full text-xs leading-snug text-ink-2" role="status">
           {SAVED}
         </p>
       )}

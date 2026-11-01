@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 // Pill buttons. Every interactive size is at least 44 px tall (tap targets). Pressing squishes the button and it
 // springs back (transform only).
 const buttonVariants = cva(
-  'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full font-bold whitespace-nowrap outline-none select-none transition-[transform,box-shadow,background-color,color] duration-200 ease-(--ease-spring) active:scale-[0.96] active:duration-100 disabled:pointer-events-none disabled:opacity-45 [&_svg]:shrink-0',
+  'inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap outline-none select-none transition-[transform,box-shadow,background-color,color] duration-200 ease-(--ease-spring) active:scale-[0.96] active:duration-100 disabled:pointer-events-none disabled:opacity-45 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -22,7 +22,7 @@ const buttonVariants = cva(
       },
       size: {
         sm: 'h-11 px-4 text-sm',
-        md: 'h-12 px-6 text-[15px]',
+        md: 'h-12 px-6 text-base',
         lg: 'h-[52px] px-7 text-base',
         icon: 'size-11',
       },

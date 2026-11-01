@@ -26,8 +26,8 @@ export function ConfirmDialog({ open, onOpenChange, title, description, confirmL
           <span className="grid size-14 place-items-center rounded-[18px] bg-irritation-bg text-irritation-ink">
             <Trash size={26} />
           </span>
-          <AlertDialog.Title className="display mt-4 text-[28px] leading-none">{title}</AlertDialog.Title>
-          <AlertDialog.Description className="mt-3 text-[15px] leading-relaxed text-ink-2">{description}</AlertDialog.Description>
+          <AlertDialog.Title className="display mt-4 text-3xl leading-none">{title}</AlertDialog.Title>
+          <AlertDialog.Description className="mt-3 text-base leading-relaxed text-ink-2">{description}</AlertDialog.Description>
           {error && (
             <p role="alert" className="mt-3 rounded-2xl bg-irritation-bg px-4 py-3 text-sm font-semibold text-irritation-ink">
               {error}

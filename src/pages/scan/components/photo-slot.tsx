@@ -51,7 +51,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
       aria-label="Your two photos"
     >
       {analysing ? (
-        <p className="flex h-11 items-center justify-center gap-2.5 rounded-full bg-white/8 text-[14.5px] font-bold" aria-live="polite">
+        <p className="flex h-11 items-center justify-center gap-2.5 rounded-full bg-white/8 text-sm font-semibold" aria-live="polite">
           <span className="spin size-5 rounded-full border-[2.5px] border-white/20 border-t-accent" aria-hidden />
           Reading your skin
         </p>
@@ -68,16 +68,16 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                 disabled={previews[index] !== null}
                 aria-pressed={on}
                 className={cn(
-                  'flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full text-sm font-bold transition-[background-color,color,box-shadow] duration-500 ease-(--ease-liquid) disabled:cursor-default',
+                  'flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full text-sm font-semibold transition-[background-color,color,box-shadow] duration-500 ease-(--ease-liquid) disabled:cursor-default',
                   on ? 'bg-linear-to-b from-white/22 to-white/10 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.22)]' : 'text-white/60',
                 )}
               >
                 <i
                   className={cn(
-                    'grid size-[22px] place-items-center rounded-full border-[1.5px] border-white/35 text-xs font-extrabold not-italic',
+                    'grid size-[22px] place-items-center rounded-full border-[1.5px] border-white/35 text-xs font-semibold not-italic',
                     st === 'now' && 'border-accent bg-accent text-ink',
                     st === 'done' && 'border-working bg-working',
-                    st === 'bad' && 'border-irritation bg-irritation',
+                    st === 'bad' && 'border-irritation bg-irritation text-fog',
                   )}
                 >
                   {st === 'done' ? <Check size={12} weight="bold" /> : st === 'bad' ? '!' : index + 1}
@@ -101,7 +101,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                   {previews[index] && (
                     <img src={previews[index]!} alt={`Photo ${index + 1} of 2`} className={cn('settle size-full object-cover', problem && 'brightness-50 grayscale-[.6]')} />
                   )}
-                  <span className="absolute top-2.5 left-2.5 inline-flex h-7 items-center rounded-full bg-black/35 px-2.5 text-[12.5px] font-extrabold backdrop-blur-md">
+                  <span className="absolute top-2.5 left-2.5 inline-flex h-7 items-center rounded-full bg-black/35 px-2.5 text-xs font-semibold backdrop-blur-md">
                     Photo {index + 1}
                   </span>
                   {analysing ? (
@@ -110,9 +110,9 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                       <span aria-hidden className="absolute inset-x-0 top-0 h-[42%] animate-[sweep_1.7s_cubic-bezier(.45,0,.55,1)_infinite_alternate] bg-linear-to-b from-transparent via-accent/45 to-white/90" />
                     </>
                   ) : problem ? (
-                    <p role="alert" className="pop-in absolute inset-x-2 bottom-2 flex flex-col gap-1 rounded-[18px] bg-irritation/92 p-3 text-[12.5px] leading-snug shadow-[0_10px_20px_-10px_rgb(0_0_0/0.6)]">
+                    <p role="alert" className="pop-in absolute inset-x-2 bottom-2 flex flex-col gap-1 rounded-[18px] bg-irritation/92 p-3 text-xs leading-snug shadow-[0_10px_20px_-10px_rgb(0_0_0/0.6)]">
                       <Warning size={20} weight="bold" />
-                      <strong className="text-[15px] font-extrabold">Retake</strong>
+                      <strong className="text-base font-semibold">Retake</strong>
                       {problem}
                     </p>
                   ) : (
@@ -123,7 +123,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                       {light && (
                         <span
                           className={cn(
-                            'pop-in absolute bottom-2 left-2 inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-bold shadow-[0_6px_14px_-6px_rgb(0_0_0/0.5)]',
+                            'pop-in absolute bottom-2 left-2 inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold shadow-[0_6px_14px_-6px_rgb(0_0_0/0.5)]',
                             light.level === 'ok' ? 'bg-working-bg text-working-ink' : 'bg-canttell-bg text-canttell-ink',
                           )}
                           style={{ '--i': 2 } as React.CSSProperties}
@@ -140,7 +140,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                     <button
                       type="button"
                       onClick={() => camera(index)}
-                      className={cn('press inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 text-[13.5px] font-bold', problem ? 'bg-white text-[#191a1c]' : 'glass-clear')}
+                      className={cn('press inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 text-sm font-semibold', problem ? 'bg-white text-[#191a1c]' : 'glass-clear')}
                     >
                       <Camera size={17} weight="bold" />
                       Retake
@@ -168,13 +168,13 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                 <span key={pos} aria-hidden className={cn('absolute size-[30px] border-white/85', pos)} />
               ),
             )}
-            <span className="glass-clear absolute bottom-5 left-1/2 w-max max-w-[82%] -translate-x-1/2 rounded-[18px] px-4 py-2.5 text-center text-[13px] leading-snug text-white/85">
-              <strong className="block text-[14.5px] text-white">Photo {current + 1} of 2</strong>
+            <span className="glass-clear absolute bottom-5 left-1/2 w-max max-w-[82%] -translate-x-1/2 rounded-[18px] px-4 py-2.5 text-center text-xs leading-snug text-white/85">
+              <strong className="block text-sm text-white">Photo {current + 1} of 2</strong>
               {HINTS[current]}
             </span>
           </button>
           <div className="grid grid-cols-[1fr_auto_1fr] items-center px-2 pt-4 pb-1.5">
-            <button type="button" onClick={() => gallery(current)} className="press flex cursor-pointer flex-col items-center gap-1.5 text-xs font-bold text-white/70">
+            <button type="button" onClick={() => gallery(current)} className="press flex cursor-pointer flex-col items-center gap-1.5 text-xs font-semibold text-white/70">
               <span className="grid size-[52px] place-items-center rounded-full bg-white/12 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]">
                 <Images size={22} weight="bold" />
               </span>
@@ -196,9 +196,9 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                   type="button"
                   onClick={() => (preview ? camera(other) : setChosen(other))}
                   aria-label={preview ? `Retake photo ${other + 1}` : `Switch to photo ${other + 1}`}
-                  className="press flex cursor-pointer flex-col items-center gap-1.5 text-xs font-bold text-white/70"
+                  className="press flex cursor-pointer flex-col items-center gap-1.5 text-xs font-semibold text-white/70"
                 >
-                  <span className={cn('relative grid size-[52px] place-items-center overflow-hidden rounded-2xl text-base font-extrabold', preview ? 'border-2 border-white/90' : 'border-2 border-dashed border-white/25 text-white/55')}>
+                  <span className={cn('relative grid size-[52px] place-items-center overflow-hidden rounded-2xl text-base font-semibold', preview ? 'border-2 border-white/90' : 'border-2 border-dashed border-white/25 text-white/55')}>
                     {preview ? (
                       <>
                         <img src={preview} alt="" className="absolute inset-0 size-full object-cover" />
