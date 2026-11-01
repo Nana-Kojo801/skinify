@@ -1,5 +1,5 @@
 import { useClerk } from '@clerk/react'
-import { FileText, SignOut, Trash } from '@phosphor-icons/react'
+import { FileText, SignOut, Trash, ShieldCheck } from '@phosphor-icons/react'
 import { useAction, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
@@ -34,25 +34,9 @@ export function SettingsPage() {
   const initial = me?.email?.charAt(0).toUpperCase() ?? ' '
 
   return (
-    <main className="mx-auto flex max-w-[680px] flex-col gap-6 px-3 pt-[max(12px,env(safe-area-inset-top))] md:gap-7 md:px-6 md:pt-12">
-      <h1 className="display rise px-2 text-[40px] leading-none md:sr-only">Settings</h1>
-
-      {/* Account: a row on phones, centred on desktop */}
-      <section className="rise" style={{ '--i': 1 } as React.CSSProperties} aria-label="Account">
-        <div className="tile flex items-center gap-3.5 rounded-[22px] px-4 py-3.5 md:hidden">
-          <span className="grid size-14 shrink-0 place-items-center rounded-full bg-[image:var(--sheen)] bg-accent text-2xl font-extrabold shadow-(--shadow-depth-color)">{initial}</span>
-          <span className="min-w-0">
-            <span className="block text-[13px] text-ink-2">Signed in as</span>
-            <span className="block truncate text-[17px] font-bold">{me?.email ?? ' '}</span>
-          </span>
-        </div>
-        <div className="hidden flex-col items-center gap-2 text-center md:flex">
-          <span className="pop-in grid size-[92px] place-items-center rounded-full bg-[image:var(--sheen)] bg-accent text-[40px] font-extrabold shadow-(--shadow-depth-color)">{initial}</span>
-          <p className="mt-2 text-sm text-ink-2">Signed in as</p>
-          <p className="display text-[28px] leading-tight">{me?.email ?? ' '}</p>
-        </div>
-      </section>
-
+    <main className="screen settings-page">
+      <header className="screen-heading"><h1>Your account</h1></header>
+      <div className="account-layout"><aside className="account-profile"><span className="profile-avatar">{initial}</span><div><h2>{me?.isDemoAccount ? 'Demo account' : 'Personal account'}</h2><p>{me?.email ?? 'Loading…'}</p></div><button type="button" onClick={() => void signOut()} className="profile-signout"><SignOut size={17} />Sign out</button></aside><div className="account-settings">
       <ReminderSettings />
 
       <SettingsGroup
@@ -63,12 +47,6 @@ export function SettingsPage() {
         <Link to="/report" aria-label="Open the report" className={rowClass}>
           <SettingsRowContent icon={<FileText size={18} weight="bold" />} tint="bg-early-bg" label="Open the report" sub="For a pharmacist or dermatologist" />
         </Link>
-      </SettingsGroup>
-
-      <SettingsGroup className="rise">
-        <button type="button" onClick={() => void signOut()} className={rowClass}>
-          <SettingsRowContent icon={<SignOut size={18} weight="bold" />} tint="bg-well" label="Sign out" right="none" />
-        </button>
       </SettingsGroup>
 
       {me?.isDemoAccount ? (
@@ -91,6 +69,8 @@ export function SettingsPage() {
 
       <p className="rise px-2 pb-2 text-center text-[13px] text-ink-2">Scores are estimates from photos, not a medical assessment.</p>
 
+      <p className="privacy-strip"><ShieldCheck size={18} />Photos are never stored.</p>
+      </div></div>
       <ConfirmDialog
         open={confirming}
         onOpenChange={(open) => {

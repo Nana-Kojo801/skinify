@@ -1,12 +1,12 @@
 import { CaretRight } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
-/** iOS-style grouped list: a white rounded group of rows with inset hairlines. */
+/** Account section with flat rows and quiet separators. */
 export function SettingsGroup({ title, caption, children, className }: { title?: string; caption?: React.ReactNode; children?: React.ReactNode; className?: string }) {
   return (
-    <section className={className}>
+    <section className={cn('settings-group', className)}>
       {title && <h2 className="px-4 pb-2 text-[12.5px] font-extrabold tracking-[0.06em] text-ink-3 uppercase">{title}</h2>}
-      {children && <div className="tile overflow-hidden rounded-[22px] [&>*+*]:shadow-[inset_64px_1px_0_var(--color-tile),inset_0_1px_0_var(--color-hair)]">{children}</div>}
+      {children && <div className="settings-rows">{children}</div>}
       {caption && <div className="px-4 pt-2 text-[13px] leading-relaxed text-ink-2">{caption}</div>}
     </section>
   )
@@ -30,7 +30,7 @@ export function SettingsRowContent({
 }) {
   return (
     <>
-      <span className={cn('grid size-[34px] shrink-0 place-items-center rounded-[10px] shadow-[inset_0_1px_0_rgb(255_255_255/0.6)]', tint)} aria-hidden>
+      <span className={cn('settings-icon grid size-[34px] shrink-0 place-items-center', tint)} aria-hidden>
         {icon}
       </span>
       <span className="grid min-w-0 flex-1 gap-px text-left">

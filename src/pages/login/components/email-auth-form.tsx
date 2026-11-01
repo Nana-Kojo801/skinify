@@ -2,7 +2,6 @@ import { useSignIn, useSignUp } from '@clerk/react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 
 type Mode = 'signIn' | 'signUp'
 /** After the password is accepted Clerk may want an emailed code: to verify a new address, or on a new device. */
@@ -153,26 +152,8 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3">
-      <div className="relative grid grid-cols-2 rounded-full bg-well p-1 shadow-[inset_0_1px_2px_rgb(14_23_38/0.07)]" role="group" aria-label="Sign in or create an account">
-        <span
-          aria-hidden
-          className={cn(
-            'absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-tile shadow-[inset_0_1px_0_#fff,0_1px_1px_rgb(14_23_38/0.05),0_6px_14px_-6px_rgb(14_23_38/0.28)] transition-transform duration-500 ease-(--ease-spring)',
-            mode === 'signUp' && 'translate-x-full',
-          )}
-        />
-        {(['signIn', 'signUp'] as const).map((value) => (
-          <button
-            key={value}
-            type="button"
-            aria-pressed={mode === value}
-            aria-label={value === 'signIn' ? 'Switch to sign in' : 'Switch to create account'}
-            onClick={() => switchMode(value)}
-            className={cn('relative min-h-11 cursor-pointer text-[14.5px] font-bold transition-colors duration-300', mode === value ? 'text-ink' : 'text-ink-2')}
-          >
-            {value === 'signIn' ? 'Sign in' : 'Create account'}
-          </button>
-        ))}
+      <div className="auth-tabs" role="group" aria-label="Sign in or create an account">
+        {(['signIn', 'signUp'] as const).map(value => <button key={value} type="button" aria-pressed={mode === value} aria-label={value === 'signIn' ? 'Switch to sign in' : 'Switch to create account'} onClick={() => switchMode(value)}>{value === 'signIn' ? 'Sign in' : 'Create account'}</button>)}
       </div>
       <label className="flex flex-col gap-1.5 text-sm font-bold">
         Email
