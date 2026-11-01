@@ -22,9 +22,9 @@ export function MilestoneCelebration({ milestones, currentStreak, now }: { miles
         <Sparkle size={26} weight="fill" />
       </span>
       <div className="min-w-0">
-        <h2 className="text-[20px] leading-tight font-extrabold tracking-[-0.02em]">{title}</h2>
-        <p className="mt-1.5 text-[14.5px] leading-snug">{text}</p>
-        {shown.length > 1 && <p className="mt-1.5 text-[12.5px] font-bold opacity-80">And {shown.length - 1} more in Your milestones.</p>}
+        <h2 className="text-xl leading-tight font-semibold tracking-tight">{title}</h2>
+        <p className="mt-1.5 text-sm leading-snug">{text}</p>
+        {shown.length > 1 && <p className="mt-1.5 text-xs font-semibold opacity-80">And {shown.length - 1} more in Your milestones.</p>}
       </div>
       <button
         type="button"

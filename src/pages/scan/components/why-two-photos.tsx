@@ -18,7 +18,7 @@ const POINTS = [
 export function WhyTwoPhotos() {
   return (
     <section className="tile p-5 md:p-6" aria-labelledby="why-two-photos">
-      <h2 id="why-two-photos" className="text-[21px] font-extrabold tracking-[-0.02em]">
+      <h2 id="why-two-photos" className="text-xl font-semibold tracking-tight">
         Why two photos?
       </h2>
       <ul className="mt-4 flex flex-col gap-4">
@@ -28,8 +28,8 @@ export function WhyTwoPhotos() {
               <Icon size={19} weight="bold" />
             </span>
             <span>
-              <strong className="block text-[15px] font-bold">{term}</strong>
-              <span className="text-[13.5px] leading-snug text-ink-2">{text}</span>
+              <strong className="block text-base font-semibold">{term}</strong>
+              <span className="text-sm leading-snug text-ink-2">{text}</span>
             </span>
           </li>
         ))}

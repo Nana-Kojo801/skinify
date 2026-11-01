@@ -46,8 +46,8 @@ export function UnsubscribePage() {
             <span className="grid size-16 place-items-center rounded-full border border-hair text-primary">
               <CheckCircle size={44} weight="fill" />
             </span>
-            <h1 className="display text-[32px] leading-[1.05] md:text-[40px]">You're unsubscribed</h1>
-            <p className="max-w-[34ch] text-[15.5px] text-ink-2">We won't email you scan reminders any more. You can turn them back on in Settings.</p>
+            <h1 className="display text-4xl leading-[1.05] md:text-5xl">You're unsubscribed</h1>
+            <p className="max-w-[34ch] text-base text-ink-2">We won't email you scan reminders any more. You can turn them back on in Settings.</p>
           </>
         )}
         {result === 'failed' && (
@@ -55,8 +55,8 @@ export function UnsubscribePage() {
             <span className="grid size-16 place-items-center rounded-full border border-hair text-canttell-ink">
               <Warning size={44} weight="bold" />
             </span>
-            <h1 className="display text-[32px] leading-[1.05] md:text-[40px]">This link didn't work</h1>
-            <p className="max-w-[34ch] text-[15.5px] text-ink-2">It may be incomplete. Sign in and switch the reminder off in Settings instead.</p>
+            <h1 className="display text-4xl leading-[1.05] md:text-5xl">This link didn't work</h1>
+            <p className="max-w-[34ch] text-base text-ink-2">It may be incomplete. Sign in and switch the reminder off in Settings instead.</p>
           </>
         )}
         <Link to="/" className={buttonVariants({ variant: 'soft', size: 'lg', className: 'mt-2' })}>

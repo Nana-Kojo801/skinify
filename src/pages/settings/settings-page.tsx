@@ -67,7 +67,7 @@ export function SettingsPage() {
         </SettingsGroup>
       )}
 
-      <p className="rise px-2 pb-2 text-center text-[13px] text-ink-2">Scores are estimates from photos, not a medical assessment.</p>
+      <p className="rise px-2 pb-2 text-center text-xs text-ink-2">Scores are estimates from photos, not a medical assessment.</p>
 
       <p className="privacy-strip"><ShieldCheck size={18} />Photos are never stored.</p>
       </div></div>

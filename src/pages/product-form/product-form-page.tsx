@@ -30,8 +30,8 @@ export function ProductFormPage() {
         <span className="tile grid size-[92px] place-items-center rounded-[32px]" aria-hidden>
           <Drop size={40} />
         </span>
-        <h1 className="display text-[32px] leading-[1.05] md:text-[48px]">Product not found</h1>
-        <p className="text-[15.5px] text-ink-2">It may have been deleted, or the link is wrong.</p>
+        <h1 className="display text-4xl leading-[1.05] md:text-6xl">Product not found</h1>
+        <p className="text-base text-ink-2">It may have been deleted, or the link is wrong.</p>
         <Link to="/" className={buttonVariants({ variant: 'soft', size: 'lg' })}>
           Back home
         </Link>

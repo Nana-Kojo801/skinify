@@ -33,7 +33,7 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
         <Lightbulb size={18} weight="bold" />
         Ideas to test
       </h2>
-      <p className="mt-2 text-[14.5px] leading-snug text-ink-2">
+      <p className="mt-2 text-sm leading-snug text-ink-2">
         Your lowest scores this scan, and what people commonly try for them. Try one, and Receipts will tell you honestly whether it worked.
       </p>
 
@@ -43,8 +43,8 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
             <div className="flex items-center gap-3">
               <strong className="text-3xl font-medium tabular-nums">{Math.round(block.score)}</strong>
               <div>
-                <p className="text-[19px] leading-tight font-extrabold tracking-[-0.02em]">{CONCERNS[block.concern].label}</p>
-                <p className="text-[12.5px] font-semibold text-ink-2">{rankLabel(block)}</p>
+                <p className="text-xl leading-tight font-semibold tracking-tight">{CONCERNS[block.concern].label}</p>
+                <p className="text-xs font-semibold text-ink-2">{rankLabel(block)}</p>
               </div>
             </div>
             <ul className="mt-3 flex flex-col gap-2">
@@ -53,8 +53,8 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
                 return (
                   <li key={idea.name} className="flex items-center justify-between gap-3 border-b border-hair py-3">
                     <span className="min-w-0">
-                      <span className="block text-[14px] font-medium">{idea.name}</span>
-                      <span className="block text-[13px] leading-snug text-ink-2">{idea.for}</span>
+                      <span className="block text-sm font-medium">{idea.name}</span>
+                      <span className="block text-xs leading-snug text-ink-2">{idea.for}</span>
                     </span>
                     {canCreate ? (
                       <Link to={to} className={buttonVariants({ variant: 'soft', size: 'sm' })}>
@@ -69,12 +69,12 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
                 )
               })}
             </ul>
-            {block.note && <p className="mt-2 text-[12.5px] leading-snug text-ink-2">{block.note}</p>}
+            {block.note && <p className="mt-2 text-xs leading-snug text-ink-2">{block.note}</p>}
           </div>
         ))}
       </div>
 
-      <p className="mt-4 text-[12.5px] leading-relaxed text-ink-2">
+      <p className="mt-4 text-xs leading-relaxed text-ink-2">
         These are ideas to try, not advice. A low score doesn't mean you need a product, and scores are estimates from photos. Not sure what suits your
         skin? A pharmacist or dermatologist is the right person to ask.
       </p>

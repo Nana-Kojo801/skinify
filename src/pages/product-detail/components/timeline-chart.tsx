@@ -69,14 +69,14 @@ export function TimelineChart({ points, startDate, color }: { points: TimelinePo
             {[hi, mid, lo].map((v) => (
               <g key={v}>
                 <line x1={PAD.left} x2={w} y1={y(v)} y2={y(v)} stroke="rgb(14 23 38 / 0.07)" />
-                <text x={0} y={y(v) + 4} fontSize="11" fontWeight="600" fill="var(--color-ink-3)">
+                <text x={0} y={y(v) + 4} className="text-xs font-medium" fill="var(--color-ink-3)">
                   {v}
                 </text>
               </g>
             ))}
             <line x1={sx} x2={sx} y1={PAD.top - 2} y2={HEIGHT - 2} stroke="var(--color-ink)" strokeWidth="1.5" strokeDasharray="4 4" />
             <rect x={labelX - 29} y={2} width={58} height={20} rx={10} fill="var(--color-accent)" />
-            <text x={labelX} y={16} fontSize="11" fontWeight="800" textAnchor="middle" fill="var(--color-ink)">
+            <text x={labelX} y={16} className="text-xs font-semibold" textAnchor="middle" fill="var(--color-ink)">
               Started
             </text>
             <path d={area} fill={color} opacity={0.12} className="fade-in" style={{ '--d': '.7s' } as React.CSSProperties} />
@@ -104,7 +104,7 @@ export function TimelineChart({ points, startDate, color }: { points: TimelinePo
         <span>{formatShortDate(t1)}</span>
       </div>
       {points.some((p) => p.flagged) && (
-        <p className="mt-2.5 flex items-center gap-1.5 text-[12.5px] text-ink-2">
+        <p className="mt-2.5 flex items-center gap-1.5 text-xs text-ink-2">
           <span className="inline-block size-2.5 rounded-full border-[2.5px] border-canttell" />
           Lower quality scan: the two photos disagreed
         </p>

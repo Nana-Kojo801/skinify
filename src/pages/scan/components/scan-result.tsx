@@ -37,7 +37,7 @@ function GapScale({ gap }: { gap: number }) {
   return (
     <div className="relative mt-4 pt-7" aria-hidden>
       <span className="absolute top-0 flex -translate-x-1/2 flex-col items-center" style={{ left: `${left}%` }}>
-        <b className="pop-in rounded-full bg-ink px-2 py-0.5 text-xs font-extrabold text-fog tabular-nums">{gap.toFixed(1)}</b>
+        <b className="pop-in rounded-full bg-ink px-2 py-0.5 text-xs font-bold text-fog tabular-nums">{gap.toFixed(1)}</b>
         <i className="mt-0.5 h-[22px] w-[3px] rounded-full bg-ink" />
       </span>
       <div className="grid h-3 gap-[3px]" style={{ gridTemplateColumns: columns }}>
@@ -45,7 +45,7 @@ function GapScale({ gap }: { gap: number }) {
           <i key={band.from} className={cn('rounded-[4px]', band.color)} />
         ))}
       </div>
-      <div className="mt-1.5 grid gap-[3px] text-[11.5px] leading-tight font-bold text-ink-3" style={{ gridTemplateColumns: columns }}>
+      <div className="mt-1.5 grid gap-[3px] text-xs leading-tight font-semibold text-ink-3" style={{ gridTemplateColumns: columns }}>
         {bands.map((band) => (
           <span key={band.from}>{describeAgreement((band.from + band.to) / 2, poor).label}</span>
         ))}

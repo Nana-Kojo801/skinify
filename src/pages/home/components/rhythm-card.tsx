@@ -21,26 +21,26 @@ export function MilestonesCard({ milestones }: { milestones: readonly Milestone[
     <section className="tile p-5 md:p-6" aria-label="Milestones">
       <ul>
         {milestones.map((milestone) => (
-          <li key={milestone.id} className={cn('flex items-center gap-3 border-t border-hair py-3 text-[14.5px] first:border-t-0 first:pt-0', !milestone.achieved && 'text-ink-2')}>
+          <li key={milestone.id} className={cn('flex items-center gap-3 border-t border-hair py-3 text-sm first:border-t-0 first:pt-0', !milestone.achieved && 'text-ink-2')}>
             <span
               className={cn(
-                'grid size-8 shrink-0 place-items-center rounded-full text-[13px] font-extrabold',
+                'grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold',
                 milestone.achieved ? 'bg-ink text-accent' : 'bg-well',
               )}
             >
               {milestone.achieved ? <Check size={15} weight="bold" /> : milestone.id.replace(/\D/g, '') || '·'}
             </span>
             <span className="min-w-0 flex-1">
-              <span className={cn('block', milestone.achieved && 'font-bold text-ink')}>{milestone.title}</span>
-              {milestone.detail && <span className="block truncate text-[12.5px] text-ink-2">{milestone.detail}</span>}
+              <span className={cn('block', milestone.achieved && 'font-semibold text-ink')}>{milestone.title}</span>
+              {milestone.detail && <span className="block truncate text-xs text-ink-2">{milestone.detail}</span>}
             </span>
-            <span className="shrink-0 text-[12.5px] font-semibold text-ink-2">
+            <span className="shrink-0 text-xs font-semibold text-ink-2">
               {milestone.achievedAt !== null ? formatShortDate(milestone.achievedAt) : (milestone.progress ?? '')}
             </span>
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-2">
+      <p className="mt-3 text-xs leading-relaxed text-ink-2">
         The streak counts the last {RHYTHM_CONFIG.weeksShown} weeks. A week counts when you scan within {RHYTHM_CONFIG.maxGapDays} days of your last scan.
         Missing one just pauses it.
       </p>

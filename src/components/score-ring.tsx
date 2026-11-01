@@ -45,11 +45,11 @@ export function ScoreRing({ value, label, size = 62, stroke = 'var(--color-ink)'
             }}
           />
         </svg>
-        <span className={cn('absolute inset-0 grid place-items-center text-[19px] font-extrabold tracking-[-0.03em] tabular-nums', numberClassName)}>
+        <span className={cn('absolute inset-0 grid place-items-center text-xl font-bold tracking-tighter tabular-nums', numberClassName)}>
           <CountUp value={Math.round(value)} start={inView} />
         </span>
       </div>
-      {label && <span className={cn('text-center text-xs font-bold text-ink-2', labelClassName)}>{label}</span>}
+      {label && <span className={cn('text-center text-xs font-semibold text-ink-2', labelClassName)}>{label}</span>}
     </div>
   )
 }

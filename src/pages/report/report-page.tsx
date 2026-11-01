@@ -14,7 +14,7 @@ import {
 import { api } from "../../../convex/_generated/api";
 
 const th =
-  "border-b-[1.5px] border-[#111216] px-1.5 py-1.5 text-left text-[11px] font-semibold tracking-[0.04em] text-[#4a4d55] uppercase";
+  "border-b-[1.5px] border-[#111216] px-1.5 py-1.5 text-left text-eyebrow font-semibold tracking-eyebrow text-[#4a4d55] uppercase";
 const td = "border-b border-[#e1e2e6] px-1.5 py-1.5 align-top print:py-1";
 
 // A plain black-and-white document for a pharmacist or dermatologist: products, results and every scan as numbers,
@@ -44,7 +44,7 @@ export function ReportPage() {
     <main className="screen report-page print:min-h-0 print:bg-white print:pb-0">
       <div className="report-controls print:hidden">
         <BackLink to="/settings" label="Back" /><h1>Skin report</h1><p className="report-intro">Your products, progress and scan history. Ready to share.</p>
-        <label className="flex min-w-[200px] flex-1 flex-col gap-1.5 text-sm font-bold" htmlFor="report-name">
+        <label className="flex min-w-[200px] flex-1 flex-col gap-1.5 text-sm font-semibold" htmlFor="report-name">
           Your name (optional, not saved)
           <input
             id="report-name"
@@ -61,12 +61,12 @@ export function ReportPage() {
         </button>
       </div>
 
-      <article className="report-paper bg-white text-[#111216] print:text-[12px] print:leading-[1.35]">
+      <article className="report-paper bg-white text-[#111216] print:text-xs print:leading-[1.35]">
         <div className="flex items-start justify-between gap-3">
-          <h2 className="text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em]">
+          <h2 className="text-4xl leading-[1.05] font-semibold tracking-tighter">
             Skin tracking report
           </h2>
-          <span className="inline-flex shrink-0 items-center gap-2 text-[15px] font-extrabold tracking-[-0.02em]">
+          <span className="inline-flex shrink-0 items-center gap-2 text-base font-semibold tracking-tight">
             <LogoMark className="size-7" />
             Receipts
           </span>
@@ -84,11 +84,11 @@ export function ReportPage() {
           </span>
         </div>
 
-        <p className="mt-3.5 rounded-xl border-[1.5px] border-[#111216] px-3 py-2.5 text-[12.5px]">
+        <p className="mt-3.5 rounded-xl border-[1.5px] border-[#111216] px-3 py-2.5 text-xs">
           <strong>Please read first.</strong> {REPORT_DISCLAIMER}
         </p>
 
-        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-[17px] font-extrabold tracking-[-0.02em] print:mt-4 print:break-after-avoid">
+        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-lg font-semibold tracking-tight print:mt-4 print:break-after-avoid">
           Products being tracked
         </h2>
         {report.products.length === 0 ? (
@@ -103,7 +103,7 @@ export function ReportPage() {
                   className="border-b border-[#e1e2e6] py-2.5"
                 >
                   <p className="font-semibold">{product.name}</p>
-                  <p className="text-[12px] text-[#4a4d55]">
+                  <p className="text-xs text-[#4a4d55]">
                     {product.concern} · started {formatDate(product.startDate)}{" "}
                     (day {product.day})
                     {!product.active &&
@@ -111,17 +111,17 @@ export function ReportPage() {
                       ` · stopped ${formatDate(product.endDate)}`}
                   </p>
                   <p className="mt-1.5">
-                    <span className="inline-block rounded-[4px] border-[1.5px] border-[#111216] px-1.5 text-[11px] font-bold">
+                    <span className="inline-block rounded-[4px] border-[1.5px] border-[#111216] px-1.5 text-xs font-semibold">
                       {product.verdictLabel}
                     </span>
                   </p>
                   {product.lines.map((line) => (
-                    <p key={line} className="mt-0.5 text-[12px] text-[#4a4d55]">
+                    <p key={line} className="mt-0.5 text-xs text-[#4a4d55]">
                       {line}
                     </p>
                   ))}
                   {(product.scoreChange || product.variation) && (
-                    <p className="mt-1 text-[12px] tabular-nums">
+                    <p className="mt-1 text-xs tabular-nums">
                       {product.scoreChange
                         ? `Score before → now: ${product.scoreChange}`
                         : ""}
@@ -135,7 +135,7 @@ export function ReportPage() {
               ))}
             </ul>
             <div className="hidden overflow-x-auto sm:block print:block print:overflow-visible">
-              <table className="w-full min-w-[640px] border-collapse text-[12px] print:min-w-0">
+              <table className="w-full min-w-[640px] border-collapse text-xs print:min-w-0">
                 <thead>
                   <tr>
                     <th className={th}>Product</th>
@@ -155,7 +155,7 @@ export function ReportPage() {
                       <td className={td}>
                         <strong>{product.name}</strong>
                         {!product.active && product.endDate !== null && (
-                          <span className="block text-[11px] text-[#4a4d55]">
+                          <span className="block text-xs text-[#4a4d55]">
                             Stopped {formatDate(product.endDate)}
                           </span>
                         )}
@@ -163,18 +163,18 @@ export function ReportPage() {
                       <td className={td}>{product.concern}</td>
                       <td className={td}>
                         {formatDate(product.startDate)}
-                        <span className="block text-[11px] text-[#4a4d55]">
+                        <span className="block text-xs text-[#4a4d55]">
                           day {product.day}
                         </span>
                       </td>
                       <td className={td}>
-                        <span className="inline-block rounded-[4px] border-[1.5px] border-[#111216] px-1.5 text-[11px] font-bold">
+                        <span className="inline-block rounded-[4px] border-[1.5px] border-[#111216] px-1.5 text-xs font-semibold">
                           {product.verdictLabel}
                         </span>
                         {product.lines.map((line) => (
                           <span
                             key={line}
-                            className="block text-[11px] text-[#4a4d55]"
+                            className="block text-xs text-[#4a4d55]"
                           >
                             {line}
                           </span>
@@ -193,21 +193,21 @@ export function ReportPage() {
             </div>
           </>
         )}
-        <p className="mt-2 text-[11px] text-[#4a4d55]">
+        <p className="mt-2 text-xs text-[#4a4d55]">
           Scores run 1 to 100, higher is healthier.
         </p>
 
-        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-[17px] font-extrabold tracking-[-0.02em] print:mt-4 print:break-after-avoid">
+        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-lg font-semibold tracking-tight print:mt-4 print:break-after-avoid">
           Scores at each scan
         </h2>
         {report.scans.length === 0 ? (
           <p>No scans yet.</p>
         ) : (
           <div className="overflow-x-auto print:overflow-visible">
-            <p className="mb-1.5 text-[11px] text-[#4a4d55] sm:hidden print:hidden">
+            <p className="mb-1.5 text-xs text-[#4a4d55] sm:hidden print:hidden">
               Swipe sideways to see every concern.
             </p>
-            <table className="w-full min-w-[640px] border-collapse text-[12px] print:min-w-0">
+            <table className="w-full min-w-[640px] border-collapse text-xs print:min-w-0">
               <thead>
                 <tr>
                   <th className={th}>Date</th>
@@ -227,14 +227,14 @@ export function ReportPage() {
                     <td className={td}>
                       {formatDate(scan.createdAt)}
                       {scan.startedProducts > 0 && (
-                        <span className="block text-[11px] text-[#4a4d55]">
+                        <span className="block text-xs text-[#4a4d55]">
                           {scan.startedProducts === 1
                             ? "a product started"
                             : `${scan.startedProducts} products started`}
                         </span>
                       )}
                       {scan.flagged && (
-                        <span className="block text-[11px]">lower quality</span>
+                        <span className="block text-xs">lower quality</span>
                       )}
                     </td>
                     {scan.scores.map((score, index) => (
@@ -252,7 +252,7 @@ export function ReportPage() {
           </div>
         )}
 
-        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-[17px] font-extrabold tracking-[-0.02em] print:mt-4 print:break-after-avoid">
+        <h2 className="mt-5 mb-2 border-b-[1.5px] border-[#111216] pb-1 text-lg font-semibold tracking-tight print:mt-4 print:break-after-avoid">
           How to read this
         </h2>
         <ul className="grid list-disc gap-x-8 pl-5 sm:grid-cols-2">
@@ -262,7 +262,7 @@ export function ReportPage() {
             </li>
           ))}
         </ul>
-        <p className="mt-3.5 border-t border-[#e1e2e6] pt-2 text-[11px] text-[#4a4d55]">
+        <p className="mt-3.5 border-t border-[#e1e2e6] pt-2 text-xs text-[#4a4d55]">
           Generated by Receipts from the person's own scans. Skin analysis by
           YouCam. Not a medical device, not a diagnosis.
         </p>
