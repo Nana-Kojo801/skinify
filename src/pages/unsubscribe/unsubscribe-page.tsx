@@ -34,29 +34,29 @@ export function UnsubscribePage() {
       <div className="absolute top-[max(16px,env(safe-area-inset-top))] left-5 md:top-8 md:left-10">
         <Logo />
       </div>
-      <div className="flex w-full max-w-[480px] flex-col items-center gap-5 text-center">
+      <div className="flex w-full max-w-[480px] flex-col items-center gap-4 text-center">
         {result === 'working' && (
           <>
-            <span className="spin size-12 rounded-full border-[5px] border-ink/10 border-t-ink" aria-hidden />
+            <span className="spin size-10 rounded-full border-[3px] border-ink/10 border-t-primary" aria-hidden />
             <p className="text-ink-2">One moment…</p>
           </>
         )}
         {result === 'done' && (
           <>
-            <span className="grid size-16 place-items-center rounded-full border border-hair text-primary">
-              <CheckCircle size={44} weight="fill" />
+            <span className="grid size-16 place-items-center rounded-2xl border border-border bg-card text-primary" aria-hidden>
+              <CheckCircle size={30} weight="fill" />
             </span>
-            <h1 className="display text-4xl leading-[1.05] md:text-5xl">You're unsubscribed</h1>
-            <p className="max-w-[34ch] text-base text-ink-2">We won't email you scan reminders any more. You can turn them back on in Settings.</p>
+            <h1 className="page-title">You're unsubscribed</h1>
+            <p className="max-w-[38ch] text-base text-ink-2">We won't email you scan reminders any more. You can turn them back on in Settings.</p>
           </>
         )}
         {result === 'failed' && (
           <>
-            <span className="grid size-16 place-items-center rounded-full border border-hair text-canttell-ink">
-              <Warning size={44} weight="bold" />
+            <span className="grid size-16 place-items-center rounded-2xl border border-border bg-card text-canttell-ink" aria-hidden>
+              <Warning size={30} />
             </span>
-            <h1 className="display text-4xl leading-[1.05] md:text-5xl">This link didn't work</h1>
-            <p className="max-w-[34ch] text-base text-ink-2">It may be incomplete. Sign in and switch the reminder off in Settings instead.</p>
+            <h1 className="page-title">This link didn't work</h1>
+            <p className="max-w-[38ch] text-base text-ink-2">It may be incomplete. Sign in and switch the reminder off in Settings instead.</p>
           </>
         )}
         <Link to="/" className={buttonVariants({ variant: 'secondary', size: 'lg', className: 'mt-2' })}>

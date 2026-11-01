@@ -198,11 +198,11 @@ export function ScanPage() {
           {pending ? (
             <div className="rise px-2" aria-live="polite">
               <p className="text-base font-semibold text-ink-2">About 10 seconds</p>
-              <h1 className="display mt-1 text-3xl leading-[1.1] md:text-4xl">Reading your skin</h1>
+              <h1 className="page-title mt-1">Reading your skin</h1>
             </div>
           ) : (
             <div className="rise px-2">
-              <h1 className="display text-3xl leading-[1.1] md:text-4xl">Weekly scan</h1>
+              <h1 className="page-title">Weekly scan</h1>
               <p className="mt-2 text-base text-ink-2 md:text-lg">Two photos. Same spot, same light.</p>
               <NextScanDue className="mt-3 desktop-only" />
             </div>

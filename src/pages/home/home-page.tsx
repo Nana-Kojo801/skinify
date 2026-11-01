@@ -13,6 +13,8 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Alert } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { PageHeader } from '@/components/page-header'
+import { EmptyState } from '@/components/empty-state'
 import { cn } from '@/lib/utils'
 import { daysBetween, formatDate, formatShortDate, formatSigned } from '@/lib/format'
 import { VERDICT_LABELS } from '@/lib/verdict-display'
@@ -58,17 +60,30 @@ export function HomePage({ routineOnly = false }: { routineOnly?: boolean }) {
   const notice = usage?.isDemoAccount ? 'Sample account · Explore the results. Live scans and editing are off.' : usage && !usage.serviceAvailable ? 'Scanning is paused: the app’s free scan budget is used up.' : usage?.nextScanAt && !canScan ? `Daily limit reached. Next scan ${formatDate(usage.nextScanAt)}.` : null
   return (
     <main className="screen overview-page">
-      <header className="screen-heading">
-        <div className="title-with-control"><h1>{routineOnly ? 'Your routine' : 'Your skin'}</h1>{!routineOnly && (
-          <NativeSelect aria-label="Chart period" value={range} onChange={e => setRange(e.target.value)} className="range-select">
-            {RANGES.map(r => <NativeSelectOption key={r.value} value={r.value}>{r.label}</NativeSelectOption>)}
-          </NativeSelect>
-        )}</div>
-        {routineOnly ? canEdit && <Link to="/products/new" className={buttonVariants()}><Plus size={18} />Add product</Link> : canScan && <Link className={`${buttonVariants()} desktop-scan-action`} to="/scan">Take weekly scan</Link>}
-      </header>
+      <PageHeader
+        actions={routineOnly ? canEdit && <Link to="/products/new" className={buttonVariants()}><Plus size={18} />Add product</Link> : canScan && <Link className={`${buttonVariants()} desktop-scan-action`} to="/scan">Take weekly scan</Link>}
+      >
+        <div className="title-with-control">
+          <h1 className="page-title">{routineOnly ? 'Your routine' : 'Your skin'}</h1>
+          {!routineOnly && (
+            <NativeSelect aria-label="Chart period" value={range} onChange={e => setRange(e.target.value)} className="range-select">
+              {RANGES.map(r => <NativeSelectOption key={r.value} value={r.value}>{r.label}</NativeSelectOption>)}
+            </NativeSelect>
+          )}
+        </div>
+      </PageHeader>
       {notice && <Alert role="status" className="mb-6"><Info size={16} />{notice}</Alert>}
       {!routineOnly && <>
-        {scans === undefined ? <Skeleton className="h-72" aria-label="Loading scans" /> : !latest ? <section className="first-scan"><Camera size={32} /><h2>Your first scan starts the story.</h2><p>Take two photos, then add a product. Your weekly scans help you see what changes over time.</p>{canScan && <Link to="/scan" className={buttonVariants()}>Take your first scan</Link>}<p className="fine-print">Two scans before starting a product make a better baseline.</p></section> : <div className="overview-grid">
+        {scans === undefined ? <Skeleton className="h-72" aria-label="Loading scans" /> : !latest ? (
+          <EmptyState
+            icon={<Camera size={24} />}
+            title="Your first scan starts the story."
+            description="Take two photos, then add a product. Your weekly scans help you see what changes over time."
+            action={canScan && <Link to="/scan" className={buttonVariants()}>Take your first scan</Link>}
+          >
+            <p className="text-xs text-ink-3">Two scans before starting a product make a better baseline.</p>
+          </EmptyState>
+        ) : <div className="overview-grid">
           <section className="overview-chart" aria-label="Skin progress">
             <ToggleGroup
               aria-label="Concern to plot"
@@ -85,7 +100,7 @@ export function HomePage({ routineOnly = false }: { routineOnly?: boolean }) {
         </div>}
       </>}
       <section className="routine-section" aria-labelledby="routine-title"><div className="section-heading"><h2 id="routine-title">{routineOnly ? 'Products you’re tracking' : 'In your routine'}</h2>{canEdit && <Link to="/products/new" className="text-action"><Plus size={16} />Add product</Link>}</div>
-        {products === undefined ? <Skeleton className="h-40" aria-label="Loading products" /> : products.length === 0 ? <div className="empty-routine"><h3>No products yet</h3><p>Add the product and the concern you want to track.</p>{canEdit && <Link to="/products/new" className={buttonVariants({ variant: 'outline' })}>Add your first product</Link>}</div> : <div className="routine-table"><div className="routine-table-head"><span>#</span><span>Product</span><span>Concern</span><span>Started</span><span>Status</span><span>Weekly trend</span><span>Score</span><span /></div><ul>{products.map((p, i) => {
+        {products === undefined ? <Skeleton className="h-40" aria-label="Loading products" /> : products.length === 0 ? <EmptyState heading="h3" icon={<Plus size={24} />} title="No products yet" description="Add the product and the concern you want to track." action={canEdit && <Link to="/products/new" className={buttonVariants({ variant: 'outline' })}>Add your first product</Link>} /> : <div className="routine-table"><div className="routine-table-head"><span>#</span><span>Product</span><span>Concern</span><span>Started</span><span>Status</span><span>Weekly trend</span><span>Score</span><span /></div><ul>{products.map((p, i) => {
           const verdict = byProduct.get(p._id)
           const trend = ordered.flatMap(s => s.scores[p.targetConcern] == null ? [] : [s.scores[p.targetConcern]]).slice(-8)
           const label = isConcernKey(p.targetConcern) ? CONCERNS[p.targetConcern].label : p.targetConcern

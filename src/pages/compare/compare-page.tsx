@@ -1,10 +1,12 @@
-import { ArrowRight, ChartBar } from '@phosphor-icons/react'
+import { ArrowRight, ChartBar, MagnifyingGlass } from '@phosphor-icons/react'
 import { useQuery } from 'convex/react'
 import { Link, useParams } from 'react-router'
 import { BackLink } from '@/components/back-link'
 import { PageSkeleton } from '@/components/page-skeleton'
 import { buttonVariants } from '@/components/ui/button'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { PageHeader } from '@/components/page-header'
+import { EmptyState } from '@/components/empty-state'
 import { cn } from '@/lib/utils'
 import { formatDate, formatSigned } from '@/lib/format'
 import { CONCERN_KEYS, CONCERNS } from '@shared/concerns'
@@ -18,7 +20,19 @@ export function ComparePage() {
   const product = useQuery(api.products.get, { productId })
   const scans = useQuery(api.scans.list)
   if (product === undefined || scans === undefined) return <PageSkeleton />
-  if (!product) return <main className="screen status-page"><h1>Product not found</h1><Link to="/routine" className={buttonVariants({ variant: 'outline' })}>Back to routine</Link></main>
+  if (!product) {
+    return (
+      <main className="screen">
+        <EmptyState
+          variant="page"
+          icon={<MagnifyingGlass size={30} />}
+          title="Product not found"
+          description="It may have been deleted, or the link is wrong."
+          action={<Link to="/routine" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>Back to routine</Link>}
+        />
+      </main>
+    )
+  }
   const sorted = [...scans].sort((a,b) => a.createdAt - b.createdAt)
   const before = sorted.filter(s => s.createdAt < product.startDate + 86400000)
   const after = sorted.filter(s => s.createdAt >= product.startDate + 86400000).slice(-2)
@@ -30,8 +44,13 @@ export function ComparePage() {
   const target = rows.find(r => r.key === product.targetConcern)
   return <main className="screen comparison-page">
     <BackLink to={`/products/${productId}`} label="Product" />
-    <header className="screen-heading detail-heading"><div><h1>Before & now</h1><p>{product.name} · Started {formatDate(product.startDate)}</p></div><Link to="/report" className={`${buttonVariants({ variant: 'outline', size: 'sm' })} desktop-only`}><ChartBar size={16} />View full report</Link></header>
-    {before.length === 0 || after.length === 0 ? <section className="empty-routine"><h2>More scans needed</h2><p>{before.length === 0 ? 'No scans from before the start date to compare against.' : 'No scans after the start date yet. Scan again to see a comparison.'}</p></section> : <div className="comparison-layout">
+    <PageHeader
+      className="detail-heading"
+      title="Before & now"
+      description={<>{product.name} · Started {formatDate(product.startDate)}</>}
+      actions={<Link to="/report" className={`${buttonVariants({ variant: 'outline', size: 'sm' })} desktop-only`}><ChartBar size={16} />View full report</Link>}
+    />
+    {before.length === 0 || after.length === 0 ? <EmptyState icon={<ChartBar size={24} />} title="More scans needed" description={before.length === 0 ? 'No scans from before the start date to compare against.' : 'No scans after the start date yet. Scan again to see a comparison.'} /> : <div className="comparison-layout">
       <section className="comparison-summary"><div className="comparison-dates"><span>Before<small>{before.length} baseline scans</small></span><span>Now<small>Latest {after.length} scans</small></span></div>{target && target.before != null && target.after != null && <div className="comparison-highlight"><p>{target.label}</p><div><strong>{Math.round(target.before)}</strong><ArrowRight size={28} /><strong>{Math.round(target.after)}</strong></div><span>{formatSigned(target.change!)} points</span></div>}<p className="comparison-note">Higher scores mean healthier-looking skin. Small changes can be measurement noise.</p></section>
       <section className="comparison-table-wrap"><Table>
         <TableCaption className="sr-only">Average scores before and after starting this product</TableCaption>

@@ -2,6 +2,7 @@ import { Camera, House, ListBullets, User, WifiSlash } from '@phosphor-icons/rea
 import { useQuery } from 'convex/react'
 import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
+import { ErrorBoundary } from '@/components/error-boundary'
 import { Logo } from '@/components/logo'
 import { PageSkeleton } from '@/components/page-skeleton'
 import { TOASTER_EVENT } from '@/lib/toast'
@@ -62,7 +63,7 @@ export function AppShell() {
       </header>
       {!online && <Alert role="status" className="offline-notice"><WifiSlash size={18} /> You're offline. Showing what was loaded last. Scans need a connection.</Alert>}
       <div id="main-content" className={`app-content ${isForm ? 'has-form' : ''}`} tabIndex={-1}>
-        <Suspense fallback={<PageSkeleton />}><div key={pathname} className="page-in"><Outlet /></div></Suspense>
+        <ErrorBoundary key={pathname}><Suspense fallback={<PageSkeleton />}><div className="page-in"><Outlet /></div></Suspense></ErrorBoundary>
       </div>
       {toaster && <Suspense fallback={null}><Toaster /></Suspense>}
       {!isForm && <nav className="bottom-nav print:hidden" aria-label="Mobile navigation">

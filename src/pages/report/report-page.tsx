@@ -46,7 +46,7 @@ export function ReportPage() {
   return (
     <main className="screen report-page print:min-h-0 print:bg-white print:pb-0">
       <div className="report-controls print:hidden">
-        <BackLink to="/settings" label="Back" /><h1>Skin report</h1><p className="report-intro">Your products, progress and scan history. Ready to share.</p>
+        <BackLink to="/settings" label="Back" /><h1 className="page-title">Skin report</h1><p className="report-intro">Your products, progress and scan history. Ready to share.</p>
         <Label className="min-w-[200px] flex-1" htmlFor="report-name">
           Your name (optional, not saved)
           <Input

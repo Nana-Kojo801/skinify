@@ -1,4 +1,4 @@
-import { ArrowsLeftRight, PencilSimple, Trash } from '@phosphor-icons/react'
+import { ArrowsLeftRight, MagnifyingGlass, PencilSimple, Trash } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
@@ -12,6 +12,8 @@ import { Alert } from '@/components/ui/alert'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogMedia, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { PageHeader } from '@/components/page-header'
+import { EmptyState } from '@/components/empty-state'
 import { daysBetween, formatDate } from '@/lib/format'
 import { CONCERNS, isConcernKey } from '@shared/concerns'
 import { overlapsFor } from '@shared/products/overlap'
@@ -71,7 +73,12 @@ export function ProductDetailPage() {
   return (
     <main className="screen product-detail-page">
       <BackLink to="/routine" label="Routine" />
-      <header className="screen-heading detail-heading"><div><h1>{product.name}</h1><p>{concern} · Started {formatDate(product.startDate)}{started ? ` · Day ${day}` : ''}</p></div>{!isDemo && <Link to={`/products/${productId}/edit`} className={buttonVariants({ variant: 'outline', size: 'sm' })}><PencilSimple size={16} />Edit product</Link>}</header>
+      <PageHeader
+        className="detail-heading"
+        title={product.name}
+        description={<>{concern} · Started {formatDate(product.startDate)}{started ? ` · Day ${day}` : ''}</>}
+        actions={!isDemo && <Link to={`/products/${productId}/edit`} className={buttonVariants({ variant: 'outline', size: 'sm' })}><PencilSimple size={16} />Edit product</Link>}
+      />
       {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concern.toLowerCase()} />}
       <div className="evidence-layout">
         <div className="verdict-column">
@@ -80,7 +87,7 @@ export function ProductDetailPage() {
         </div>
         <div className="evidence-main">
           <section className="detail-chart"><div className="section-heading"><h2>{concern} score over time</h2><span>{points.length} scans</span></div><ScoreChart points={points} startDate={product.startDate} baseline={inputs?.baselineMean} label={`${concern} score`} /><p className="chart-quality">The dashed line marks the product start date.</p></section>
-          <section className="scan-history"><h2>Scan history</h2>{points.length === 0 ? <p>No scans yet.</p> : <Table>
+          <section className="scan-history"><h2>Scan history</h2>{points.length === 0 ? <p className="text-sm text-ink-2">No scans yet.</p> : <Table>
             <TableCaption className="sr-only">All scans for this product’s target concern</TableCaption>
             <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>{concern}</TableHead><TableHead>Quality</TableHead><TableHead>Period</TableHead></TableRow></TableHeader>
             <TableBody>{[...points].sort((a, b) => b.createdAt - a.createdAt).map(point => (
@@ -111,5 +118,15 @@ export function ProductDetailPage() {
   )
 }
 function NotFound() {
-  return <main className="screen status-page"><h1>Product not found</h1><p>It may have been deleted, or the link is wrong.</p><Link to="/routine" className={buttonVariants({ variant: 'outline' })}>Back to routine</Link></main>
+  return (
+    <main className="screen">
+      <EmptyState
+        variant="page"
+        icon={<MagnifyingGlass size={30} />}
+        title="Product not found"
+        description="It may have been deleted, or the link is wrong."
+        action={<Link to="/routine" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>Back to routine</Link>}
+      />
+    </main>
+  )
 }

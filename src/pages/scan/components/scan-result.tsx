@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import { buttonVariants } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { PageHeader } from '@/components/page-header'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS } from '@shared/concerns'
 import { describeAgreement, type AgreementLevel } from '@shared/scan/photo-agreement'
@@ -58,7 +59,7 @@ function GapScale({ gap }: { gap: number }) {
 export function ScanResult({ result, ideas }: { result: ScanResultData; ideas?: React.ReactNode }) {
   const agreement = describeAgreement(result.gap)
   return <div className="scan-result-content">
-    <header className="screen-heading"><div><h1>Scan recorded</h1><p>Your photos weren’t stored.</p></div><Link to="/" className={`${buttonVariants()} desktop-only`}>Back to overview</Link></header>
+    <PageHeader title="Scan recorded" description="Your photos weren’t stored." actions={<Link to="/" className={`${buttonVariants()} desktop-only`}>Back to overview</Link>} />
     <div className="result-layout"><section className="result-ledger" aria-label="Your scores"><ol>{CONCERN_KEYS.filter(key => result.scores[key] !== undefined).map((key, index) => <li key={key}><span>{String(index+1).padStart(2,'0')}</span><h2>{CONCERNS[key].label}</h2><span className="score-track" aria-hidden><i style={{ width: `${Math.max(0, Math.min(100, result.scores[key]))}%` }} /></span><strong>{Math.round(result.scores[key])}</strong></li>)}</ol><p>Scores out of 100. Higher is healthier.</p></section>
       <div className="result-consistency"><section className="agreement-panel"><header><h2>Photo consistency</h2><strong className={AGREEMENT_CHIP[agreement.level]}>{agreement.label}</strong></header><GapScale gap={result.gap} /><p>{result.gap.toFixed(1)} points between photos.</p><p>{agreement.sentence}</p>{result.qualityFlag && <p className="quality-note">Lower-quality scan: keep light and distance consistent next time.</p>}</section><p className="result-privacy">Saved to your scan history. You can find updated product verdicts in your routine.</p><Link to="/routine" className={buttonVariants({ variant: 'outline' })}>View your routine</Link></div>
     </div>

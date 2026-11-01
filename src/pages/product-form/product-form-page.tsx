@@ -1,4 +1,4 @@
-import { CalendarBlank, Drop, Warning } from '@phosphor-icons/react'
+import { CalendarBlank, MagnifyingGlass, Warning } from '@phosphor-icons/react'
 import { useMutation, useQuery } from 'convex/react'
 import { ConvexError } from 'convex/values'
 import { useState } from 'react'
@@ -10,6 +10,8 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Alert } from '@/components/ui/alert'
+import { PageHeader } from '@/components/page-header'
+import { EmptyState } from '@/components/empty-state'
 import { fromDateInputValue, toDateInputValue } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS, isConcernKey } from '@shared/concerns'
@@ -29,15 +31,14 @@ export function ProductFormPage() {
   if (id && product === undefined) return <PageSkeleton />
   if (id && product === null) {
     return (
-      <main className="mx-auto flex max-w-md flex-col items-center gap-4 px-6 pt-32 text-center md:pt-40">
-        <span className="tile grid size-[92px] place-items-center rounded-[32px]" aria-hidden>
-          <Drop size={40} />
-        </span>
-        <h1 className="display text-4xl leading-[1.05] md:text-6xl">Product not found</h1>
-        <p className="text-base text-ink-2">It may have been deleted, or the link is wrong.</p>
-        <Link to="/" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>
-          Back home
-        </Link>
+      <main className="screen">
+        <EmptyState
+          variant="page"
+          icon={<MagnifyingGlass size={30} />}
+          title="Product not found"
+          description="It may have been deleted, or the link is wrong."
+          action={<Link to="/routine" className={buttonVariants({ variant: 'secondary', size: 'lg' })}>Back to routine</Link>}
+        />
       </main>
     )
   }
@@ -107,7 +108,7 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
 
   return <main className="screen product-form-page">
     <BackLink to={back} label="Back" />
-    <header className="screen-heading detail-heading"><h1>{productId ? 'Edit product' : 'Add a product'}</h1></header>
+    <PageHeader className="detail-heading" title={productId ? 'Edit product' : 'Add a product'} />
     <div className="product-form-layout"><aside className="form-guide"><ol><li><b>01</b><span>Product<small>Add product details.</small></span></li><li><b>02</b><span>Concern<small>Choose what you’re tracking.</small></span></li><li><b>03</b><span>Start date<small>Set when you started using it.</small></span></li></ol><p>Track one concern at a time.</p></aside>
       <form onSubmit={onSubmit} className="product-form">
         <label className="form-label"><span><small>01 / </small>Product name</span><Input value={values.name} onChange={e => setValues({ ...values, name: e.target.value })} maxLength={80} required placeholder="e.g. Niacinamide 10%" /></label>
