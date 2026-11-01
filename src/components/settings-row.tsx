@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 export function SettingsGroup({ title, caption, children, className }: { title?: string; caption?: React.ReactNode; children?: React.ReactNode; className?: string }) {
   return (
     <section className={cn('settings-group', className)}>
-      {title && <h2 className="px-4 pb-2 text-eyebrow font-semibold tracking-eyebrow text-ink-3 uppercase">{title}</h2>}
+      {title && <h2 className="px-4 pb-2 text-2xs font-semibold tracking-wider text-ink-3 uppercase">{title}</h2>}
       {children && <div className="settings-rows">{children}</div>}
       {caption && <div className="px-4 pt-2 text-xs leading-relaxed text-ink-2">{caption}</div>}
     </section>

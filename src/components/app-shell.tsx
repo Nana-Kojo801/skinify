@@ -1,10 +1,16 @@
 import { Camera, House, ListBullets, User, WifiSlash } from '@phosphor-icons/react'
 import { useQuery } from 'convex/react'
-import { Suspense, useEffect, useSyncExternalStore } from 'react'
+import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import { Logo } from '@/components/logo'
 import { PageSkeleton } from '@/components/page-skeleton'
+import { TOASTER_EVENT } from '@/lib/toast'
+import { Alert } from '@/components/ui/alert'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { api } from '../../convex/_generated/api'
+
+// Mounted on the first toast only (see lib/toast.ts).
+const Toaster = lazy(() => import('@/components/ui/sonner').then((m) => ({ default: m.Toaster })))
 
 function useOnline() {
   return useSyncExternalStore((onChange) => {
@@ -21,6 +27,12 @@ export function AppShell() {
   const me = useQuery(api.account.me)
   const { pathname } = useLocation()
   const online = useOnline()
+  const [toaster, setToaster] = useState(false)
+  useEffect(() => {
+    const mount = () => setToaster(true)
+    window.addEventListener(TOASTER_EVENT, mount)
+    return () => window.removeEventListener(TOASTER_EVENT, mount)
+  }, [])
   const routineActive = pathname === '/routine' || pathname.startsWith('/products/') || pathname.startsWith('/compare/')
   const isForm = pathname === '/products/new' || pathname.endsWith('/edit')
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }) }, [pathname])
@@ -45,13 +57,14 @@ export function AppShell() {
           <nav className="desktop-nav" aria-label="Main navigation">
             {desktopLinks.map(item => <Link key={item.to} to={item.to} aria-current={item.active ? 'page' : undefined}>{item.label}</Link>)}
           </nav>
-          <Link to="/settings" className="account-link" aria-label="Your account"><span className="avatar">{me?.email?.[0]?.toUpperCase() || <User size={16} />}</span><span className="account-label">{me?.isDemoAccount ? 'Demo account' : 'Your account'}</span></Link>
+          <Link to="/settings" className="account-link" aria-label="Your account"><Avatar><AvatarFallback>{me?.email?.[0]?.toUpperCase() || <User size={16} />}</AvatarFallback></Avatar><span className="account-label">{me?.isDemoAccount ? 'Demo account' : 'Your account'}</span></Link>
         </div>
       </header>
-      {!online && <p className="offline-notice" role="status"><WifiSlash size={18} /> You're offline. Showing what was loaded last. Scans need a connection.</p>}
+      {!online && <Alert role="status" className="offline-notice"><WifiSlash size={18} /> You're offline. Showing what was loaded last. Scans need a connection.</Alert>}
       <div id="main-content" className={`app-content ${isForm ? 'has-form' : ''}`} tabIndex={-1}>
         <Suspense fallback={<PageSkeleton />}><div key={pathname} className="page-in"><Outlet /></div></Suspense>
       </div>
+      {toaster && <Suspense fallback={null}><Toaster /></Suspense>}
       {!isForm && <nav className="bottom-nav print:hidden" aria-label="Mobile navigation">
         {mobileLinks.map(({ to, label, icon: Icon, active }) => <Link key={to} to={to} aria-current={active ? 'page' : undefined}><Icon size={23} weight={active ? 'fill' : 'regular'} /><span>{label}</span></Link>)}
       </nav>}

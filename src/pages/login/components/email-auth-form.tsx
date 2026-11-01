@@ -2,6 +2,9 @@ import { useSignIn, useSignUp } from '@clerk/react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 type Mode = 'signIn' | 'signUp'
 /** After the password is accepted Clerk may want an emailed code: to verify a new address, or on a new device. */
@@ -121,9 +124,9 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
         <p className="text-base leading-snug text-ink-2">
           We emailed a 6-digit code to <strong className="font-semibold">{codeStep.email}</strong>. Enter it to continue.
         </p>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold">
+        <Label>
           Code
-          <input
+          <Input
             name="code"
             inputMode="numeric"
             autoComplete="one-time-code"
@@ -132,9 +135,9 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
             required
             autoFocus
             placeholder="123456"
-            className="field h-16 text-center text-3xl font-semibold tracking-[0.5em]"
+            className="h-16 text-center text-3xl font-semibold tracking-[0.5em]"
           />
-        </label>
+        </Label>
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? 'Please wait…' : 'Verify and continue'}
         </Button>
@@ -152,25 +155,38 @@ export function EmailAuthForm({ pending, setPending, setError }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3">
-      <div className="auth-tabs" role="group" aria-label="Sign in or create an account">
-        {(['signIn', 'signUp'] as const).map(value => <button key={value} type="button" aria-pressed={mode === value} aria-label={value === 'signIn' ? 'Switch to sign in' : 'Switch to create account'} onClick={() => switchMode(value)}>{value === 'signIn' ? 'Sign in' : 'Create account'}</button>)}
-      </div>
-      <label className="flex flex-col gap-1.5 text-sm font-semibold">
+      <ToggleGroup
+        variant="segment"
+        aria-label="Sign in or create an account"
+        value={[mode]}
+        onValueChange={(next) => {
+          const value = next[0]
+          if (value === 'signIn' || value === 'signUp') switchMode(value)
+        }}
+        className="mb-1 grid grid-cols-2 gap-0 rounded-full border border-input p-[3px]"
+      >
+        <ToggleGroupItem value="signIn" aria-label="Switch to sign in">
+          Sign in
+        </ToggleGroupItem>
+        <ToggleGroupItem value="signUp" aria-label="Switch to create account">
+          Create account
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <Label>
         Email
-        <input name="email" type="email" autoComplete="email" required placeholder="you@example.com" className="field" />
-      </label>
-      <label className="flex flex-col gap-1.5 text-sm font-semibold">
+        <Input name="email" type="email" autoComplete="email" required placeholder="you@example.com" />
+      </Label>
+      <Label>
         {mode === 'signUp' ? 'Password, at least 8 characters' : 'Password'}
-        <input
+        <Input
           name="password"
           type="password"
           autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'}
           minLength={mode === 'signUp' ? 8 : undefined}
           required
           placeholder="••••••••"
-          className="field"
         />
-      </label>
+      </Label>
       {/* Clerk draws its bot check here when a sign-up needs one. */}
       {mode === 'signUp' && <div id="clerk-captcha" />}
       <Button type="submit" size="lg" disabled={pending}>

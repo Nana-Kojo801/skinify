@@ -4,6 +4,9 @@ import { useState } from "react";
 import { BackLink } from "@/components/back-link";
 import { LogoMark } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { formatDate } from "@/lib/format";
 import {
@@ -14,7 +17,7 @@ import {
 import { api } from "../../../convex/_generated/api";
 
 const th =
-  "border-b-[1.5px] border-[#111216] px-1.5 py-1.5 text-left text-eyebrow font-semibold tracking-eyebrow text-[#4a4d55] uppercase";
+  "border-b-[1.5px] border-[#111216] px-1.5 py-1.5 text-left text-2xs font-semibold tracking-wider text-[#4a4d55] uppercase";
 const td = "border-b border-[#e1e2e6] px-1.5 py-1.5 align-top print:py-1";
 
 // A plain black-and-white document for a pharmacist or dermatologist: products, results and every scan as numbers,
@@ -44,17 +47,16 @@ export function ReportPage() {
     <main className="screen report-page print:min-h-0 print:bg-white print:pb-0">
       <div className="report-controls print:hidden">
         <BackLink to="/settings" label="Back" /><h1>Skin report</h1><p className="report-intro">Your products, progress and scan history. Ready to share.</p>
-        <label className="flex min-w-[200px] flex-1 flex-col gap-1.5 text-sm font-semibold" htmlFor="report-name">
+        <Label className="min-w-[200px] flex-1" htmlFor="report-name">
           Your name (optional, not saved)
-          <input
+          <Input
             id="report-name"
             value={name}
             onChange={(event) => setName(event.target.value)}
             maxLength={60}
             placeholder="Your name"
-            className="field"
           />
-        </label>
+        </Label>
         <button type="button" onClick={() => window.print()} className={buttonVariants({ size: "lg" })}>
           <Printer size={18} weight="bold" />
           Print or save as PDF
@@ -135,39 +137,39 @@ export function ReportPage() {
               ))}
             </ul>
             <div className="hidden overflow-x-auto sm:block print:block print:overflow-visible">
-              <table className="w-full min-w-[640px] border-collapse text-xs print:min-w-0">
-                <thead>
-                  <tr>
-                    <th className={th}>Product</th>
-                    <th className={th}>Concern</th>
-                    <th className={th}>Started</th>
-                    <th className={th}>Result so far</th>
-                    <th className={`${th} text-right`}>Score before → now</th>
-                    <th className={`${th} text-right`}>Normal variation</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="min-w-[640px] text-xs print:min-w-0" containerClassName="print:overflow-visible">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className={th}>Product</TableHead>
+                    <TableHead className={th}>Concern</TableHead>
+                    <TableHead className={th}>Started</TableHead>
+                    <TableHead className={th}>Result so far</TableHead>
+                    <TableHead className={`${th} text-right`}>Score before → now</TableHead>
+                    <TableHead className={`${th} text-right`}>Normal variation</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {report.products.map((product) => (
-                    <tr
+                    <TableRow
                       key={`${product.name}-${product.startDate}`}
                       className="print:break-inside-avoid"
                     >
-                      <td className={td}>
+                      <TableCell className={td}>
                         <strong>{product.name}</strong>
                         {!product.active && product.endDate !== null && (
                           <span className="block text-xs text-[#4a4d55]">
                             Stopped {formatDate(product.endDate)}
                           </span>
                         )}
-                      </td>
-                      <td className={td}>{product.concern}</td>
-                      <td className={td}>
+                      </TableCell>
+                      <TableCell className={td}>{product.concern}</TableCell>
+                      <TableCell className={td}>
                         {formatDate(product.startDate)}
                         <span className="block text-xs text-[#4a4d55]">
                           day {product.day}
                         </span>
-                      </td>
-                      <td className={td}>
+                      </TableCell>
+                      <TableCell className={td}>
                         <span className="inline-block rounded-[4px] border-[1.5px] border-[#111216] px-1.5 text-xs font-semibold">
                           {product.verdictLabel}
                         </span>
@@ -179,17 +181,17 @@ export function ReportPage() {
                             {line}
                           </span>
                         ))}
-                      </td>
-                      <td className={`${td} text-right tabular-nums`}>
+                      </TableCell>
+                      <TableCell className={`${td} text-right tabular-nums`}>
                         {product.scoreChange ?? "—"}
-                      </td>
-                      <td className={`${td} text-right tabular-nums`}>
+                      </TableCell>
+                      <TableCell className={`${td} text-right tabular-nums`}>
                         {product.variation ?? "—"}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </>
         )}
@@ -207,24 +209,24 @@ export function ReportPage() {
             <p className="mb-1.5 text-xs text-[#4a4d55] sm:hidden print:hidden">
               Swipe sideways to see every concern.
             </p>
-            <table className="w-full min-w-[640px] border-collapse text-xs print:min-w-0">
-              <thead>
-                <tr>
-                  <th className={th}>Date</th>
+            <Table className="min-w-[640px] text-xs print:min-w-0" containerClassName="print:overflow-visible">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className={th}>Date</TableHead>
                   {report.concernLabels.map((label) => (
-                    <th key={label} className={`${th} text-right`}>
+                    <TableHead key={label} className={`${th} text-right`}>
                       {label}
-                    </th>
+                    </TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {report.scans.map((scan) => (
-                  <tr
+                  <TableRow
                     key={scan.createdAt}
                     className={`print:break-inside-avoid ${scan.flagged ? "text-canttell-ink" : ""}`}
                   >
-                    <td className={td}>
+                    <TableCell className={td}>
                       {formatDate(scan.createdAt)}
                       {scan.startedProducts > 0 && (
                         <span className="block text-xs text-[#4a4d55]">
@@ -236,19 +238,19 @@ export function ReportPage() {
                       {scan.flagged && (
                         <span className="block text-xs">lower quality</span>
                       )}
-                    </td>
+                    </TableCell>
                     {scan.scores.map((score, index) => (
-                      <td
+                      <TableCell
                         key={index}
                         className={`${td} text-right tabular-nums`}
                       >
                         {score ?? "—"}
-                      </td>
+                      </TableCell>
                     ))}
-                  </tr>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
 

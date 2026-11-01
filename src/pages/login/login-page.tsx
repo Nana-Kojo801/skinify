@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
+import { Alert } from '@/components/ui/alert'
 import { EmailAuthForm } from './components/email-auth-form'
 import { api } from '../../../convex/_generated/api'
 
@@ -53,7 +54,7 @@ export function LoginPage() {
   return <main className="login-page">
     <header className="login-header"><Logo /><span>SKIN / PROGRESS</span></header>
     <div className="login-layout"><section className="login-story"><h1>Keep track<br className="desktop-only" /> of what works.</h1><div className="login-photo"><img src="/images/scan-portrait.webp" alt="Close-up of natural skin" /></div><p className="login-statement">Your skin. Your record.</p><p className="login-description">One weekly scan. An honest look at what your routine is doing.</p></section>
-      <section className="login-form-panel" aria-label="Sign in"><h2>Your skin. Your record.</h2><EmailAuthForm pending={pending} setPending={setPending} setError={setError} />{error && <p role="alert" className="notice text-irritation-ink"><Warning size={18} />{error}</p>}<p className="auth-divider">or</p><Button variant="outline" size="lg" onClick={() => void onGoogle()} disabled={pending}><GoogleMark />Continue with Google</Button><button type="button" className="demo-link" onClick={() => void onDemo()} disabled={pending}>Explore a sample routine <ArrowRight size={16} /></button><p className="login-privacy">Your photos are analysed, then discarded.</p></section>
+      <section className="login-form-panel" aria-label="Sign in"><h2>Your skin. Your record.</h2><EmailAuthForm pending={pending} setPending={setPending} setError={setError} />{error && <Alert role="alert" variant="destructive"><Warning size={18} />{error}</Alert>}<p className="auth-divider">or</p><Button variant="outline" size="lg" onClick={() => void onGoogle()} disabled={pending}><GoogleMark />Continue with Google</Button><button type="button" className="demo-link" onClick={() => void onDemo()} disabled={pending}>Explore a sample routine <ArrowRight size={16} /></button><p className="login-privacy">Your photos are analysed, then discarded.</p></section>
     </div>
     <footer className="login-footer">RECEIPTS / SKIN / PROGRESS</footer>
   </main>
