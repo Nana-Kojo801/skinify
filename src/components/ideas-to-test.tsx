@@ -34,7 +34,7 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
         Ideas to test
       </h2>
       <p className="mt-2 text-sm leading-snug text-ink-2">
-        Your lowest scores this scan, and what people commonly try for them. Try one, and Receipts will tell you honestly whether it worked.
+        Your lowest scores this scan, and what people commonly try for them. Try one, and Skinify will tell you honestly whether it worked.
       </p>
 
       <div className={cn('mt-4 flex flex-col gap-4', layout === 'wide' && 'md:grid xl:grid-cols-3 md:gap-5')}>

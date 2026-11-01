@@ -86,7 +86,7 @@ export function newMilestones(milestones: readonly Milestone[], seen: ReadonlySe
 export function celebrationText(milestone: Milestone): { title: string; text: string } {
   switch (milestone.id) {
     case 'first-scan':
-      return { title: 'Your first scan is done', text: 'That is your starting point. Scan weekly and Receipts can tell you honestly what changes.' }
+      return { title: 'Your first scan is done', text: 'That is your starting point. Scan weekly and Skinify can tell you honestly what changes.' }
     case 'first-working':
       return {
         title: 'Your first "Working" verdict',

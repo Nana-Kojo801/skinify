@@ -1,4 +1,4 @@
-# Receipts: working agreement for Claude
+# Skinify: working agreement for Claude
 
 Hackathon project (YouCam API, **deadline Nov 2**). Two people build it:
 

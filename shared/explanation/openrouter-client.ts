@@ -45,7 +45,7 @@ async function askModel(
   try {
     const res = await fetchFn(OPENROUTER_URL, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'X-Title': 'Receipts' },
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'X-Title': 'Skinify' },
       // Room for models that think first.
       body: JSON.stringify({ model, messages, temperature: 0.3, max_tokens: 1500 }),
       signal: controller.signal,

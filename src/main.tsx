@@ -21,7 +21,7 @@ createRoot(document.getElementById('root')!).render(
       </ClerkProvider>
     ) : (
       <main className="mx-auto max-w-md p-4">
-        <h1 className="text-xl font-semibold">Receipts is not configured</h1>
+        <h1 className="text-xl font-semibold">Skinify is not configured</h1>
         <p className="text-sm text-neutral-500">
           Run <code>npx convex dev</code> to create a deployment and write VITE_CONVEX_URL to .env.local, and add
           VITE_CLERK_PUBLISHABLE_KEY (Clerk dashboard, API keys) to .env.local, then restart <code>npm run dev</code>.

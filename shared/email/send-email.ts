@@ -5,7 +5,7 @@ const RESEND_API = 'https://api.resend.com'
 export type EmailMessage = { to: string; subject: string; html: string; text: string }
 export type EmailSettings = {
   apiKey: string
-  /** e.g. `Receipts <onboarding@resend.dev>` */
+  /** e.g. `Skinify <onboarding@resend.dev>` */
   from: string
   /** Same key within 24 hours = Resend sends only once, so a retry after a crash can't double-send. */
   idempotencyKey?: string

@@ -54,7 +54,7 @@ export function ReminderSettings() {
       )}
       {status.optedIn && status.delivery === 'preview' && (
         <p className="mt-2 rounded-2xl bg-well px-4 py-3 text-sm text-ink-2">
-          Real email is limited to a few addresses while Receipts is a hackathon project, so yours won't be sent. This is what it would look like.
+          Real email is limited to a few addresses while Skinify is a hackathon project, so yours won't be sent. This is what it would look like.
         </p>
       )}
     </>

@@ -1,4 +1,4 @@
-# Receipts: "Is this product actually working?" (YouCam API hackathon)
+# Skinify: "Is this product actually working?" (YouCam API hackathon)
 
 ## What it is
 A mobile-first web app (PWA) where a user logs skincare products, scans their face weekly with YouCam's Skin Analysis API, and gets an honest verdict on whether each product is working. Deadline is Nov 2, so FUNCTIONALITY FIRST. Any clean, simple UI is fine for now. I will polish the design later. Do not spend time on visual design or ask me to approve a UI mock.

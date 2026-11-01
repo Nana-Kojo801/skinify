@@ -19,7 +19,7 @@ function downloadCalendarFile(dueAt: number) {
   const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }))
   const link = document.createElement('a')
   link.href = url
-  link.download = 'receipts-weekly-scan.ics'
+  link.download = 'skinify-weekly-scan.ics'
   document.body.append(link)
   link.click()
   link.remove()
