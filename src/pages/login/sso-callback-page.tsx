@@ -8,8 +8,8 @@ export function SsoCallbackPage() {
   return (
     <main className="grid min-h-dvh place-items-center px-6 text-center" aria-busy="true">
       <div className="flex flex-col items-center gap-4">
-        <span className="spin size-10 rounded-full border-2 border-ink/10 border-t-primary" aria-hidden />
-        <h1 className="display text-3xl leading-none md:text-5xl">Signing you in…</h1>
+        <span className="spin size-10 rounded-full border-[3px] border-ink/10 border-t-primary" aria-hidden />
+        <h1 className="page-title">Signing you in…</h1>
         <p className="text-base text-ink-2">Finishing Google sign-in. This takes a moment.</p>
       </div>
       <HandleSSOCallback

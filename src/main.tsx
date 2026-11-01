@@ -4,6 +4,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { App } from './app'
+import { ErrorBoundary } from './components/error-boundary'
 import { convex } from './lib/convex-client'
 
 const clerkKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')!).render(
     {convex && clerkKey ? (
       <ClerkProvider publishableKey={clerkKey}>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </ConvexProviderWithClerk>
       </ClerkProvider>
     ) : (

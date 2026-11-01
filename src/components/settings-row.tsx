@@ -42,4 +42,4 @@ export function SettingsRowContent({
   )
 }
 
-export const rowClass = 'press flex min-h-[62px] w-full cursor-pointer items-center gap-3.5 px-4 py-3 disabled:cursor-not-allowed disabled:opacity-45'
+export const rowClass = 'press flex min-h-[62px] w-full cursor-pointer items-center gap-3.5 px-4 py-3 transition-colors hover:bg-white/[.03] disabled:cursor-not-allowed disabled:opacity-45'

@@ -9,6 +9,7 @@ import { SettingsGroup, SettingsRowContent, rowClass } from '@/components/settin
 import { Alert } from '@/components/ui/alert'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogMedia, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { PageHeader } from '@/components/page-header'
 import { api } from '../../../convex/_generated/api'
 
 export function SettingsPage() {
@@ -37,7 +38,7 @@ export function SettingsPage() {
 
   return (
     <main className="screen settings-page">
-      <header className="screen-heading"><h1>Your account</h1></header>
+      <PageHeader title="Your account" />
       <div className="account-layout"><aside className="account-profile"><Avatar className="profile-avatar"><AvatarFallback className="text-inherit">{initial}</AvatarFallback></Avatar><div><h2>{me?.isDemoAccount ? 'Demo account' : 'Personal account'}</h2><p>{me?.email ?? 'Loading…'}</p></div><button type="button" onClick={() => void signOut()} className="profile-signout"><SignOut size={17} />Sign out</button></aside><div className="account-settings">
       <ReminderSettings />
 

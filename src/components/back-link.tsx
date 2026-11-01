@@ -9,7 +9,7 @@ export function BackLink({ to, label, ariaLabel, className }: { to: string; labe
       to={to}
       aria-label={ariaLabel}
       className={cn(
-        'press inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-full bg-[image:var(--sheen)] bg-tile text-base font-semibold text-ink shadow-(--shadow-depth)',
+        'press inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-full bg-[image:var(--sheen)] bg-tile text-base font-semibold text-ink shadow-(--shadow-depth) transition-colors hover:bg-well',
         label ? 'pr-4 pl-2.5' : 'w-11',
         className,
       )}
