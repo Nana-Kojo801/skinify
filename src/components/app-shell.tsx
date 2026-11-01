@@ -54,7 +54,7 @@ export function AppShell() {
       <a href="#main-content" className="skip-link">Skip to content</a>
       <header className="app-header print:hidden">
         <div className="app-header-inner">
-          <Link to="/" aria-label="Receipts home"><Logo /></Link>
+          <Link to="/" aria-label="Skinify home"><Logo /></Link>
           <nav className="desktop-nav" aria-label="Main navigation">
             {desktopLinks.map(item => <Link key={item.to} to={item.to} aria-current={item.active ? 'page' : undefined}>{item.label}</Link>)}
           </nav>
