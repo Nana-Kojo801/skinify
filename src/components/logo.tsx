@@ -8,5 +8,5 @@ export function LogoMark({ className = 'size-5' }: { className?: string; inverte
 }
 
 export function Logo({ inverted = false }: { inverted?: boolean }) {
-  return <span className={`brand ${inverted ? 'text-white' : ''}`}>receipts<LogoMark /></span>
+  return <span className={`brand ${inverted ? 'text-white' : ''}`}>skinify<LogoMark /></span>
 }

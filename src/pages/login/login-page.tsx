@@ -88,7 +88,7 @@ export function LoginPage() {
           <p className="login-privacy">Your photos are analysed, then discarded.</p>
         </section>
       </div>
-      <footer className="login-footer">RECEIPTS / SKIN / PROGRESS</footer>
+      <footer className="login-footer">SKINIFY / SKIN / PROGRESS</footer>
     </main>
   )
 }

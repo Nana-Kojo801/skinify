@@ -1,6 +1,6 @@
 {
-  "name": "Receipts",
-  "short_name": "Receipts",
+  "name": "Skinify",
+  "short_name": "Skinify",
   "description": "Is this skincare product actually working?",
   "start_url": "/",
   "scope": "/",
