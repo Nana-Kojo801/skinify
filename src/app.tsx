@@ -46,16 +46,10 @@ export function App() {
           }
         />
         <Route element={<RequireAuth />}>
-          <Route
-            path="/report"
-            element={
-              <Suspense fallback={null}>
-                <ReportPage />
-              </Suspense>
-            }
-          />
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/routine" element={<HomePage routineOnly />} />
+            <Route path="/report" element={<ReportPage />} />
             <Route path="/scan" element={<ScanPage />} />
             <Route path="/products/new" element={<ProductFormPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />

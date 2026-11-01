@@ -1,5 +1,5 @@
 import { useSignIn } from '@clerk/react'
-import { Sparkle, Warning } from '@phosphor-icons/react'
+import { ArrowRight, Warning } from '@phosphor-icons/react'
 import { useAction } from 'convex/react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -50,63 +50,13 @@ export function LoginPage() {
     }
   }
 
-  const verdictCard = (className: string) => (
-    <div className={`glass float absolute flex items-center gap-3 rounded-[24px] py-2.5 pr-4 pl-2.5 text-ink ${className}`} aria-hidden>
-      <span className="grid size-[54px] place-items-center rounded-[17px] bg-[image:var(--sheen)] bg-accent text-[28px] font-extrabold tracking-[-0.03em]">72</span>
-      <span className="text-[13px] leading-tight">
-        <strong className="block text-[15px] font-extrabold">Working</strong>
-        <span className="text-ink-2">Acne +13.1 since day 1</span>
-      </span>
+  return <main className="login-page">
+    <header className="login-header"><Logo /><span>SKIN / PROGRESS</span></header>
+    <div className="login-layout"><section className="login-story"><h1>Keep track<br className="desktop-only" /> of what works.</h1><div className="login-photo"><img src="/images/scan-portrait.webp" alt="Close-up of natural skin" /></div><p className="login-statement">Your skin. Your record.</p><p className="login-description">One weekly scan. An honest look at what your routine is doing.</p></section>
+      <section className="login-form-panel" aria-label="Sign in"><h2>Your skin. Your record.</h2><EmailAuthForm pending={pending} setPending={setPending} setError={setError} />{error && <p role="alert" className="notice text-irritation-ink"><Warning size={18} />{error}</p>}<p className="auth-divider">or</p><Button variant="outline" size="lg" onClick={() => void onGoogle()} disabled={pending}><GoogleMark />Continue with Google</Button><button type="button" className="demo-link" onClick={() => void onDemo()} disabled={pending}>Explore a sample routine <ArrowRight size={16} /></button><p className="login-privacy">Your photos are analysed, then discarded.</p></section>
     </div>
-  )
-
-  return (
-    <main className="min-h-dvh md:grid md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-      <div className="photo-tile relative h-[380px] rounded-t-none md:sticky md:top-4 md:m-4 md:h-[calc(100dvh-2rem)] md:rounded-(--radius-tile)">
-        <img src="/images/scan-portrait.webp" alt="" className="settle absolute inset-0 size-full object-cover object-[50%_30%]" />
-        <span aria-hidden className="absolute inset-0 bg-linear-to-b from-black/45 via-black/0 via-35% to-black/55 md:to-black/75" />
-        <header className="absolute inset-x-0 top-[max(14px,env(safe-area-inset-top))] flex items-center justify-between px-[18px] md:top-6 md:px-7">
-          <Logo inverted />
-          <Button variant="glass" size="sm" onClick={() => void onDemo()} disabled={pending}>
-            Try the demo
-          </Button>
-        </header>
-        {verdictCard('bottom-14 left-[18px] md:top-[38%] md:bottom-auto md:left-7')}
-        <div className="absolute inset-x-7 bottom-8 hidden md:block">
-          <p className="display text-[56px] leading-[0.98] lg:text-[64px]">Is your skincare actually working?</p>
-          <p className="mt-4 max-w-[44ch] text-[17px] text-white/85">Scan your face once a week. Get an honest verdict on every product, based on the numbers.</p>
-        </div>
-      </div>
-
-      <section className="relative z-10 -mt-9 w-full rounded-t-[34px] bg-[radial-gradient(120%_40%_at_50%_0%,#fff,rgb(255_255_255/0)_70%),var(--color-fog)] px-4 pt-7 pb-12 shadow-[0_-14px_28px_-18px_rgb(0_0_0/0.35)] md:mx-auto md:mt-0 md:flex md:max-w-[460px] md:flex-col md:justify-center md:rounded-none md:bg-none md:px-6 md:py-16 md:shadow-none">
-        <h1 className="display rise text-[34px] leading-[1.02] md:hidden">Is your skincare actually working?</h1>
-        <p className="rise mt-2.5 text-[15.5px] text-ink-2 md:hidden" style={{ '--i': 1 } as React.CSSProperties}>
-          Scan your face once a week. Get an honest verdict on every product, based on the numbers.
-        </p>
-        <h1 className="display rise hidden text-[44px] leading-[1.02] md:block">Welcome to Receipts</h1>
-
-        <div className="rise mt-6 flex flex-col gap-3 md:mt-8" style={{ '--i': 2 } as React.CSSProperties}>
-          <EmailAuthForm pending={pending} setPending={setPending} setError={setError} />
-          {error && (
-            <p role="alert" className="pop-in flex items-start gap-2.5 rounded-[20px] bg-irritation-bg px-4 py-3 text-sm font-semibold text-irritation-ink">
-              <Warning size={18} weight="bold" className="mt-px shrink-0" />
-              {error}
-            </p>
-          )}
-          <p className="my-1 flex items-center gap-3 text-[13px] font-bold text-ink-3 before:h-px before:flex-1 before:bg-hair after:h-px after:flex-1 after:bg-hair">or</p>
-          <Button variant="soft" size="lg" onClick={() => void onGoogle()} disabled={pending}>
-            <GoogleMark />
-            Continue with Google
-          </Button>
-          <Button variant="tint" size="lg" onClick={() => void onDemo()} disabled={pending}>
-            <Sparkle size={18} weight="fill" />
-            Try the demo
-          </Button>
-          <p className="px-1 text-center text-[13px] text-ink-2">The demo is a read-only account with sample scans.</p>
-        </div>
-      </section>
-    </main>
-  )
+    <footer className="login-footer">RECEIPTS / SKIN / PROGRESS</footer>
+  </main>
 }
 
 /** Google's "G", in its own colours. */

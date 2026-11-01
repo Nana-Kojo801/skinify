@@ -6,7 +6,6 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { BackLink } from '@/components/back-link'
 import { OverlapWarning } from '@/components/overlap-warning'
 import { PageSkeleton } from '@/components/page-skeleton'
-import { ScoreRing } from '@/components/score-ring'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { fromDateInputValue, toDateInputValue } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -67,7 +66,7 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
   const [now] = useState(() => Date.now())
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
-  const back = productId ? `/products/${productId}` : '/'
+  const back = productId ? `/products/${productId}` : '/routine'
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -103,116 +102,18 @@ function ProductForm({ productId, initial }: { productId?: Id<'products'>; initi
     now,
   )
 
-  return (
-    <main className="mx-auto max-w-[1180px] px-3 pt-[max(12px,env(safe-area-inset-top))] md:px-10 md:pt-8">
-      <header className="flex h-14 items-center px-1">
-        <BackLink to={back} label={productId ? initial.name : 'Products'} ariaLabel="Back" />
-      </header>
-
-      <div className="mt-2 md:mt-4 md:grid md:grid-cols-12 md:items-stretch md:gap-3.5">
-        <aside className="photo-tile hidden md:col-span-5 md:flex md:min-h-[640px] md:flex-col md:justify-end">
-          <img src="/images/product-pour.webp" alt="" className="settle absolute inset-0 size-full object-cover" />
-          <span aria-hidden className="absolute inset-0 bg-linear-to-b from-black/0 via-black/0 via-40% to-black/70" />
-          <div className="relative p-7">
-            <p className="display text-[40px] leading-[1.02]">
-              One product,
-              <br />
-              one concern.
-            </p>
-            <p className="mt-3 text-[15px] text-white/85">That keeps the verdict honest: a single score to follow, from the start date on.</p>
-          </div>
-        </aside>
-
-        <div className="md:col-span-7">
-          <section className="rise px-2 md:px-1">
-            <h1 className="display text-[38px] leading-[1.02] md:text-[52px]">{productId ? 'Edit product' : 'New product'}</h1>
-            <p className="mt-2 max-w-md text-[15.5px] text-ink-2 md:text-[17px]">Pick the one skin concern it promises to improve. That is the score the verdict will follow.</p>
-          </section>
-
-          <form onSubmit={onSubmit} className="mt-5 flex flex-col gap-5 md:rounded-(--radius-tile) md:bg-tile md:bg-[image:var(--sheen)] md:shadow-(--shadow-depth) md:mt-6 md:p-6">
-            <label className="rise flex flex-col gap-1.5 text-sm font-bold" style={{ '--i': 1 } as React.CSSProperties}>
-              Product name
-              <input
-                value={values.name}
-                onChange={(e) => setValues({ ...values, name: e.target.value })}
-                maxLength={80}
-                required
-                placeholder="e.g. Niacinamide 10% serum"
-                className="field"
-              />
-            </label>
-
-            <fieldset className="rise" style={{ '--i': 2 } as React.CSSProperties}>
-              <legend className="mb-2 text-sm font-bold">Target concern</legend>
-              <div className="grid grid-cols-2 gap-2">
-                {CONCERN_KEYS.map((key) => {
-                  const checked = values.targetConcern === key
-                  return (
-                    <label
-                      key={key}
-                      className={cn(
-                        'press relative flex min-h-[66px] cursor-pointer flex-col justify-center rounded-[18px] px-3.5 py-2.5 pr-9 transition-[background-color,box-shadow] duration-500 ease-(--ease-liquid) has-focus-visible:outline-[2.5px] has-focus-visible:outline-offset-2 has-focus-visible:outline-ink',
-                        checked ? 'bg-tile shadow-[inset_0_0_0_2px_var(--color-ink),0_12px_22px_-14px_rgb(14_23_38/0.45)]' : 'bg-well shadow-[inset_0_1px_2px_rgb(14_23_38/0.06)] hover:bg-ink/8',
-                      )}
-                    >
-                      <input
-                        type="radio"
-                        name="targetConcern"
-                        value={key}
-                        checked={checked}
-                        onChange={() => setValues({ ...values, targetConcern: key })}
-                        className="sr-only"
-                      />
-                      <span className="block text-[15px] leading-tight font-bold">{CONCERNS[key].label}</span>
-                      <span className="mt-0.5 block text-[12.5px] leading-snug text-ink-2">{CONCERNS[key].hint}</span>
-                      {checked && (
-                        <span className="absolute top-2.5 right-2.5 grid size-[22px] animate-[pop_.4s_var(--ease-spring)_both] place-items-center rounded-full bg-ink text-accent">
-                          <Check size={12} weight="bold" />
-                        </span>
-                      )}
-                    </label>
-                  )
-                })}
-              </div>
-            </fieldset>
-
-            {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concernLabel.toLowerCase()} variant="form" className="rise" />}
-
-            <div className="rise flex items-center gap-4 rounded-[20px] bg-well px-4 py-3.5" style={{ '--i': 3 } as React.CSSProperties}>
-              {latestScore !== undefined && <ScoreRing key={values.targetConcern} value={latestScore} size={56} numberClassName="text-[17px]" />}
-              <p className="text-[14.5px] leading-snug text-ink-2">
-                The verdict will follow your <strong className="font-bold text-ink">{concernLabel.toLowerCase()}</strong> score
-                {latestScore !== undefined ? `. Latest scan: ${Math.round(latestScore)} of 100.` : '.'}
-              </p>
-            </div>
-
-            <label className="rise flex flex-col gap-1.5 text-sm font-bold" style={{ '--i': 4 } as React.CSSProperties}>
-              <span className="flex items-center gap-1.5">
-                <CalendarBlank size={16} weight="bold" />
-                Start date
-              </span>
-              <input type="date" value={values.startDate} onChange={(e) => setValues({ ...values, startDate: e.target.value })} required className="field" />
-              <span className="text-[13px] font-medium text-ink-2">Scans before this date are your baseline.</span>
-            </label>
-
-            {error && (
-              <p role="alert" className="pop-in flex items-start gap-2.5 rounded-[20px] bg-irritation-bg px-4 py-3 text-sm font-semibold text-irritation-ink">
-                <Warning size={18} weight="bold" className="mt-px shrink-0" />
-                {error}
-              </p>
-            )}
-
-            <div className="glass sticky bottom-3 z-20 -mx-1 grid grid-cols-[1fr_2fr] gap-2 rounded-full p-2 md:static md:mx-0 md:flex md:justify-end md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
-              <Link to={back} className={buttonVariants({ variant: 'soft', size: 'lg' })}>
-                Cancel
-              </Link>
-              <Button type="submit" size="lg" disabled={pending} className="md:px-10">
-                {pending ? 'Saving…' : 'Save product'}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </main>
-  )
+  return <main className="screen product-form-page">
+    <BackLink to={back} label="Back" />
+    <header className="screen-heading detail-heading"><h1>{productId ? 'Edit product' : 'Add a product'}</h1></header>
+    <div className="product-form-layout"><aside className="form-guide"><ol><li><b>01</b><span>Product<small>Add product details.</small></span></li><li><b>02</b><span>Concern<small>Choose what you’re tracking.</small></span></li><li><b>03</b><span>Start date<small>Set when you started using it.</small></span></li></ol><p>Track one concern at a time.</p></aside>
+      <form onSubmit={onSubmit} className="product-form">
+        <label className="form-label"><span><small>01 / </small>Product name</span><input value={values.name} onChange={e => setValues({ ...values, name: e.target.value })} maxLength={80} required placeholder="e.g. Niacinamide 10%" className="field" /></label>
+        <fieldset><legend className="form-label"><span><small>02 / </small>What are you tracking?</span></legend><div className="concern-options">{CONCERN_KEYS.map(key => <label key={key} className={cn('concern-option', values.targetConcern === key && 'selected')}><input type="radio" name="targetConcern" value={key} checked={values.targetConcern === key} onChange={() => setValues({ ...values, targetConcern: key })} className="sr-only" /><span className="radio-indicator" aria-hidden>{values.targetConcern === key && <Check size={10} weight="bold" />}</span><span>{CONCERNS[key].label}</span></label>)}</div><p className="form-hint">{concernLabel}{latestScore !== undefined ? ` · Latest score ${Math.round(latestScore)} of 100` : ' will be the score this product follows.'}</p></fieldset>
+        {overlaps.length > 0 && <OverlapWarning overlaps={overlaps} concern={concernLabel.toLowerCase()} variant="form" />}
+        <label className="form-label start-date-field"><span><small>03 / </small>Start date <CalendarBlank size={16} /></span><input type="date" value={values.startDate} onChange={e => setValues({ ...values, startDate: e.target.value })} required className="field" /><span className="form-hint">Scans on or before this date become your baseline.</span></label>
+        {error && <p role="alert" className="notice text-irritation-ink"><Warning size={18} />{error}</p>}
+        <div className="form-actions"><Link to={back} className={buttonVariants({ variant: 'outline' })}>Cancel</Link><Button type="submit" disabled={pending}>{pending ? 'Saving…' : 'Save product'}</Button></div>
+      </form>
+    </div>
+  </main>
 }

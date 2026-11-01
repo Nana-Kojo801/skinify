@@ -109,7 +109,7 @@ export function ScanPage() {
 
   if (result) {
     return (
-      <main className="mx-auto max-w-[1180px] px-3 pt-[max(20px,env(safe-area-inset-top))] md:px-10 md:pt-10">
+      <main className="screen scan-result-page">
         <ScanResult
           result={result}
           ideas={<IdeasToTest scores={result.scores} qualityFlag={result.qualityFlag} products={products} canCreate={!usage?.isDemoAccount} />}
@@ -133,9 +133,9 @@ export function ScanPage() {
       : null
 
   const tips = (
-    <ul className="rise -mx-3 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0" style={{ '--i': 1 } as React.CSSProperties}>
+    <ul className="capture-tips" style={{ '--i': 1 } as React.CSSProperties}>
       {TIPS.map(({ icon: Icon, term, text, tint }) => (
-        <li key={term} className="tile w-[168px] shrink-0 snap-start p-4 md:w-auto">
+        <li key={term} className="capture-tip">
           <span className={cn('grid size-[42px] place-items-center rounded-[14px] shadow-[inset_0_1px_0_rgb(255_255_255/0.7)]', tint)}>
             <Icon size={21} weight="bold" />
           </span>
@@ -185,28 +185,28 @@ export function ScanPage() {
   )
 
   return (
-    <main className="mx-auto max-w-[1180px] px-3 pt-[max(12px,env(safe-area-inset-top))] md:px-10 md:pt-8">
+    <main className="screen scan-page">
       <header className="flex h-14 items-center justify-between px-1 md:mb-2">
         <BackLink to="/" ariaLabel="Back to products" className="md:hidden" />
         <BackLink to="/" label="Home" className="hidden md:inline-flex" />
         {!pending && remaining}
       </header>
 
-      <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:items-start md:gap-3.5">
-        <section className="flex flex-col gap-4 md:sticky md:top-28 md:col-span-5">
+      <div className="capture-layout">
+        <section className="capture-guide">
           {pending ? (
             <div className="rise px-2" aria-live="polite">
               <p className="text-[15px] font-bold text-ink-2">About 10 seconds</p>
-              <h1 className="display mt-1 text-[38px] leading-[1.02] md:text-[52px]">Reading your skin</h1>
+              <h1 className="display mt-1 text-[28px] leading-[1.1] md:text-[32px]">Reading your skin</h1>
             </div>
           ) : (
             <div className="rise px-2">
-              <h1 className="display text-[38px] leading-[1.02] md:text-[52px]">New scan</h1>
-              <p className="mt-2 text-[15.5px] text-ink-2 md:text-[17px]">Take two photos, one right after the other. Your scan needs both.</p>
-              <NextScanDue className="mt-3" />
+              <h1 className="display text-[28px] leading-[1.1] md:text-[32px]">Weekly scan</h1>
+              <p className="mt-2 text-[15.5px] text-ink-2 md:text-[17px]">Two photos. Same spot, same light.</p>
+              <NextScanDue className="mt-3 desktop-only" />
             </div>
           )}
-          {pending ? <div className="hidden md:block">{steps}</div> : tips}
+          {pending ? <div className="hidden md:block">{steps}</div> : <div className="desktop-only">{tips}</div>}
           {!pending && !blocked && (
             <div className="hidden md:block">
               <WhyTwoPhotos />
@@ -220,12 +220,10 @@ export function ScanPage() {
           )}
         </section>
 
-        <section className="flex flex-col gap-3 md:col-span-7">
+        <section className="capture-workspace">
           {blocked ? (
-            <div className="photo-tile rise flex h-[300px] items-end md:h-[560px]" style={{ '--i': 2 } as React.CSSProperties}>
-              <img src="/images/scan-portrait.webp" alt="" className="absolute inset-0 size-full object-cover object-[50%_28%]" />
-              <span aria-hidden className="absolute inset-0 bg-linear-to-b from-transparent from-30% to-black/80" />
-              <p className="relative flex items-start gap-2.5 p-5 text-[15px] leading-snug font-semibold">
+            <div className="flex min-h-[260px] items-center rounded-[22px] border border-hair bg-tile md:min-h-[430px]" style={{ '--i': 2 } as React.CSSProperties}>
+              <p className="flex items-start gap-3 p-8 text-[15px] leading-relaxed text-ink-2">
                 <Info size={20} weight="bold" className="mt-px shrink-0" />
                 {blocked}
               </p>
@@ -260,7 +258,7 @@ export function ScanPage() {
                 ))}
               {!pending && (
                 <div className="rise flex flex-col gap-2.5" style={{ '--i': 3 } as React.CSSProperties}>
-                  <Button variant="accent" size="lg" className="h-[58px]" disabled={!photos[0] || !photos[1]} onClick={() => void onSubmit()}>
+                  <Button variant="accent" size="lg" className="h-[58px]" disabled={!photos[0] || !photos[1] || !usage?.canScan} onClick={() => void onSubmit()}>
                     <ScanSmiley size={20} weight="bold" />
                     Analyse my skin
                   </Button>
@@ -276,7 +274,8 @@ export function ScanPage() {
                 </div>
               )}
               {!pending && (
-                <div className="md:hidden">
+                <div className="md:hidden capture-mobile-help">
+                  {tips}
                   <WhyTwoPhotos />
                 </div>
               )}

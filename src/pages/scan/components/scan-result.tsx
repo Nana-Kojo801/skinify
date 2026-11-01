@@ -1,6 +1,4 @@
 import { Link } from 'react-router'
-import { Burst } from '@/components/burst'
-import { ScoreRing } from '@/components/score-ring'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CONCERN_KEYS, CONCERNS } from '@shared/concerns'
@@ -30,8 +28,8 @@ function GapScale({ gap }: { gap: number }) {
   const max = poor * 1.2
   const bands = [
     { from: 0, to: poor * 0.25, color: 'bg-working' },
-    { from: poor * 0.25, to: poor * 0.5, color: 'bg-[#7fd3a2]' },
-    { from: poor * 0.5, to: poor, color: 'bg-[#f2c14e]' },
+    { from: poor * 0.25, to: poor * 0.5, color: 'bg-[#a2a4aa]' },
+    { from: poor * 0.5, to: poor, color: 'bg-[#77797e]' },
     { from: poor, to: max, color: 'bg-irritation' },
   ]
   const columns = bands.map((band) => `${band.to - band.from}fr`).join(' ')
@@ -39,7 +37,7 @@ function GapScale({ gap }: { gap: number }) {
   return (
     <div className="relative mt-4 pt-7" aria-hidden>
       <span className="absolute top-0 flex -translate-x-1/2 flex-col items-center" style={{ left: `${left}%` }}>
-        <b className="pop-in rounded-full bg-ink px-2 py-0.5 text-xs font-extrabold text-white tabular-nums">{gap.toFixed(1)}</b>
+        <b className="pop-in rounded-full bg-ink px-2 py-0.5 text-xs font-extrabold text-fog tabular-nums">{gap.toFixed(1)}</b>
         <i className="mt-0.5 h-[22px] w-[3px] rounded-full bg-ink" />
       </span>
       <div className="grid h-3 gap-[3px]" style={{ gridTemplateColumns: columns }}>
@@ -56,65 +54,14 @@ function GapScale({ gap }: { gap: number }) {
   )
 }
 
-// The reward after a scan: a badge that pops with confetti, then the scores ring in one by one,
-// then how steady the scan was and Ideas to test (rendered by the page).
 export function ScanResult({ result, ideas }: { result: ScanResultData; ideas?: React.ReactNode }) {
   const agreement = describeAgreement(result.gap)
-  const back = (className?: string) => (
-    <Link to="/" className={buttonVariants({ size: 'lg', className })}>
-      Back to products
-    </Link>
-  )
-  return (
-    <div className="flex flex-col">
-      <header className="flex flex-col items-center gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left">
-        <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
-          <Burst />
-          <div>
-            <h1 className="display rise text-[36px] leading-none md:text-[56px]" style={{ '--i': 2 } as React.CSSProperties}>
-              Scan saved
-            </h1>
-            <p className="rise mt-2 max-w-sm text-ink-2 md:max-w-none md:text-[17px]" style={{ '--i': 3 } as React.CSSProperties}>
-              Scores run 1 to 100, higher is healthier. Your photos were not saved.
-            </p>
-          </div>
-        </div>
-        {back('hidden md:inline-flex')}
-      </header>
-
-      <div className="flex items-baseline justify-between px-1.5 pt-8 pb-3">
-        <h2 className="display text-[25px] leading-none md:text-[28px]">Your scores</h2>
-        {result.qualityFlag && <span className="text-[13.5px] font-bold text-canttell-ink">Lower quality scan</span>}
-      </div>
-      <section className="tile rise px-2 pt-6 pb-5 md:px-5 md:pt-7" style={{ '--i': 4 } as React.CSSProperties}>
-        <ul className="grid grid-cols-4 gap-y-5 md:grid-cols-8">
-          {CONCERN_KEYS.filter((key) => result.scores[key] !== undefined).map((key, index) => (
-            <li key={key}>
-              <ScoreRing value={result.scores[key]} label={CONCERNS[key].label} size={72} index={index + 4} numberClassName="text-[22px]" />
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <h2 className="display px-1.5 pt-9 pb-3 text-[25px] leading-none md:text-[28px]">What to do with them</h2>
-      <div className="flex flex-col gap-2.5 md:gap-3.5">
-        <section className="tile rise p-5 md:p-6" style={{ '--i': 5 } as React.CSSProperties}>
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="text-[19px] leading-tight font-extrabold tracking-[-0.02em]">How steady was this scan?</h3>
-            <span className={cn('rounded-full px-3 py-1 text-[13px] font-extrabold whitespace-nowrap', AGREEMENT_CHIP[agreement.level])}>{agreement.label}</span>
-          </div>
-          <p className="mt-2 text-[14.5px] leading-snug text-ink-2">{agreement.sentence}</p>
-          <div className="md:max-w-[640px]">
-            <GapScale gap={result.gap} />
-          </div>
-          <p className="mt-3 text-[13.5px] leading-snug text-ink-2">
-            Average gap between your two photos: <strong className="font-extrabold text-ink">{result.gap.toFixed(1)} points</strong> (smaller is better). That gap is
-            how we tell a real change from normal noise.
-          </p>
-        </section>
-        {ideas}
-      </div>
-      {back('mt-6 w-full md:hidden')}
+  return <div className="scan-result-content">
+    <header className="screen-heading"><div><h1>Scan recorded</h1><p>Your photos weren’t stored.</p></div><Link to="/" className={`${buttonVariants()} desktop-only`}>Back to overview</Link></header>
+    <div className="result-layout"><section className="result-ledger" aria-label="Your scores"><ol>{CONCERN_KEYS.filter(key => result.scores[key] !== undefined).map((key, index) => <li key={key}><span>{String(index+1).padStart(2,'0')}</span><h2>{CONCERNS[key].label}</h2><span className="score-track" aria-hidden><i style={{ width: `${Math.max(0, Math.min(100, result.scores[key]))}%` }} /></span><strong>{Math.round(result.scores[key])}</strong></li>)}</ol><p>Scores out of 100. Higher is healthier.</p></section>
+      <div className="result-consistency"><section className="agreement-panel"><header><h2>Photo consistency</h2><strong className={AGREEMENT_CHIP[agreement.level]}>{agreement.label}</strong></header><GapScale gap={result.gap} /><p>{result.gap.toFixed(1)} points between photos.</p><p>{agreement.sentence}</p>{result.qualityFlag && <p className="quality-note">Lower-quality scan: keep light and distance consistent next time.</p>}</section><p className="result-privacy">Saved to your scan history. You can find updated product verdicts in your routine.</p><Link to="/routine" className={buttonVariants({ variant: 'outline' })}>View your routine</Link></div>
     </div>
-  )
+    <Link to="/" className={`${buttonVariants({ size: 'lg' })} result-mobile-back`}>Back to overview</Link>
+    <details className="secondary-section"><summary>Ideas to test<span>Based on this scan</span></summary>{ideas}</details>
+  </div>
 }

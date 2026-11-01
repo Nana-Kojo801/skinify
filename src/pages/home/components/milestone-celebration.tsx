@@ -1,6 +1,5 @@
 import { Sparkle, X } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
-import { Burst } from '@/components/burst'
 import { markMilestonesSeen, readSeenMilestones } from '@/lib/seen-milestones'
 import { celebrationText, newMilestones, type Milestone } from '@shared/rhythm/milestones'
 
@@ -19,19 +18,19 @@ export function MilestoneCelebration({ milestones, currentStreak, now }: { miles
 
   return (
     <section role="status" className="tile-accent pop-in relative flex items-start gap-4 p-4 pr-14 md:p-5 md:pr-16">
-      <Burst className="size-14" coreClassName="bg-ink bg-none text-accent" radius={40}>
+      <span className="grid size-12 shrink-0 place-items-center rounded-full border border-hair text-primary">
         <Sparkle size={26} weight="fill" />
-      </Burst>
+      </span>
       <div className="min-w-0">
         <h2 className="text-[20px] leading-tight font-extrabold tracking-[-0.02em]">{title}</h2>
         <p className="mt-1.5 text-[14.5px] leading-snug">{text}</p>
-        {shown.length > 1 && <p className="mt-1.5 text-[12.5px] font-bold opacity-80">And {shown.length - 1} more in Your rhythm below.</p>}
+        {shown.length > 1 && <p className="mt-1.5 text-[12.5px] font-bold opacity-80">And {shown.length - 1} more in Your milestones.</p>}
       </div>
       <button
         type="button"
         aria-label="Dismiss"
         onClick={() => setDismissed(true)}
-        className="press absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-white/55 hover:bg-white/80"
+        className="press absolute top-3 right-3 grid size-11 cursor-pointer place-items-center rounded-full bg-soft hover:bg-well"
       >
         <X size={18} weight="bold" />
       </button>

@@ -47,7 +47,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
 
   return (
     <section
-      className="relative overflow-hidden rounded-[34px] bg-[radial-gradient(120%_70%_at_50%_0%,#2c3646_0%,#121a26_55%,#0a0f17_100%)] p-3 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14),inset_0_0_0_1px_rgb(255_255_255/0.05),0_2px_4px_rgb(14_23_38/0.1),0_34px_60px_-30px_rgb(14_23_38/0.7)] md:p-3.5"
+      className="camera-panel"
       aria-label="Your two photos"
     >
       {analysing ? (
@@ -97,7 +97,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
             const light = lighting[index]
             return (
               <div key={index} className="flex flex-col items-center gap-2">
-                <div className="relative aspect-[3/4.4] w-full overflow-hidden rounded-[22px] bg-[#121826] md:aspect-auto md:h-[440px]">
+                <div className="relative aspect-[3/4.4] w-full overflow-hidden rounded-[22px] bg-[#242629] md:aspect-auto md:h-[440px]">
                   {previews[index] && (
                     <img src={previews[index]!} alt={`Photo ${index + 1} of 2`} className={cn('settle size-full object-cover', problem && 'brightness-50 grayscale-[.6]')} />
                   )}
@@ -140,7 +140,7 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
                     <button
                       type="button"
                       onClick={() => camera(index)}
-                      className={cn('press inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 text-[13.5px] font-bold', problem ? 'bg-white text-ink' : 'glass-clear')}
+                      className={cn('press inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full px-4 text-[13.5px] font-bold', problem ? 'bg-white text-[#191a1c]' : 'glass-clear')}
                     >
                       <Camera size={17} weight="bold" />
                       Retake
@@ -159,10 +159,10 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
           <button
             type="button"
             onClick={() => camera(current)}
-            className="relative mt-3 block aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[26px] bg-[radial-gradient(60%_50%_at_50%_42%,#252e3c,#0e131c)] md:aspect-auto md:h-[440px]"
+            className="camera-viewfinder"
             aria-label={`Take photo ${current + 1}`}
           >
-            <span aria-hidden className="breathe absolute top-[44%] left-1/2 aspect-[3/4] h-auto w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border-[2.5px] border-dashed border-accent/90 shadow-[0_0_40px_rgb(125_187_255/0.25)] md:h-[74%] md:w-auto" />
+            <span className="camera-placeholder" aria-hidden><Camera size={42} weight="thin" /><span>Open camera</span></span>
             {['top-4 left-4 rounded-tl-xl border-t-[3px] border-l-[3px]', 'top-4 right-4 rounded-tr-xl border-t-[3px] border-r-[3px]', 'bottom-4 left-4 rounded-bl-xl border-b-[3px] border-l-[3px]', 'right-4 bottom-4 rounded-br-xl border-r-[3px] border-b-[3px]'].map(
               (pos) => (
                 <span key={pos} aria-hidden className={cn('absolute size-[30px] border-white/85', pos)} />
@@ -184,11 +184,9 @@ export function PhotoSlots({ previews, problems, lighting, analysing, onFile }: 
               type="button"
               onClick={() => camera(current)}
               aria-label="Camera"
-              className="press grid size-[82px] cursor-pointer place-items-center rounded-full bg-[conic-gradient(from_200deg,var(--color-primary),var(--color-primary-soft),var(--color-primary))] p-[5px] shadow-[0_10px_26px_-8px_rgb(0_104_224/0.5)]"
+              className="camera-shutter press"
             >
-              <span className="grid size-full place-items-center rounded-full bg-[radial-gradient(circle_at_50%_30%,#fff,#e6ecf4)] text-ink shadow-[inset_0_-2px_4px_rgb(0_0_0/0.12),0_0_0_4px_#0f1622]">
-                <Camera size={28} weight="bold" />
-              </span>
+              <span aria-hidden />
             </button>
             {(() => {
               const other = current === 0 ? 1 : 0

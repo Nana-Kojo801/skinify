@@ -1,7 +1,6 @@
 import { Lightbulb } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { ScoreRing } from '@/components/score-ring'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CONCERNS } from '@shared/concerns'
@@ -29,7 +28,7 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
   if (blocks.length === 0) return null
 
   return (
-    <section className="tile-soft p-5 md:p-6" aria-labelledby="ideas-title">
+    <section className="py-5" aria-labelledby="ideas-title">
       <h2 id="ideas-title" className="eyebrow">
         <Lightbulb size={18} weight="bold" />
         Ideas to test
@@ -38,11 +37,11 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
         Your lowest scores this scan, and what people commonly try for them. Try one, and Receipts will tell you honestly whether it worked.
       </p>
 
-      <div className={cn('mt-4 flex flex-col gap-4', layout === 'wide' && 'md:grid md:grid-cols-3 md:gap-5')}>
+      <div className={cn('mt-4 flex flex-col gap-4', layout === 'wide' && 'md:grid xl:grid-cols-3 md:gap-5')}>
         {blocks.map((block) => (
           <div key={block.concern}>
             <div className="flex items-center gap-3">
-              <ScoreRing value={block.score} size={48} stroke="var(--color-canttell)" numberClassName="text-[15px]" />
+              <strong className="text-3xl font-medium tabular-nums">{Math.round(block.score)}</strong>
               <div>
                 <p className="text-[19px] leading-tight font-extrabold tracking-[-0.02em]">{CONCERNS[block.concern].label}</p>
                 <p className="text-[12.5px] font-semibold text-ink-2">{rankLabel(block)}</p>
@@ -52,9 +51,9 @@ export function IdeasToTest({ scores, qualityFlag, products, canCreate, layout =
               {block.ideas.map((idea) => {
                 const to = `/products/new?${new URLSearchParams({ concern: block.concern, name: idea.name.replace(/\s*\(.*\)$/, '') })}`
                 return (
-                  <li key={idea.name} className="flex items-center justify-between gap-3 rounded-[18px] bg-white/60 py-2.5 pr-2.5 pl-4 shadow-[inset_0_0_0_1px_rgb(14_23_38/0.05)]">
+                  <li key={idea.name} className="flex items-center justify-between gap-3 border-b border-hair py-3">
                     <span className="min-w-0">
-                      <span className="block text-[15px] font-bold">{idea.name}</span>
+                      <span className="block text-[14px] font-medium">{idea.name}</span>
                       <span className="block text-[13px] leading-snug text-ink-2">{idea.for}</span>
                     </span>
                     {canCreate ? (

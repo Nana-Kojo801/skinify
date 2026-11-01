@@ -34,7 +34,7 @@ export function UnsubscribePage() {
       <div className="absolute top-[max(16px,env(safe-area-inset-top))] left-5 md:top-8 md:left-10">
         <Logo />
       </div>
-      <div className="flex w-full max-w-[520px] flex-col items-center gap-4 text-center md:rounded-(--radius-tile) md:bg-tile md:bg-[image:var(--sheen)] md:shadow-(--shadow-depth) md:px-10 md:py-11">
+      <div className="flex w-full max-w-[480px] flex-col items-center gap-5 text-center">
         {result === 'working' && (
           <>
             <span className="spin size-12 rounded-full border-[5px] border-ink/10 border-t-ink" aria-hidden />
@@ -43,7 +43,7 @@ export function UnsubscribePage() {
         )}
         {result === 'done' && (
           <>
-            <span className="pop-in grid size-[92px] place-items-center rounded-[32px] bg-[image:var(--sheen)] bg-working-bg text-working-ink shadow-(--shadow-depth-color)">
+            <span className="grid size-16 place-items-center rounded-full border border-hair text-primary">
               <CheckCircle size={44} weight="fill" />
             </span>
             <h1 className="display text-[32px] leading-[1.05] md:text-[40px]">You're unsubscribed</h1>
@@ -52,7 +52,7 @@ export function UnsubscribePage() {
         )}
         {result === 'failed' && (
           <>
-            <span className="pop-in grid size-[92px] place-items-center rounded-[32px] bg-[image:var(--sheen)] bg-canttell-bg text-canttell-ink shadow-(--shadow-depth-color)">
+            <span className="grid size-16 place-items-center rounded-full border border-hair text-canttell-ink">
               <Warning size={44} weight="bold" />
             </span>
             <h1 className="display text-[32px] leading-[1.05] md:text-[40px]">This link didn't work</h1>
