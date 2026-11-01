@@ -1,4 +1,4 @@
-# Receipts
+# Skinify
 
 **"Is this product actually working?"** A mobile-first web app (PWA) where you log your skincare products, scan your face once a week, and get an honest verdict on whether each product is doing anything, with the numbers to back it up.
 
@@ -25,7 +25,7 @@ The honest part: two photos of the same face never score exactly the same (light
 The **[YouCam AI Skin Analysis API](https://yce.perfectcorp.com/ai-api)** (standard definition, v2.0 endpoints). For every photo the server uploads the image, creates a `skin-analysis` task, polls it, and reads the `raw_score` (1 to 100, higher is healthier) for 8 concerns: `acne, redness, pore, texture, oiliness, moisture, radiance, dark_circle_v2`.
 
 - All YouCam calls happen **server-side** in Convex actions. The API key never reaches the browser.
-- **Privacy:** photos are sent to YouCam for analysis (YouCam states uploads are deleted after 24 hours). Receipts itself never stores, logs or caches a photo; it keeps only the numbers.
+- **Privacy:** photos are sent to YouCam for analysis (YouCam states uploads are deleted after 24 hours). Skinify itself never stores, logs or caches a photo; it keeps only the numbers.
 - **Free-tier budget:** the API allows 1,000 free units in total, and one scan costs 24. So the app limits each user to **3 scans per rolling 24 hours** and stops live scanning for everyone after 900 units. The demo account runs on seeded data and never spends units.
 - What we learned about the API (noise, score ranges, errors, costs) is in [`docs/youcam-api-notes.md`](docs/youcam-api-notes.md).
 
@@ -55,7 +55,7 @@ Then set the server-side environment variables on your Convex deployment (they a
 | `OPENROUTER_API_KEY` | AI-written explanations. Without it a built-in templated explanation is used. | `npx convex env set OPENROUTER_API_KEY <key>` |
 | `OPENROUTER_MODEL` | Optional. One or more OpenRouter model ids, comma-separated, tried in order. Default: a few free chat models (see `shared/explanation/openrouter-client.ts`). | `npx convex env set OPENROUTER_MODEL <ids>` |
 | `CLERK_JWT_ISSUER_DOMAIN` | Login (Clerk). Convex only accepts sign-in tokens from this Clerk instance. | The **Frontend API URL** from the Clerk dashboard, e.g. `npx convex env set CLERK_JWT_ISSUER_DOMAIN https://your-name-00.clerk.accounts.dev`. |
-| `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL` | Scan reminder emails ([Resend](https://resend.com)). Without them no email is sent and everything else works. | `npx convex env set RESEND_API_KEY <re_...>`; `EMAIL_FROM` like `Receipts <onboarding@resend.dev>` (the sender must be on a domain verified in Resend, except Resend's test sender); `APP_URL` is the site address used in the email links, e.g. `https://receipts-three-tau.vercel.app`. |
+| `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL` | Scan reminder emails ([Resend](https://resend.com)). Without them no email is sent and everything else works. | `npx convex env set RESEND_API_KEY <re_...>`; `EMAIL_FROM` like `Skinify <onboarding@resend.dev>` (the sender must be on a domain verified in Resend, except Resend's test sender); `APP_URL` is the site address used in the email links, e.g. `https://receipts-three-tau.vercel.app`. |
 | `EMAIL_ALLOWED_TO` | Who really gets reminder emails. Unset or empty = nobody (safe default), `*` = everyone, otherwise a comma-separated list of addresses. Everyone else only sees the preview in Settings. | `npx convex env set EMAIL_ALLOWED_TO you@example.org`. Resend's test sender can only reach the Resend account owner, so use that address until a domain is verified, then set `*`. |
 | `CLERK_SECRET_KEY` | Creating the demo user, "Try the demo" tickets and account deletion. Server-side only. | `npx convex env set CLERK_SECRET_KEY <sk_...>` (Clerk dashboard, API keys). |
 
@@ -94,7 +94,7 @@ Never emailed: the demo account, addresses on test domains (`example.com`, `exam
 
 ## Ideas to test
 
-After a scan (and on Home), a card lists the 1 to 3 concerns with the lowest scores, with a few ingredient families people commonly try for each. **Test this** opens the new-product form with the concern and a name pre-filled, and Receipts then judges the product like any other. The list is hand-written in [`shared/ideas/ideas-config.ts`](shared/ideas/ideas-config.ts): no brands, nothing written by an AI model, no prescription or drug-like ingredients (a test enforces this). Concerns that already have an active product are skipped, nothing is suggested after a scan flagged as poor quality, and the card always says these are ideas to try, not advice. It makes no YouCam calls.
+After a scan (and on Home), a card lists the 1 to 3 concerns with the lowest scores, with a few ingredient families people commonly try for each. **Test this** opens the new-product form with the concern and a name pre-filled, and Skinify then judges the product like any other. The list is hand-written in [`shared/ideas/ideas-config.ts`](shared/ideas/ideas-config.ts): no brands, nothing written by an AI model, no prescription or drug-like ingredients (a test enforces this). Concerns that already have an active product are skipped, nothing is suggested after a scan flagged as poor quality, and the card always says these are ideas to try, not advice. It makes no YouCam calls.
 
 ## Scan quality coach
 
@@ -102,7 +102,7 @@ On the Scan page, each photo gets a small lighting hint as soon as it is chosen 
 
 ## Same-concern warning
 
-When two **active** products target the same concern and **started within 28 days** of each other, Receipts says so: a note on both product pages, a chip on the Home cards, and a heads-up in the new-product form before saving (it never blocks saving). The verdict compares your score before and after a start date, so it can't tell overlapping products apart. This is a warning only: the verdict engine is unchanged. The rule and the 28 days live in [`shared/products/overlap.ts`](shared/products/overlap.ts).
+When two **active** products target the same concern and **started within 28 days** of each other, Skinify says so: a note on both product pages, a chip on the Home cards, and a heads-up in the new-product form before saving (it never blocks saving). The verdict compares your score before and after a start date, so it can't tell overlapping products apart. This is a warning only: the verdict engine is unchanged. The rule and the 28 days live in [`shared/products/overlap.ts`](shared/products/overlap.ts).
 
 ## Evidence strength
 

@@ -16,7 +16,7 @@ export const REPORT_VERDICT_LABELS: Record<Verdict, string> = {
 }
 
 export const REPORT_DISCLAIMER =
-  "This is a record of numbers from the person's own weekly selfies, not a medical assessment or a diagnosis. Scores are estimates from photos made by YouCam's skin analysis and can move with light, angle and expression. No photos are stored or included. Receipts is not a medical device. The decision about any product or treatment belongs with a qualified professional."
+  "This is a record of numbers from the person's own weekly selfies, not a medical assessment or a diagnosis. Scores are estimates from photos made by YouCam's skin analysis and can move with light, angle and expression. No photos are stored or included. Skinify is not a medical device. The decision about any product or treatment belongs with a qualified professional."
 
 export type ReportScan = { createdAt: number; scores: Record<string, number>; qualityFlag: boolean }
 export type ReportProduct = { _id: string; name: string; targetConcern: string; startDate: number; endDate?: number | null }

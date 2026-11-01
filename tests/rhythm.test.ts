@@ -128,7 +128,7 @@ describe('celebrationText', () => {
 })
 
 describe('buildWeeklyScanIcs', () => {
-  const ics = buildWeeklyScanIcs({ date: { year: 2026, month: 11, day: 6 }, uid: 'abc-123', createdAt: new Date(Date.UTC(2026, 9, 30, 12, 0, 5)), appUrl: 'https://receipts.test/' })
+  const ics = buildWeeklyScanIcs({ date: { year: 2026, month: 11, day: 6 }, uid: 'abc-123', createdAt: new Date(Date.UTC(2026, 9, 30, 12, 0, 5)), appUrl: 'https://skinify.test/' })
 
   it('is a valid-looking calendar with one weekly all-day event', () => {
     expect(ics.startsWith('BEGIN:VCALENDAR\r\n')).toBe(true)
@@ -136,8 +136,8 @@ describe('buildWeeklyScanIcs', () => {
     expect(ics).toContain('\r\nDTSTART;VALUE=DATE:20261106\r\n')
     expect(ics).toContain('\r\nRRULE:FREQ=WEEKLY\r\n')
     expect(ics).toContain('\r\nDTSTAMP:20261030T120005Z\r\n')
-    expect(ics).toContain('\r\nUID:abc-123@receipts\r\n')
-    expect(ics).toContain('SUMMARY:Weekly skin scan (Receipts)')
+    expect(ics).toContain('\r\nUID:abc-123@skinify\r\n')
+    expect(ics).toContain('SUMMARY:Weekly skin scan (Skinify)')
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(1)
   })
 
@@ -148,7 +148,7 @@ describe('buildWeeklyScanIcs', () => {
 
   it('escapes the description and has no photos or scores in it', () => {
     const unfolded = ics.replace(/\r\n /g, '') // long lines are folded, so join them before reading
-    expect(unfolded).toContain('DESCRIPTION:Two quick photos\\, taken back to back in the same light.\\nScan: https://receipts.test/scan')
+    expect(unfolded).toContain('DESCRIPTION:Two quick photos\\, taken back to back in the same light.\\nScan: https://skinify.test/scan')
     expect(unfolded).not.toMatch(/acne|score/i)
   })
 })

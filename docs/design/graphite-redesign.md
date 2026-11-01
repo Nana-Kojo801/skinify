@@ -1,4 +1,4 @@
-# Receipts — graphite redesign
+# Skinify — graphite redesign
 
 Implements the approved graphite, silver, and orange desktop/mobile direction.
 

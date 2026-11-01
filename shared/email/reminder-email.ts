@@ -15,7 +15,7 @@ const escapeHtml = (text: string) =>
 export function buildReminderEmail({ dueLabel, appUrl, unsubscribeUrl }: ReminderEmailInput) {
   const subject = 'Time for your weekly scan'
   const scanUrl = `${appUrl.replace(/\/$/, '')}/scan`
-  const why = 'You are getting this because you turned on scan reminders in Receipts.'
+  const why = 'You are getting this because you turned on scan reminders in Skinify.'
   const text = [
     `Your next weekly scan is due ${dueLabel}.`,
     '',
@@ -29,7 +29,7 @@ export function buildReminderEmail({ dueLabel, appUrl, unsubscribeUrl }: Reminde
 <html><body style="margin:0;padding:24px 12px;background:#eef3f9;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#0e1726">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:24px;overflow:hidden">
 <tr><td style="background:#d2e6ff;padding:16px 24px;font-size:18px;font-weight:800;letter-spacing:-0.02em">
-<span style="display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;background:#0068e0;color:#ffffff;font-size:15px;vertical-align:-6px;margin-right:8px">&#10003;</span>Receipts</td></tr>
+<span style="display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;background:#0068e0;color:#ffffff;font-size:15px;vertical-align:-6px;margin-right:8px">&#10003;</span>Skinify</td></tr>
 <tr><td style="padding:26px 24px 8px">
 <h1 style="margin:0 0 12px;font-size:28px;line-height:1.1;font-weight:800;letter-spacing:-0.025em">Time for your weekly scan</h1>
 <p style="margin:0 0 22px;font-size:16px;line-height:1.5;color:#4b5566">Your next scan is due <strong style="color:#0e1726">${escapeHtml(dueLabel)}</strong>. Two quick photos keep your verdicts honest.</p>

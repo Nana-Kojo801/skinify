@@ -60,7 +60,7 @@ export function UnsubscribePage() {
           </>
         )}
         <Link to="/" className={buttonVariants({ variant: 'secondary', size: 'lg', className: 'mt-2' })}>
-          Open Receipts
+          Open Skinify
         </Link>
       </div>
     </main>
