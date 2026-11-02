@@ -49,7 +49,7 @@ Mobile-first PWA where a user logs skincare products, scans their face weekly (2
 ## 4. Stack and conventions
 
 - React + Vite + TypeScript + TailwindCSS + shadcn/ui + Convex
-- Sign-in: **Clerk** (replaced Convex Auth in issue #39): Google, or email + password verified by an emailed code (Clerk sends it). Convex verifies Clerk's token; each person has a `users` row keyed by `clerkId`. "Try the demo" uses a server-minted Clerk sign-in ticket (the demo user has no password).
+- Sign-in: **Clerk** (replaced Convex Auth in issue #39): Google, or email + password verified by an emailed code (Clerk sends it). Convex verifies Clerk's token; each person has a `users` row keyed by `clerkId`. "Explore a sample routine" (the demo) uses a server-minted Clerk sign-in ticket (the demo user has no password).
 - OpenRouter (free model) for explanation text
 - **kebab-case file names**, per-page directories with nested `components/` (`src/pages/<page>/<page>-page.tsx`), **named exports only** (no default exports)
 - Mobile-first layout

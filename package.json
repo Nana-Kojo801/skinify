@@ -1,5 +1,12 @@
 {
   "name": "skinify",
+  "description": "Is this skincare product actually working? Weekly face scans with the YouCam Skin Analysis API, and an honest verdict that accounts for scan-to-scan noise.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nana-Kojo801/receipts.git"
+  },
+  "homepage": "https://skiniffy.vercel.app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
