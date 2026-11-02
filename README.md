@@ -4,6 +4,10 @@
 
 Built for the YouCam API hackathon.
 
+**Live demo:** https://skiniffy.vercel.app (tap **"Explore a sample routine"**, no sign-up needed) · **Demo video:** https://youtu.be/GeWxLl7XGSM · **Code:** you are here
+
+![Skinify overview: the acne score over six weeks, the weekly check-in and the routine](docs/screenshots/overview.jpg)
+
 ## What it does
 
 1. **Add a product** and pick the skin concern it should help with (acne, redness, pores, texture, oiliness, moisture, radiance or dark circles) and the day you started it.
@@ -29,11 +33,21 @@ The **[YouCam AI Skin Analysis API](https://yce.perfectcorp.com/ai-api)** (stand
 - **Free-tier budget:** the API allows 1,000 free units in total, and one scan costs 24. So the app limits each user to **3 scans per rolling 24 hours** and stops live scanning for everyone after 900 units. The demo account runs on seeded data and never spends units.
 - What we learned about the API (noise, score ranges, errors, costs) is in [`docs/youcam-api-notes.md`](docs/youcam-api-notes.md).
 
-## Try it
+## Test it in 2 minutes (for judges)
 
-**Demo account** (read-only, pre-filled with 6 weeks of sample scans and 3 products showing `WORKING`, `NO_VISIBLE_CHANGE` and `CANT_TELL`): on the login screen, **"Try the demo"** signs in with one tap. It has no password.
+1. **Open https://skiniffy.vercel.app** on a phone or a laptop. It is a mobile-first app that also works on desktop, and it can be installed to the home screen (PWA).
+2. **Tap "Explore a sample routine".** No password and no sign-up: it opens a read-only account with six weeks of sample data and three products showing `WORKING`, `NO_VISIBLE_CHANGE` and `CANT_TELL`. It never spends YouCam units. Look at **Overview** (the score over time and the weekly check-in), **Routine** (open a product to see its verdict, the evidence behind it and the scan history) and **Report** (the printable page for a pharmacist or dermatologist).
+3. **To try a real scan with your own face,** create your own account (**Continue with Google**, or an email and password: Clerk emails a 6-digit code), open **Scan**, take two photos back to back and wait about 10 seconds. A real scan sends the photos to the YouCam Skin Analysis API and spends **24 units** of a shared free budget, so each account is limited to **3 scans per 24 hours**. The photos are analysed and discarded; only the scores are kept.
+4. **Where the YouCam API is used:** the server action `submit` in [`convex/scans.ts`](convex/scans.ts) calls the client in [`shared/youcam/youcam-client.ts`](shared/youcam/youcam-client.ts) for each photo (upload, create a `skin-analysis` task, poll, read the scores). The API key lives only in the Convex deployment.
 
-To scan for real, tap **"Continue with Google"**, or create an account with an email and password (Clerk emails a 6-digit code to confirm the address). Sign-in is handled by [Clerk](https://clerk.com).
+Running the whole stack yourself needs your own Convex project, Clerk application and YouCam API key (see below), so the live demo above is the quickest way to test it.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![A product with a Working verdict, the evidence behind it and its score history](docs/screenshots/verdict-working.jpg) | ![The printable report for a pharmacist or dermatologist](docs/screenshots/report.jpg) |
+| ![The same app on a phone](docs/screenshots/phones.jpg) | |
 
 ## Run it yourself
 
@@ -57,7 +71,7 @@ Then set the server-side environment variables on your Convex deployment (they a
 | `CLERK_JWT_ISSUER_DOMAIN` | Login (Clerk). Convex only accepts sign-in tokens from this Clerk instance. | The **Frontend API URL** from the Clerk dashboard, e.g. `npx convex env set CLERK_JWT_ISSUER_DOMAIN https://your-name-00.clerk.accounts.dev`. |
 | `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL` | Scan reminder emails ([Resend](https://resend.com)). Without them no email is sent and everything else works. | `npx convex env set RESEND_API_KEY <re_...>`; `EMAIL_FROM` like `Skinify <onboarding@resend.dev>` (the sender must be on a domain verified in Resend, except Resend's test sender); `APP_URL` is the site address used in the email links, e.g. `https://receipts-three-tau.vercel.app`. |
 | `EMAIL_ALLOWED_TO` | Who really gets reminder emails. Unset or empty = nobody (safe default), `*` = everyone, otherwise a comma-separated list of addresses. Everyone else only sees the preview in Settings. | `npx convex env set EMAIL_ALLOWED_TO you@example.org`. Resend's test sender can only reach the Resend account owner, so use that address until a domain is verified, then set `*`. |
-| `CLERK_SECRET_KEY` | Creating the demo user, "Try the demo" tickets and account deletion. Server-side only. | `npx convex env set CLERK_SECRET_KEY <sk_...>` (Clerk dashboard, API keys). |
+| `CLERK_SECRET_KEY` | Creating the demo user, sample-routine sign-in tickets and account deletion. Server-side only. | `npx convex env set CLERK_SECRET_KEY <sk_...>` (Clerk dashboard, API keys). |
 
 The frontend also needs `VITE_CLERK_PUBLISHABLE_KEY` (the `pk_...` key, public) in `.env.local`, and in the Netlify and Vercel environment variables.
 
@@ -72,6 +86,8 @@ npm run reset-demo            # creates the demo user in Clerk if missing and (r
 Other commands: `npm test` (unit and Convex function tests), `npm run typecheck`, `npm run lint`, `npm run build`.
 
 ### Deploying (Netlify and/or Vercel, plus a Convex deployment)
+
+**The live site runs on Vercel at https://skiniffy.vercel.app**, talking to the Convex development deployment described below. Netlify is an optional second host (`netlify.toml` is included); it is not part of the submission.
 
 For this hackathon the live app runs on a Convex **development** deployment (no separate production deployment). That deployment already has the environment variables above and the demo account; the code is pushed to it with `npx convex dev --once` (or while `npx convex dev` runs). Note that anything pushed there goes live at once, so don't leave `npx convex dev` running with half-finished edits while the app is being judged.
 
@@ -149,7 +165,11 @@ scripts/        YouCam API spike and a live check script (need an API key)
 docs/           SPEC.md, youcam-api-notes.md, api-contract.md
 ```
 
-Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions), Clerk (Google and email + password sign-in). Charts are hand-drawn SVG; Figtree (Fontsource, OFL) is the typeface.
+Stack: React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Convex (database, functions), Clerk (Google and email + password sign-in). Charts are hand-drawn SVG; Geist (Fontsource, SIL Open Font License) is the typeface.
+
+## Credits
+
+Skin analysis: the [YouCam AI Skin Analysis API](https://yce.perfectcorp.com/ai-api) by Perfect Corp. (YouCam and Perfect Corp. are trademarks of their owners). Built with React, Vite, TypeScript, Tailwind CSS, [shadcn/ui](https://ui.shadcn.com) on [Base UI](https://base-ui.com), [Convex](https://convex.dev), [Clerk](https://clerk.com), [Resend](https://resend.com), [OpenRouter](https://openrouter.ai) and Vitest. Icons: [Phosphor Icons](https://phosphoricons.com) (MIT). Typeface: [Geist](https://vercel.com/font) (SIL Open Font License).
 
 ## License
 
